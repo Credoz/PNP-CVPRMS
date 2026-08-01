@@ -5,6 +5,8 @@
 The Pseudocode describes the step-by-step algorithms used by the system without following any specific programming language syntax. It explains the logical sequence of operations involved in checkpoint screening, driver verification, violation processing, citation generation, and records updating.
 
 
+
+
 ALGORITHM ProcessCheckpointViolation(officer_badge_no, checkpoint_id)
 
     // Step 1: Input Driver and Vehicle Details
