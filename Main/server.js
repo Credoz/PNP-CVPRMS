@@ -127,12 +127,44 @@ function initializeSchema() {
             screening_status TEXT DEFAULT 'clear'
         )
     `;
+
     db.run(createTableQuery, (err) => {
         if (err) {
             console.error('[DATABASE ERROR] Table initialization failed:', err.message);
-        } else {
-            console.log('[DATABASE] Violations table verified/created successfully.');
+            return;
         }
+
+        db.all('PRAGMA table_info(violations)', (pragmaErr, columns) => {
+            if (pragmaErr) {
+                console.error('[DATABASE ERROR] Failed to inspect schema:', pragmaErr.message);
+                return;
+            }
+
+            const existingColumns = new Set((columns || []).map((column) => column.name));
+            const migrationSteps = [
+                { name: 'ticket_number', sql: "ALTER TABLE violations ADD COLUMN ticket_number TEXT" },
+                { name: 'screening_status', sql: "ALTER TABLE violations ADD COLUMN screening_status TEXT DEFAULT 'clear'" }
+            ];
+
+            const pending = migrationSteps.filter((step) => !existingColumns.has(step.name));
+
+            if (pending.length === 0) {
+                console.log('[DATABASE] Violations table verified/created successfully.');
+                return;
+            }
+
+            db.serialize(() => {
+                pending.forEach((step) => {
+                    db.run(step.sql, (alterErr) => {
+                        if (alterErr) {
+                            console.error(`[DATABASE ERROR] Failed to add ${step.name}:`, alterErr.message);
+                        }
+                    });
+                });
+
+                console.log('[DATABASE] Violations table migrated successfully.');
+            });
+        });
     });
 }
 

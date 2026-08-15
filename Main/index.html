@@ -145,6 +145,68 @@
             background-color: #374151;
         }
 
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 12px;
+            margin-top: 6px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            border: 1px solid var(--pnp-border);
+            border-radius: 6px;
+            background: #F8FAFC;
+            font-size: 0.82rem;
+        }
+
+        .checkbox-item input {
+            width: auto;
+            margin: 0;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .status-box {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #F8FAFC;
+            border: 1px solid var(--pnp-border);
+        }
+
+        .status-box strong {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--pnp-navy);
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-clear {
+            background: #DCFCE7;
+            color: var(--pnp-success);
+        }
+
+        .status-warning {
+            background: #FEE2E2;
+            color: var(--pnp-danger);
+        }
+
         .search-bar {
             display: flex;
             gap: 8px;
@@ -240,21 +302,27 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="violation_type">Apprehended Violation</label>
-                    <select id="violation_type" name="violation_type" required>
-                        <option value="">-- Select Violation --</option>
-                        <option value="No Driver's License">No Driver's License</option>
-                        <option value="Expired Vehicle Registration">Expired Vehicle Registration</option>
-                        <option value="No Helmet / Seatbelt">No Helmet / Seatbelt</option>
-                        <option value="Driving Under the Influence (DUI)">Driving Under the Influence (DUI)</option>
-                        <option value="Illegal Modification">Illegal Modification</option>
-                        <option value="Reckless Driving">Reckless Driving</option>
-                    </select>
+                    <label>Apprehended Violations</label>
+                    <div class="checkbox-group" id="violationChecklist">
+                        <label class="checkbox-item"><input type="checkbox" value="No Driver's License"> No Driver's License</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Expired Vehicle Registration"> Expired Vehicle Registration</label>
+                        <label class="checkbox-item"><input type="checkbox" value="No Helmet / Seatbelt"> No Helmet / Seatbelt</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Driving Under the Influence (DUI)"> Driving Under the Influence (DUI)</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Illegal Modification"> Illegal Modification</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Reckless Driving"> Reckless Driving</label>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="fine_amount">Fine Amount (PHP)</label>
-                    <input type="number" id="fine_amount" name="fine_amount" min="1" step="0.01" placeholder="e.g. 1500.00" required>
+                <div class="field-row">
+                    <div class="form-group">
+                        <label for="fine_amount">Fine Amount (PHP)</label>
+                        <input type="number" id="fine_amount" name="fine_amount" min="1" step="0.01" placeholder="e.g. 1500.00" required readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ticket_number_display">Ticket Number</label>
+                        <input type="text" id="ticket_number_display" value="PNP-NEW" readonly>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -262,7 +330,13 @@
                     <input type="text" id="officer_id" name="officer_id" placeholder="e.g. PNP-OFFICER-4491" required>
                 </div>
 
-                <button type="submit" class="btn" id="submitBtn">Submit Violation Record</button>
+                <div class="status-box">
+                    <strong>Screening Status</strong>
+                    <span id="screeningStatusBadge" class="status-pill status-clear">Clear</span>
+                    <div id="screeningStatusText" style="margin-top: 8px; color: #475569; font-size: 0.82rem;">No screening alerts found in local rule set.</div>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn" style="margin-top: 16px;">Submit Violation Record</button>
             </form>
         </section>
 
@@ -286,6 +360,8 @@
                             <th>Plate</th>
                             <th>Violation</th>
                             <th>Fine (PHP)</th>
+                            <th>Ticket</th>
+                            <th>Screening</th>
                             <th>Officer</th>
                         </tr>
                     </thead>
@@ -304,6 +380,20 @@
         const alertBox = document.getElementById('formAlert');
         const tableBody = document.getElementById('violationsTableBody');
         const searchInput = document.getElementById('searchInput');
+        const screeningStatusBadge = document.getElementById('screeningStatusBadge');
+        const screeningStatusText = document.getElementById('screeningStatusText');
+        const fineAmountInput = document.getElementById('fine_amount');
+        const ticketNumberDisplay = document.getElementById('ticket_number_display');
+        const violationChecklist = document.getElementById('violationChecklist');
+
+        const OFFENSE_SCHEDULE = {
+            "No Driver's License": 1500,
+            "Expired Vehicle Registration": 1200,
+            "No Helmet / Seatbelt": 1000,
+            "Driving Under the Influence (DUI)": 5000,
+            "Illegal Modification": 2500,
+            "Reckless Driving": 3000
+        };
 
         function showAlert(message, type) {
             alertBox.textContent = message;
@@ -313,6 +403,22 @@
                 alertBox.style.display = 'none';
             }, 5000);
         }
+
+        function updateFineTotal() {
+            const checked = [...violationChecklist.querySelectorAll('input:checked')].map(input => input.value);
+            const total = checked.reduce((sum, value) => sum + (OFFENSE_SCHEDULE[value] || 0), 0);
+            fineAmountInput.value = total.toFixed(2);
+            ticketNumberDisplay.value = total > 0 ? 'PNP-NEW' : 'PNP-NEW';
+        }
+
+        function updateScreeningResult(screeningStatus, flags) {
+            const isWarning = screeningStatus === 'warning';
+            screeningStatusBadge.textContent = isWarning ? 'Warning' : 'Clear';
+            screeningStatusBadge.className = `status-pill ${isWarning ? 'status-warning' : 'status-clear'}`;
+            screeningStatusText.textContent = Array.isArray(flags) && flags.length ? flags.join(' ') : 'No screening alerts found in local rule set.';
+        }
+
+        violationChecklist.addEventListener('change', updateFineTotal);
 
         async function loadAllViolations() {
             searchInput.value = '';
@@ -352,19 +458,23 @@
         function renderTable(records) {
             tableBody.innerHTML = '';
             if (!records || records.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #64748B;">No checkpoint violation records found.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: #64748B;">No checkpoint violation records found.</td></tr>`;
                 return;
             }
 
             records.forEach(row => {
                 const tr = document.createElement('tr');
+                const status = row.screening_status || 'clear';
+                const ticketNumber = row.ticket_number || '—';
                 tr.innerHTML = `
                     <td>${row.date_recorded}</td>
                     <td><strong>${escapeHtml(row.driver_name)}</strong></td>
                     <td>${escapeHtml(row.license_number)}</td>
                     <td><span class="tag">${escapeHtml(row.plate_number)}</span></td>
                     <td>${escapeHtml(row.violation_type)}</td>
-                    <td>₱${parseFloat(row.fine_amount).toFixed(2)}</td>
+                    <td>₱${parseFloat(row.fine_amount || 0).toFixed(2)}</td>
+                    <td>${escapeHtml(ticketNumber)}</td>
+                    <td><span class="status-pill ${status === 'warning' ? 'status-warning' : 'status-clear'}">${escapeHtml(status)}</span></td>
                     <td>${escapeHtml(row.officer_id)}</td>
                 `;
                 tableBody.appendChild(tr);
@@ -383,14 +493,21 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const selectedViolations = [...violationChecklist.querySelectorAll('input:checked')].map(input => input.value);
             const payload = {
                 driver_name: document.getElementById('driver_name').value,
                 license_number: document.getElementById('license_number').value,
                 plate_number: document.getElementById('plate_number').value,
-                violation_type: document.getElementById('violation_type').value,
+                violation_type: selectedViolations.join(', '),
+                violation_types: selectedViolations,
                 fine_amount: document.getElementById('fine_amount').value,
                 officer_id: document.getElementById('officer_id').value
             };
+
+            if (selectedViolations.length === 0) {
+                showAlert('Select at least one violation before submitting.', 'danger');
+                return;
+            }
 
             try {
                 const response = await fetch('/api/violations', {
@@ -403,7 +520,14 @@
 
                 if (response.ok && result.success) {
                     showAlert('Record registered successfully!', 'success');
+                    if (result.ticket_number) {
+                        ticketNumberDisplay.value = result.ticket_number;
+                    }
+                    if (result.screening_status) {
+                        updateScreeningResult(result.screening_status, result.screening_flags || []);
+                    }
                     form.reset();
+                    updateFineTotal();
                     loadAllViolations();
                 } else {
                     const errorMessage = result.errors ? result.errors.join(' ') : result.message;
@@ -415,6 +539,8 @@
         });
 
         // Initialize table on load
+        updateFineTotal();
+        updateScreeningResult('clear', ['No screening alerts found in local rule set.']);
         loadAllViolations();
     </script>
 </body>

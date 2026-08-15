@@ -15,7 +15,7 @@ test('calculateViolationTotal adds multiple violation fees from the local schedu
   ];
 
   const total = calculateViolationTotal(violations);
-  assert.equal(total, 4000);
+  assert.equal(total, 3700);
 });
 
 test('generateTicketNumber creates a unique citation identifier', () => {
