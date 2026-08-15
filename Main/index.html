@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNP Checkpoint Violation Processing & Records Management System</title>
+    <style>
+        :root {
+            --pnp-navy: #0B1E3D;
+            --pnp-accent: #C5A059;
+            --pnp-light: #F4F6FA;
+            --pnp-dark: #1E293B;
+            --pnp-border: #D1D5DB;
+            --pnp-danger: #DC2626;
+            --pnp-success: #16A34A;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--pnp-light);
+            color: var(--pnp-dark);
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--pnp-navy) 0%, #17325F 100%);
+            color: #ffffff;
+            padding: 24px 32px;
+            border-bottom: 4px solid var(--pnp-accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-size: 0.85rem;
+            color: #D1D5DB;
+            margin-top: 4px;
+        }
+
+        .badge {
+            background-color: var(--pnp-accent);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07);
+            border: 1px solid var(--pnp-border);
+        }
+
+        .card h2 {
+            font-size: 1.15rem;
+            color: var(--pnp-navy);
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--pnp-light);
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--pnp-dark);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--pnp-border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--pnp-navy);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 10px 16px;
+            background-color: var(--pnp-navy);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #17325F;
+        }
+
+        .btn-secondary {
+            background-color: #4B5563;
+            width: auto;
+            padding: 8px 16px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #374151;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .alert-box {
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-bottom: 14px;
+            display: none;
+        }
+
+        .alert-danger {
+            background-color: #FEE2E2;
+            color: var(--pnp-danger);
+            border: 1px solid #FCA5A5;
+        }
+
+        .alert-success {
+            background-color: #DCFCE7;
+            color: var(--pnp-success);
+            border: 1px solid #86EFAC;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--pnp-border);
+        }
+
+        th {
+            background-color: #F8FAFC;
+            color: var(--pnp-navy);
+            font-weight: 700;
+        }
+
+        tr:hover {
+            background-color: #F1F5F9;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #E2E8F0;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>PNP Checkpoint Violation Processing & Records Management System</h1>
+            <p>Philippine National Police | Operational Prototype</p>
+        </div>
+        <div>
+            <span class="badge">PNP-CVPRMS v1.0</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- FORM SECTION: Record Violation -->
+        <section class="card">
+            <h2>Record Checkpoint Violation</h2>
+            
+            <div id="formAlert" class="alert-box"></div>
+
+            <form id="violationForm">
+                <div class="form-group">
+                    <label for="driver_name">Driver Full Name</label>
+                    <input type="text" id="driver_name" name="driver_name" placeholder="e.g. Juan Dela Cruz" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="license_number">Driver's License No.</label>
+                    <input type="text" id="license_number" name="license_number" placeholder="e.g. N01-12-345678" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="plate_number">Vehicle Plate Number</label>
+                    <input type="text" id="plate_number" name="plate_number" placeholder="e.g. ABC 1234" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="violation_type">Apprehended Violation</label>
+                    <select id="violation_type" name="violation_type" required>
+                        <option value="">-- Select Violation --</option>
+                        <option value="No Driver's License">No Driver's License</option>
+                        <option value="Expired Vehicle Registration">Expired Vehicle Registration</option>
+                        <option value="No Helmet / Seatbelt">No Helmet / Seatbelt</option>
+                        <option value="Driving Under the Influence (DUI)">Driving Under the Influence (DUI)</option>
+                        <option value="Illegal Modification">Illegal Modification</option>
+                        <option value="Reckless Driving">Reckless Driving</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fine_amount">Fine Amount (PHP)</label>
+                    <input type="number" id="fine_amount" name="fine_amount" min="1" step="0.01" placeholder="e.g. 1500.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="officer_id">Apprehending Officer Badge/ID</label>
+                    <input type="text" id="officer_id" name="officer_id" placeholder="e.g. PNP-OFFICER-4491" required>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">Submit Violation Record</button>
+            </form>
+        </section>
+
+        <!-- DISPLAY SECTION: Records and Search -->
+        <section class="card">
+            <h2>Checkpoint Violation Registry</h2>
+
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by Plate Number, License, or Driver Name...">
+                <button type="button" class="btn btn-secondary" onclick="executeSearch()">Search</button>
+                <button type="button" class="btn btn-secondary" onclick="loadAllViolations()">Reset</button>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Driver</th>
+                            <th>License</th>
+                            <th>Plate</th>
+                            <th>Violation</th>
+                            <th>Fine (PHP)</th>
+                            <th>Officer</th>
+                        </tr>
+                    </thead>
+                    <tbody id="violationsTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: #64748B;">Loading records...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById('violationForm');
+        const alertBox = document.getElementById('formAlert');
+        const tableBody = document.getElementById('violationsTableBody');
+        const searchInput = document.getElementById('searchInput');
+
+        function showAlert(message, type) {
+            alertBox.textContent = message;
+            alertBox.className = `alert-box alert-${type}`;
+            alertBox.style.display = 'block';
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        async function loadAllViolations() {
+            searchInput.value = '';
+            try {
+                const response = await fetch('/api/violations');
+                const result = await response.json();
+                if (result.success) {
+                    renderTable(result.data);
+                } else {
+                    showAlert(result.message || 'Failed to fetch records.', 'danger');
+                }
+            } catch (err) {
+                showAlert('Network connection error.', 'danger');
+            }
+        }
+
+        async function executeSearch() {
+            const query = searchInput.value.trim();
+            if (!query) {
+                loadAllViolations();
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/violations/search?q=${encodeURIComponent(query)}`);
+                const result = await response.json();
+                if (result.success) {
+                    renderTable(result.data);
+                } else {
+                    showAlert(result.message || 'Search failed.', 'danger');
+                }
+            } catch (err) {
+                showAlert('Network error during search execution.', 'danger');
+            }
+        }
+
+        function renderTable(records) {
+            tableBody.innerHTML = '';
+            if (!records || records.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #64748B;">No checkpoint violation records found.</td></tr>`;
+                return;
+            }
+
+            records.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.date_recorded}</td>
+                    <td><strong>${escapeHtml(row.driver_name)}</strong></td>
+                    <td>${escapeHtml(row.license_number)}</td>
+                    <td><span class="tag">${escapeHtml(row.plate_number)}</span></td>
+                    <td>${escapeHtml(row.violation_type)}</td>
+                    <td>₱${parseFloat(row.fine_amount).toFixed(2)}</td>
+                    <td>${escapeHtml(row.officer_id)}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const payload = {
+                driver_name: document.getElementById('driver_name').value,
+                license_number: document.getElementById('license_number').value,
+                plate_number: document.getElementById('plate_number').value,
+                violation_type: document.getElementById('violation_type').value,
+                fine_amount: document.getElementById('fine_amount').value,
+                officer_id: document.getElementById('officer_id').value
+            };
+
+            try {
+                const response = await fetch('/api/violations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showAlert('Record registered successfully!', 'success');
+                    form.reset();
+                    loadAllViolations();
+                } else {
+                    const errorMessage = result.errors ? result.errors.join(' ') : result.message;
+                    showAlert(errorMessage || 'Failed to submit record.', 'danger');
+                }
+            } catch (err) {
+                showAlert('Network error while transmitting record.', 'danger');
+            }
+        });
+
+        // Initialize table on load
+        loadAllViolations();
+    </script>
+</body>
+</html>
