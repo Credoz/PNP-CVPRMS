@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^Set-Location Main; node --test$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
