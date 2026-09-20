@@ -1,66 +1,93 @@
-# Computerized Violation Processing and Records Management System for PNP Checkpoints (PNP-CVPRMS)
+# PNP-CVPRMS
 
-## 📌 Project Overview
+Computerized Violation Processing and Records Management System for PNP Checkpoints.
 
-The **Computerized Violation Processing and Records Management System for PNP Checkpoints (PNP-CVPRMS)** is a specialized records and citation management solution designed to streamline checkpoint operations for the Philippine National Police (PNP).
+Repository: https://github.com/Credoz/PNP-CVPRMS
 
-The system modernizes traditional paper-based citation procedures by providing digital verification of drivers and vehicles, automated penalty computation, real-time citation generation, and centralized records management for traffic violations committed at police checkpoints.
+## Overview
 
-\---
+PNP-CVPRMS is a Node.js and Express prototype for recording and managing checkpoint traffic violations. It provides a browser-based interface for entering driver, vehicle, officer, and violation information; calculating fines; generating ticket numbers; applying local screening rules; and reviewing stored records.
 
-## 🗂️ Repository Folder Structure
+The prototype uses SQLite for local data storage. It does not connect to live government, police, licensing, or vehicle databases. Screening uses the local rule set defined in the backend.
 
-This repository is organized into structural and design documentation required for the system architecture:
+## Requirements
+
+- Node.js 18 or later
+- npm
+- A modern web browser
+
+## Setup and Run
+
+From the repository root:
+
+```bash
+cd Main
+npm install
+npm start
+```
+
+Open `http://localhost:3000` in a browser.
+
+To use another port, set the `PORT` environment variable before starting the server. For example, in PowerShell:
+
+```powershell
+$env:PORT = 3001
+npm start
+```
+
+## Test
+
+Run the built-in Node.js test suite from the application directory:
+
+```bash
+cd Main
+node --test
+```
+
+## Current Features
+
+- Driver and vehicle record entry
+- Multiple violations per citation
+- Automatic fine calculation
+- Ticket number generation
+- Local screening status for flagged drivers, licenses, and vehicles
+- Search by driver name, license number, or plate number
+- SQLite-based violation records
+- Summary reporting through the application API
+
+## Repository Structure
 
 ```text
 .
-├── DFD/                          # Data Flow Diagrams
-│   ├── stage0/                   # Context Diagram (Overview of system entities)
-│   ├── stage1/                   # Level 1 DFD (Major system processes)
-│   └── stage2/                   # Level 2 DFD (Detailed sub-processes)
-├── Structured\_Chart/             # System Architecture \& Module Hierarchy
-├── HIPO Diagram/                 # Hierarchy plus Input-Process-Output Diagrams
-├── Structured\_English/           # Natural language business logic and decision rules
-├── Pseudo\_Code/                  # Step-by-step system algorithms
-│   └── process\_violation.txt    # Main violation screening and citation logic
-├── ERD/                          # Entity-Relationship Diagram \& Database Schemas
-└── Data\_Dictionary/              # Comprehensive database field definitions
+├── Main/                  Application source, package files, database, and tests
+├── Documentations/        Data dictionary, diagrams, pseudo-code, and design documents
+├── Config Scripts/        Configuration script resources
+├── Dependencies/          Dependency-related repository resources
+├── Schema/                Schema-related repository resources
+├── Source Code/           Source-code repository resources
+├── README.md              Project overview and usage instructions
+└── SCM_PLAN.md            Software configuration management plan
 ```
 
-\---
+The main application files are:
 
-## ⚙️ Key Features \& System Capabilities
+- `Main/server.js` - Express server, API routes, validation, business rules, and SQLite schema initialization
+- `Main/index.html` - Browser interface and client-side behavior
+- `Main/package.json` - Project metadata, dependencies, and start script
+- `Main/test/features.test.js` - Automated feature tests
 
-1. **Driver \& Vehicle Screening:**
+## Team
 
-   * Real-time lookup of driver's licenses and vehicle plate numbers.
-   * Flagging of stolen vehicles, expired registrations, or wanted individuals.
-2. **Violation Recording \& Citation Issuance:**
+- Casey Freud - Leader
+- Angelo
+- Antonio
+- Augusto
+- Manuel
+- Benjie
+- Emmanuel John
+- Genuflect
+- Ranier
 
-   * Selection of single or multiple traffic/checkpoint violations.
-   * Automatic generation of official citation tickets with unique tracking numbers.
-3. **Automated Fine \& Penalty Computation:**
+## Project Status
 
-   * Instant computation of total fines based on standard PNP offense schedules.
-4. **Centralized Records Management:**
-
-   * Secure logging of violations, checkpoint locations, and duty officer details.
-   * Status tracking for ticket payments and record clearance.
-5. **Reporting \& Analytics:**
-
-   * Generation of summary reports for checkpoint activity and offense trends.
-
-\---
-
-## 👥 Project Team \& Contributions
-
-* ##### System Architecture \& Documentation: 
-* Casey Freud - Leader
-* Angelo
-* Antonio
-* Augusto
-* Manuel
-* Benjie
-* Emmanuel John
-* Genuflect
-* Ranier
+This is an academic or prototype project intended for coursework and presentation use. It should not be treated as a production system or as a connection to official PNP records.
