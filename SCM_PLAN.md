@@ -13,7 +13,7 @@ PNP-CVPRMS
 | GitHub URL | https://github.com/Credoz/PNP-CVPRMS |
 | Version | v1.0.0 |
 | Date | 2026-09-20 |
-| Team members | Casey Freud, Angelo, Antonio, Augusto, Manuel, Benjie, Emmanuel John, Genuflect, Ranier |
+| Team members | Casey Freud, Angelo, Antonio, Augusto Manuel, Benjie, Emmanuel John, Genuflect, Ranier |
 
 ## 2. Purpose and Scope
 
@@ -94,8 +94,8 @@ The table below is the controlled inventory for baseline `1.0.0`. Paths are rela
 | Backend application and business logic | Source Code | `Main/server.js` | Casey Freud | 1.0.0 | Baseline |
 | REST API routes and handlers | Source Code | `Main/server.js` | Angelo | 1.0.0 | Baseline |
 | SQLite schema initialization and migrations | Data/Schema | `Main/server.js` | Antonio | 1.0.0 | Baseline |
-| Static web interface and client-side JavaScript | Source Code / Public Asset | `Main/index.html` | Augusto | 1.0.0 | Baseline |
-| Node project manifest and npm start script | Dependencies/Environment | `Main/package.json` | Manuel | 1.0.0 | Baseline |
+| Static web interface and client-side JavaScript | Source Code / Public Asset | `Main/index.html` | Augusto Manuel | 1.0.0 | Baseline |
+| Node project manifest and npm start script | Dependencies/Environment | `Main/package.json` | Augusto Manuel | 1.0.0 | Baseline |
 | Locked dependency tree | Dependencies/Environment | `Main/package-lock.json` | Benjie | 1.0.0 | Baseline |
 | SQLite violations database | Data/Schema | `Main/pnp_checkpoint.db` | Emmanuel John | 1.0.0 | Baseline |
 | Built-in Node test suite | Build/Config/Test Scripts | `Main/test/features.test.js` | Genuflect | 1.0.0 | Baseline |
@@ -103,8 +103,8 @@ The table below is the controlled inventory for baseline `1.0.0`. Paths are rela
 | Root project overview and team record | Documentation | `README.md` | Casey Freud | 1.0.0 | Baseline |
 | Application setup and usage guide | Documentation | `Main/README.md` | Angelo | 1.0.0 | Baseline |
 | Data dictionary | Documentation | `Documentations/Data_Dictionary/datadictionary.md` | Antonio | 1.0.0 | Baseline |
-| Entity-relationship diagram documentation | Documentation | `Documentations/ERD/erd_diagram.md` | Augusto | 1.0.0 | Baseline |
-| Stage 0 DFD documentation | Documentation | `Documentations/DFD/stage0/dfdstage0.md` | Manuel | 1.0.0 | Baseline |
+| Entity-relationship diagram documentation | Documentation | `Documentations/ERD/erd_diagram.md` | Augusto Manuel | 1.0.0 | Baseline |
+| Stage 0 DFD documentation | Documentation | `Documentations/DFD/stage0/dfdstage0.md` | Augusto Manuel | 1.0.0 | Baseline |
 | Stage 0 process description | Documentation | `Documentations/DFD/stage0/stage0.md` | Benjie | 1.0.0 | Baseline |
 | Stage 1 DFD documentation | Documentation | `Documentations/DFD/stage1/dfdstage1.md` | Emmanuel John | 1.0.0 | Baseline |
 | Stage 2 DFD documentation | Documentation | `Documentations/DFD/stage2/dfdstage2.md` | Genuflect | 1.0.0 | Baseline |
@@ -112,8 +112,8 @@ The table below is the controlled inventory for baseline `1.0.0`. Paths are rela
 | Pseudo-code for violation processing | Documentation | `Documentations/Pseudo_Code/pseudocode_process_violation.md` | Casey Freud | 1.0.0 | Baseline |
 | Structured chart documentation | Documentation | `Documentations/Structured_Chart/structuredchart.md` | Angelo | 1.0.0 | Baseline |
 | Structured English documentation | Documentation | `Documentations/Structured_English/structuredenglish.md` | Antonio | 1.0.0 | Baseline |
-| SCM governance plan | Documentation | `SCM_PLAN.md` | Augusto | 1.0.0 | Baseline |
-| Dependencies directory placeholder | Dependencies/Environment | `Dependencies/.gitkeep` | Manuel | 1.0.0 | Baseline |
+| SCM governance plan | Documentation | `SCM_PLAN.md` | Augusto Manuel | 1.0.0 | Baseline |
+| Dependencies directory placeholder | Dependencies/Environment | `Dependencies/.gitkeep` | Augusto Manuel | 1.0.0 | Baseline |
 | Schema directory placeholder | Data/Schema | `Schema/.gitkeep` | Benjie | 1.0.0 | Baseline |
 | Source Code directory placeholder | Source Code | `Source Code/.gitkeep` | Emmanuel John | 1.0.0 | Baseline |
 | Configuration Scripts directory placeholder | Build/Config/Test Scripts | `Config Scripts/.gitkeep` | Genuflect | 1.0.0 | Baseline |

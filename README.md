@@ -81,8 +81,7 @@ The main application files are:
 - Casey Freud - Leader
 - Angelo
 - Antonio
-- Augusto
-- Manuel
+- Augusto Manuel
 - Benjie
 - Emmanuel John
 - Genuflect
