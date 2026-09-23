@@ -39,7 +39,11 @@ The station label defaults to `Agoo Municipal Police Station`. For local testing
 
 ## Desktop Shortcut
 
-To create a desktop shortcut on Windows, run `Create-CVPRMS-Shortcut.ps1` from PowerShell inside the `Source Code` folder. The shortcut uses `Start-CVPRMS.bat`, starts the local server, and opens `http://localhost:3000`. The shortcut uses the SVG icon at `Source Code\assets\PNPsvg.svg`.
+To create a desktop shortcut on Windows, you can either:
+- Double-click `Create-CVPRMS-Shortcut.bat` inside the `Source Code` folder, or
+- Run `Create-CVPRMS-Shortcut.ps1` from PowerShell inside the `Source Code` folder (`powershell -ExecutionPolicy Bypass -File .\Create-CVPRMS-Shortcut.ps1`).
+
+The shortcut points to `Start-CVPRMS.bat`, starts the local server, opens `http://localhost:3000`, and uses the application icon at `Source Code\assets\PNPCVPRMS.ico` (automatically generated from `PNPCVPRMS.png` if missing).
 
 ## Test
 

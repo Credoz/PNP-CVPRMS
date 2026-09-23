@@ -34,6 +34,13 @@ This repository contains the software prototype for the PNP Checkpoint Violation
    http://localhost:3000
    ```
 
+### Creating a Desktop Shortcut (Windows)
+You can create a convenient desktop shortcut by either:
+* Double-clicking `Create-CVPRMS-Shortcut.bat`, or
+* Running `powershell -ExecutionPolicy Bypass -File .\Create-CVPRMS-Shortcut.ps1` in PowerShell.
+
+The shortcut will appear on your desktop with the PNP badge icon and will launch the local application and open the browser automatically.
+
 ## Project Overview
 This prototype allows checkpoint officers to:
 - record driver and vehicle violation information
