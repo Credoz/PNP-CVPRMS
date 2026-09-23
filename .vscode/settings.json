@@ -1,6 +1,42 @@
 {
     "chat.tools.terminal.autoApprove": {
-        "/^Set-Location Main; node --test$/": {
+        "/^Set-Location Source Code; node --test$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Push-Location Source Code; node --check server\\.js; node --test; Pop-Location$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Push-Location Source Code; node server\\.js$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Set-Location \"C:\\\\Users\\\\emman\\\\PNP-CVPRMS\\\\Source Code\"; npm start$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Push-Location Main; node -e 'const sqlite3=require\\(\"sqlite3\"\\)\\.verbose\\(\\); const db=new sqlite3\\.Database\\(\"pnp_checkpoint\\.db\"\\); db\\.run\\(\"DELETE FROM violations WHERE driver_name = \\? AND license_number = \\? AND plate_number = \\?\", \\[\"Audit Test\",\"TEST-001\",\"TEST-001\"\\], function\\(err\\)\\{ if\\(err\\)\\{ console\\.error\\(err\\.message\\); process\\.exitCode=1; \\} else \\{ console\\.log\\(\"Removed test records:\", this\\.changes\\); \\} db\\.close\\(\\); \\}\\);'; Pop-Location$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Push-Location Main; node -e \"const sqlite3=require\\('sqlite3'\\)\\.verbose\\(\\); const db=new sqlite3\\.Database\\('pnp_checkpoint\\.db'\\); db\\.run\\('DELETE FROM violations WHERE driver_name = \\? AND license_number = \\? AND plate_number = \\?', \\['Audit Test','TEST-001','TEST-001'\\], function\\(err\\)\\{ if\\(err\\)\\{ console\\.error\\(err\\.message\\); process\\.exitCode=1; \\} else \\{ console\\.log\\('Removed test records:', this\\.changes\\); \\} db\\.close\\(\\); \\}\\);\"; Pop-Location$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Push-Location \"Source Code\"; node --check server\\.js; node --test; Pop-Location$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Push-Location \"Source Code\"; node --test; Pop-Location$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Move-Item -Force \"C:\\\\Users\\\\emman\\\\PNP-CVPRMS\\\\Start-CVPRMS\\.bat\" \"C:\\\\Users\\\\emman\\\\PNP-CVPRMS\\\\Source Code\\\\Start-CVPRMS\\.bat\"; Move-Item -Force \"C:\\\\Users\\\\emman\\\\PNP-CVPRMS\\\\Create-CVPRMS-Shortcut\\.ps1\" \"C:\\\\Users\\\\emman\\\\PNP-CVPRMS\\\\Source Code\\\\Create-CVPRMS-Shortcut\\.ps1\"; Write-Output \"Moved launcher files to Source Code\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Push-Location \"C:\\\\Users\\\\emman\\\\PNP-CVPRMS\\\\Source Code\"; powershell\\.exe -NoProfile -ExecutionPolicy Bypass -File \"\\.\\\\Create-CVPRMS-Shortcut\\.ps1\"; Pop-Location$/": {
             "approve": true,
             "matchCommandLine": true
         }

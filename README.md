@@ -21,7 +21,7 @@ The prototype uses SQLite for local data storage. It does not connect to live go
 From the repository root:
 
 ```bash
-cd Main
+cd "Source Code"
 npm install
 npm start
 ```
@@ -35,12 +35,18 @@ $env:PORT = 3001
 npm start
 ```
 
+The station label defaults to `Agoo Municipal Police Station`. For local testing, it can be changed with the `STATION_NAME` environment variable.
+
+## Desktop Shortcut
+
+To create a desktop shortcut on Windows, run `Create-CVPRMS-Shortcut.ps1` from PowerShell inside the `Source Code` folder. The shortcut uses `Start-CVPRMS.bat`, starts the local server, and opens `http://localhost:3000`. The shortcut uses the SVG icon at `Source Code\assets\PNPsvg.svg`.
+
 ## Test
 
 Run the built-in Node.js test suite from the application directory:
 
 ```bash
-cd Main
+cd "Source Code"
 node --test
 ```
 
@@ -53,28 +59,30 @@ node --test
 - Local screening status for flagged drivers, licenses, and vehicles
 - Search by driver name, license number, or plate number
 - SQLite-based violation records
-- Summary reporting through the application API
+- Summary reporting for total records, fines, and flagged records
+- CSV export of currently displayed records
+- Agoo Municipal Police Station labeling for the local prototype
 
 ## Repository Structure
 
 ```text
 .
-├── Main/                  Application source, package files, database, and tests
+├── Main/                  Empty placeholder for the former application location
 ├── Documentations/        Data dictionary, diagrams, pseudo-code, and design documents
 ├── Config Scripts/        Configuration script resources
 ├── Dependencies/          Dependency-related repository resources
 ├── Schema/                Schema-related repository resources
-├── Source Code/           Source-code repository resources
+├── Source Code/           Application source, package files, database, assets, and tests
 ├── README.md              Project overview and usage instructions
 └── SCM_PLAN.md            Software configuration management plan
 ```
 
 The main application files are:
 
-- `Main/server.js` - Express server, API routes, validation, business rules, and SQLite schema initialization
-- `Main/index.html` - Browser interface and client-side behavior
-- `Main/package.json` - Project metadata, dependencies, and start script
-- `Main/test/features.test.js` - Automated feature tests
+- `Source Code/server.js` - Express server, API routes, validation, business rules, and SQLite schema initialization
+- `Source Code/index.html` - Browser interface and client-side behavior
+- `Source Code/package.json` - Project metadata, dependencies, and start script
+- `Source Code/test/features.test.js` - Automated feature tests
 
 ## Team
 

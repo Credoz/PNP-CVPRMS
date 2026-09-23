@@ -91,6 +91,44 @@
             padding-bottom: 8px;
         }
 
+        .summary-grid {
+            max-width: 1200px;
+            margin: 24px auto 0;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .summary-card {
+            background: #ffffff;
+            border: 1px solid var(--pnp-border);
+            border-left: 4px solid var(--pnp-accent);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .summary-card span {
+            display: block;
+            color: #64748B;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .summary-card strong {
+            display: block;
+            color: var(--pnp-navy);
+            font-size: 1.45rem;
+            margin-top: 6px;
+        }
+
+        @media (max-width: 700px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .form-group {
             margin-bottom: 14px;
         }
@@ -271,12 +309,27 @@
     <header>
         <div>
             <h1>PNP Checkpoint Violation Processing & Records Management System</h1>
-            <p>Philippine National Police | Operational Prototype</p>
+            <p id="stationName">Agoo Municipal Police Station | Local Operational Prototype</p>
         </div>
         <div>
             <span class="badge">PNP-CVPRMS v1.0</span>
         </div>
     </header>
+
+    <section class="summary-grid" aria-label="Local record summary">
+        <div class="summary-card">
+            <span>Total Records</span>
+            <strong id="totalRecords">0</strong>
+        </div>
+        <div class="summary-card">
+            <span>Total Fines</span>
+            <strong id="totalFines">PHP 0.00</strong>
+        </div>
+        <div class="summary-card">
+            <span>Flagged Records</span>
+            <strong id="flaggedRecords">0</strong>
+        </div>
+    </section>
 
     <main class="container">
         <!-- FORM SECTION: Record Violation -->
@@ -348,6 +401,7 @@
                 <input type="text" id="searchInput" placeholder="Search by Plate Number, License, or Driver Name...">
                 <button type="button" class="btn btn-secondary" onclick="executeSearch()">Search</button>
                 <button type="button" class="btn btn-secondary" onclick="loadAllViolations()">Reset</button>
+                <button type="button" class="btn btn-secondary" onclick="exportVisibleRecords()">Export CSV</button>
             </div>
 
             <div style="overflow-x: auto;">
@@ -385,6 +439,10 @@
         const fineAmountInput = document.getElementById('fine_amount');
         const ticketNumberDisplay = document.getElementById('ticket_number_display');
         const violationChecklist = document.getElementById('violationChecklist');
+        const totalRecords = document.getElementById('totalRecords');
+        const totalFines = document.getElementById('totalFines');
+        const flaggedRecords = document.getElementById('flaggedRecords');
+        let visibleRecords = [];
 
         const OFFENSE_SCHEDULE = {
             "No Driver's License": 1500,
@@ -427,6 +485,7 @@
                 const result = await response.json();
                 if (result.success) {
                     renderTable(result.data);
+                    loadSummary();
                 } else {
                     showAlert(result.message || 'Failed to fetch records.', 'danger');
                 }
@@ -456,6 +515,7 @@
         }
 
         function renderTable(records) {
+            visibleRecords = records || [];
             tableBody.innerHTML = '';
             if (!records || records.length === 0) {
                 tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: #64748B;">No checkpoint violation records found.</td></tr>`;
@@ -479,6 +539,42 @@
                 `;
                 tableBody.appendChild(tr);
             });
+        }
+
+        async function loadSummary() {
+            try {
+                const response = await fetch('/api/reports/summary');
+                const result = await response.json();
+                if (result.success) {
+                    totalRecords.textContent = result.data.total_records;
+                    totalFines.textContent = `PHP ${Number(result.data.total_fines).toFixed(2)}`;
+                    flaggedRecords.textContent = result.data.flagged_records;
+                }
+            } catch (err) {
+                totalRecords.textContent = 'Unavailable';
+                totalFines.textContent = 'Unavailable';
+                flaggedRecords.textContent = 'Unavailable';
+            }
+        }
+
+        function exportVisibleRecords() {
+            if (!visibleRecords.length) {
+                showAlert('There are no records to export.', 'danger');
+                return;
+            }
+
+            const columns = ['date_recorded', 'driver_name', 'license_number', 'plate_number', 'violation_type', 'fine_amount', 'ticket_number', 'screening_status', 'officer_id'];
+            const csv = [columns.join(','), ...visibleRecords.map(record => columns.map(column => csvValue(record[column])).join(','))].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'cvprms-violation-records.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function csvValue(value) {
+            return `"${String(value ?? '').replace(/"/g, '""')}"`;
         }
 
         function escapeHtml(str) {
@@ -529,6 +625,7 @@
                     form.reset();
                     updateFineTotal();
                     loadAllViolations();
+                    loadSummary();
                 } else {
                     const errorMessage = result.errors ? result.errors.join(' ') : result.message;
                     showAlert(errorMessage || 'Failed to submit record.', 'danger');
@@ -539,9 +636,22 @@
         });
 
         // Initialize table on load
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config');
+                const result = await response.json();
+                if (result.success && result.data.station_name) {
+                    document.getElementById('stationName').textContent = `${result.data.station_name} | Local Operational Prototype`;
+                }
+            } catch (err) {
+            }
+        }
+
         updateFineTotal();
         updateScreeningResult('clear', ['No screening alerts found in local rule set.']);
+        loadConfig();
         loadAllViolations();
+        loadSummary();
     </script>
 </body>
 </html>

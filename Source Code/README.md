@@ -16,7 +16,7 @@ This repository contains the software prototype for the PNP Checkpoint Violation
 
 2. **Open the project folder:**
    ```bash
-   cd PNP-CVPRMS
+   cd PNP-CVPRMS\Source Code
    ```
 
 3. **Install dependencies:**

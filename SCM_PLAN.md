@@ -29,10 +29,10 @@ The following configuration item classes are controlled by this plan:
 
 | CI class | Definition and examples |
 | --- | --- |
-| Source Code | Application logic, backend modules, API handlers, validation, business rules, and exported functions. The current implementation is primarily in `Main/server.js`. |
+| Source Code | Application logic, backend modules, API handlers, validation, business rules, and exported functions. The current implementation is primarily in `Source Code/server.js`. |
 | Documentation | Project requirements, architecture and analysis documents, data dictionary, diagrams, pseudo-code, structured English, README files, and this SCM plan. |
-| Dependencies/Environment | Node.js and npm requirements, `Main/package.json`, `Main/package-lock.json`, installed package definitions, and the Express and SQLite3 runtime dependencies. Generated `node_modules/` content is reproducible from the lockfile and is not committed as source. |
-| Data/Schema | SQLite database files and the database definition, initialization, and migration logic. The current `violations` table schema is defined inline in `Main/server.js`; the local database is `Main/pnp_checkpoint.db`. |
+| Dependencies/Environment | Node.js and npm requirements, `Source Code/package.json`, `Source Code/package-lock.json`, installed package definitions, and the Express and SQLite3 runtime dependencies. Generated `node_modules/` content is reproducible from the lockfile and is not committed as source. |
+| Data/Schema | SQLite database files and the database definition, initialization, and migration logic. The current `violations` table schema is defined inline in `Source Code/server.js`; the local database is `Source Code/pnp_checkpoint.db`. |
 | Build/Config/Test Scripts | npm lifecycle commands, repository ignore rules, test files, and other scripts or configuration used to install, run, validate, or package the application. The current test command is `node --test`. |
 
 Each CI must be identified by its repository path, assigned an owner, associated with a version and lifecycle status, and changed through the flow defined in Section 7. Generated or machine-local files remain subject to identification even when they are excluded from version control.
@@ -44,7 +44,7 @@ Baseline `v1.0.0` is the approved reference point for PNP-CVPRMS. It consists of
 The `v1.0.0` baseline is established only after the application passes the repository's built-in Node.js test runner from the application directory:
 
 ```text
-cd Main
+cd "Source Code"
 node --test
 ```
 
@@ -79,7 +79,7 @@ All changes to controlled configuration items follow this sequence:
 
 1. **Change Request:** Record the requested change, affected CI paths, requester, priority, and acceptance criteria.
 2. **Reason for Change:** Document the business, technical, defect, security, compliance, or maintenance reason and identify the expected impact, dependencies, and risks.
-3. **Development & Test Validation:** Implement the change on an appropriately named branch or work stream. Update affected documentation and tests, then run the relevant checks. For the application baseline, the required validation is `cd Main` followed by `node --test`.
+3. **Development & Test Validation:** Implement the change on an appropriately named branch or work stream. Update affected documentation and tests, then run the relevant checks. For the application baseline, the required validation is `cd Source Code` followed by `node --test`.
 4. **PR Review:** Submit a pull request that links the change request, explains the implementation, identifies affected CIs, and includes test evidence. At least one appropriate team member reviews source, data, dependency, documentation, and test impacts as applicable.
 5. **Approval & Merge:** An authorized project maintainer approves the pull request after review findings are resolved. The change is merged into the repository, its CI status and version are updated, and the resulting commit is available for traceability. Release or baseline changes are tagged using the applicable Semantic Version.
 
@@ -91,17 +91,17 @@ The table below is the controlled inventory for baseline `1.0.0`. Paths are rela
 
 | Name | Category | File Path | Owner | Version | Status |
 | --- | --- | --- | --- | --- | --- |
-| Backend application and business logic | Source Code | `Main/server.js` | Casey Freud | 1.0.0 | Baseline |
-| REST API routes and handlers | Source Code | `Main/server.js` | Angelo | 1.0.0 | Baseline |
-| SQLite schema initialization and migrations | Data/Schema | `Main/server.js` | Antonio | 1.0.0 | Baseline |
-| Static web interface and client-side JavaScript | Source Code / Public Asset | `Main/index.html` | Augusto Manuel | 1.0.0 | Baseline |
-| Node project manifest and npm start script | Dependencies/Environment | `Main/package.json` | Augusto Manuel | 1.0.0 | Baseline |
-| Locked dependency tree | Dependencies/Environment | `Main/package-lock.json` | Benjie | 1.0.0 | Baseline |
-| SQLite violations database | Data/Schema | `Main/pnp_checkpoint.db` | Emmanuel John | 1.0.0 | Baseline |
-| Built-in Node test suite | Build/Config/Test Scripts | `Main/test/features.test.js` | Genuflect | 1.0.0 | Baseline |
-| Application ignore and generated-file rules | Build/Config/Test Scripts | `Main/.gitignore` | Ranier | 1.0.0 | Baseline |
+| Backend application and business logic | Source Code | `Source Code/server.js` | Casey Freud | 1.0.0 | Baseline |
+| REST API routes and handlers | Source Code | `Source Code/server.js` | Angelo | 1.0.0 | Baseline |
+| SQLite schema initialization and migrations | Data/Schema | `Source Code/server.js` | Antonio | 1.0.0 | Baseline |
+| Static web interface and client-side JavaScript | Source Code / Public Asset | `Source Code/index.html` | Augusto Manuel | 1.0.0 | Baseline |
+| Node project manifest and npm start script | Dependencies/Environment | `Source Code/package.json` | Augusto Manuel | 1.0.0 | Baseline |
+| Locked dependency tree | Dependencies/Environment | `Source Code/package-lock.json` | Benjie | 1.0.0 | Baseline |
+| SQLite violations database | Data/Schema | `Source Code/pnp_checkpoint.db` | Emmanuel John | 1.0.0 | Baseline |
+| Built-in Node test suite | Build/Config/Test Scripts | `Source Code/test/features.test.js` | Genuflect | 1.0.0 | Baseline |
+| Application ignore and generated-file rules | Build/Config/Test Scripts | `Source Code/.gitignore` | Ranier | 1.0.0 | Baseline |
 | Root project overview and team record | Documentation | `README.md` | Casey Freud | 1.0.0 | Baseline |
-| Application setup and usage guide | Documentation | `Main/README.md` | Angelo | 1.0.0 | Baseline |
+| Application setup and usage guide | Documentation | `Source Code/README.md` | Angelo | 1.0.0 | Baseline |
 | Data dictionary | Documentation | `Documentations/Data_Dictionary/datadictionary.md` | Antonio | 1.0.0 | Baseline |
 | Entity-relationship diagram documentation | Documentation | `Documentations/ERD/erd_diagram.md` | Augusto Manuel | 1.0.0 | Baseline |
 | Stage 0 DFD documentation | Documentation | `Documentations/DFD/stage0/dfdstage0.md` | Augusto Manuel | 1.0.0 | Baseline |
@@ -115,7 +115,7 @@ The table below is the controlled inventory for baseline `1.0.0`. Paths are rela
 | SCM governance plan | Documentation | `SCM_PLAN.md` | Augusto Manuel | 1.0.0 | Baseline |
 | Dependencies directory placeholder | Dependencies/Environment | `Dependencies/.gitkeep` | Augusto Manuel | 1.0.0 | Baseline |
 | Schema directory placeholder | Data/Schema | `Schema/.gitkeep` | Benjie | 1.0.0 | Baseline |
-| Source Code directory placeholder | Source Code | `Source Code/.gitkeep` | Emmanuel John | 1.0.0 | Baseline |
+| Source Code assets | Source Code | `Source Code/assets/PNPsvg.svg` | Emmanuel John | 1.0.0 | Baseline |
 | Configuration Scripts directory placeholder | Build/Config/Test Scripts | `Config Scripts/.gitkeep` | Genuflect | 1.0.0 | Baseline |
 
 The inventory is reviewed whenever files are added, removed, renamed, generated, or reclassified. A new or changed item must be added to this table or to its successor baseline inventory before the related release is approved.

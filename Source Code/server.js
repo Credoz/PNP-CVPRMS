@@ -10,6 +10,7 @@ const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const STATION_NAME = process.env.STATION_NAME || 'Agoo Municipal Police Station';
 
 const OFFENSE_SCHEDULE = {
     "No Driver's License": 1500,
@@ -98,6 +99,16 @@ app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/api/config', (req, res) => {
+    return res.status(200).json({
+        success: true,
+        data: {
+            station_name: STATION_NAME,
+            environment: 'local prototype'
+        }
+    });
 });
 
 // ==========================================
@@ -372,6 +383,7 @@ if (require.main === module) {
 module.exports = {
     app,
     db,
+    STATION_NAME,
     calculateViolationTotal,
     generateTicketNumber,
     assessScreening,
