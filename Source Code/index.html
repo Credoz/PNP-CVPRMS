@@ -7,200 +7,380 @@
     <style>
         :root {
             --pnp-navy: #0B1E3D;
+            --pnp-navy-light: #162E5B;
             --pnp-accent: #C5A059;
-            --pnp-light: #F4F6FA;
-            --pnp-dark: #1E293B;
-            --pnp-border: #D1D5DB;
+            --pnp-accent-hover: #b08d48;
+            --pnp-light: #F1F5F9;
+            --pnp-dark: #0F172A;
+            --pnp-border: #CBD5E1;
             --pnp-danger: #DC2626;
-            --pnp-success: #16A34A;
+            --pnp-danger-bg: #FEE2E2;
+            --pnp-warning: #D97706;
+            --pnp-warning-bg: #FEF3C7;
+            --pnp-success: #15803D;
+            --pnp-success-bg: #DCFCE7;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
         }
 
         body {
-            background-color: var(--pnp-light);
+            background-color: #EDF2F7;
             color: var(--pnp-dark);
-            padding-bottom: 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* Top Master Header */
         header {
-            background: linear-gradient(135deg, var(--pnp-navy) 0%, #17325F 100%);
+            background: linear-gradient(135deg, var(--pnp-navy) 0%, #152C53 100%);
             color: #ffffff;
-            padding: 24px 32px;
-            border-bottom: 4px solid var(--pnp-accent);
+            padding: 16px 28px;
+            border-bottom: 3px solid var(--pnp-accent);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
-        header h1 {
-            font-size: 1.4rem;
+        .header-title-box {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-title-box h1 {
+            font-size: 1.25rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
+            font-weight: 800;
         }
 
-        header p {
-            font-size: 0.85rem;
-            color: #D1D5DB;
-            margin-top: 4px;
+        .header-title-box p {
+            font-size: 0.8rem;
+            color: #CBD5E1;
+            margin-top: 2px;
         }
 
-        .badge {
-            background-color: var(--pnp-accent);
-            color: #000;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 24px auto;
-            padding: 0 16px;
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 24px;
-        }
-
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .card {
+        /* Operational Checkpoint Sub-Header Session Bar */
+        .session-bar {
             background: #ffffff;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07);
-            border: 1px solid var(--pnp-border);
+            border-bottom: 1px solid var(--pnp-border);
+            padding: 10px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 0.82rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
 
-        .card h2 {
-            font-size: 1.15rem;
-            color: var(--pnp-navy);
-            margin-bottom: 16px;
-            border-bottom: 2px solid var(--pnp-light);
-            padding-bottom: 8px;
-        }
-
-        .summary-grid {
-            max-width: 1200px;
-            margin: 24px auto 0;
-            padding: 0 16px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        .session-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
             gap: 16px;
+        }
+
+        .session-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .session-item label {
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            margin: 0;
+        }
+
+        .session-select {
+            padding: 4px 8px;
+            border: 1px solid var(--pnp-border);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            background: #F8FAFC;
+            color: var(--pnp-dark);
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .session-select:focus {
+            border-color: var(--pnp-navy);
+        }
+
+        .officer-badge-pill {
+            background: #E2E8F0;
+            border: 1px solid #CBD5E1;
+            border-radius: 999px;
+            padding: 3px 10px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            color: var(--pnp-navy);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Summary KPIs */
+        .summary-grid {
+            max-width: 1400px;
+            width: 100%;
+            margin: 16px auto 0;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
         }
 
         .summary-card {
             background: #ffffff;
             border: 1px solid var(--pnp-border);
             border-left: 4px solid var(--pnp-accent);
-            border-radius: 8px;
-            padding: 16px;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .summary-card.danger {
+            border-left-color: var(--pnp-danger);
+        }
+
+        .summary-card.warning {
+            border-left-color: var(--pnp-warning);
         }
 
         .summary-card span {
             display: block;
             color: #64748B;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             text-transform: uppercase;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .summary-card strong {
             display: block;
             color: var(--pnp-navy);
-            font-size: 1.45rem;
-            margin-top: 6px;
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-top: 4px;
         }
 
-        @media (max-width: 700px) {
+        /* Main Workspace Two-Column Container */
+        .workspace {
+            max-width: 1400px;
+            width: 100%;
+            margin: 16px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 460px 1fr;
+            gap: 20px;
+            align-items: start;
+            flex: 1;
+        }
+
+        @media (max-width: 1060px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
             .summary-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        .form-group {
+        /* Left Column: Sticky Form */
+        .form-column {
+            position: sticky;
+            top: 1rem;
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E1 #F1F5F9;
+        }
+
+        .form-column::-webkit-scrollbar {
+            width: 6px;
+        }
+        .form-column::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            border: 1px solid var(--pnp-border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--pnp-light);
+            padding-bottom: 10px;
             margin-bottom: 14px;
+        }
+
+        .card-header h2 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--pnp-navy);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Form Components */
+        .form-group {
+            margin-bottom: 12px;
         }
 
         label {
             display: block;
-            font-size: 0.82rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--pnp-dark);
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #334155;
         }
 
-        input, select {
+        .required-star {
+            color: var(--pnp-danger);
+        }
+
+        input[type="text"], input[type="number"], select {
             width: 100%;
-            padding: 9px 12px;
+            padding: 8px 10px;
             border: 1px solid var(--pnp-border);
             border-radius: 6px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             outline: none;
-            transition: border-color 0.2s ease;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            background: #ffffff;
         }
 
-        input:focus, select:focus {
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
             border-color: var(--pnp-navy);
+            box-shadow: 0 0 0 2px rgba(11, 30, 61, 0.1);
         }
 
-        .btn {
-            display: inline-block;
-            width: 100%;
-            padding: 10px 16px;
-            background-color: var(--pnp-navy);
-            color: #ffffff;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .btn:hover {
-            background-color: #17325F;
-        }
-
-        .btn-secondary {
-            background-color: #4B5563;
-            width: auto;
-            padding: 8px 16px;
-        }
-
-        .btn-secondary:hover {
-            background-color: #374151;
-        }
-
-        .checkbox-group {
+        .field-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px 12px;
-            margin-top: 6px;
+            gap: 10px;
+        }
+
+        .field-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* Alternative Identification Section */
+        .alt-id-section {
+            background: #FFFBEB;
+            border: 1px solid #FCD34D;
+            border-left: 4px solid var(--pnp-warning);
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            animation: fadeInAlt 0.2s ease-in-out;
+        }
+
+        .alt-id-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .alt-id-badge {
+            background: var(--pnp-warning);
+            color: #ffffff;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        .alt-id-desc {
+            font-size: 0.74rem;
+            color: #78350F;
+            line-height: 1.3;
+        }
+
+        @keyframes fadeInAlt {
+            from { opacity: 0; transform: translateY(-3px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Searchable / Scrollable Violations Multi-Select */
+        .violation-picker-box {
+            border: 1px solid var(--pnp-border);
+            border-radius: 6px;
+            background: #F8FAFC;
+            padding: 8px;
+            margin-top: 4px;
+        }
+
+        .violation-search-input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid var(--pnp-border);
+            border-radius: 4px;
+            font-size: 0.78rem;
+            margin-bottom: 6px;
+            outline: none;
+            background: #ffffff;
+        }
+
+        .violation-scroll-container {
+            max-height: 170px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding-right: 4px;
+            scrollbar-width: thin;
+        }
+
+        .violation-scroll-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .violation-scroll-container::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
         }
 
         .checkbox-item {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 8px;
-            padding: 7px 10px;
-            border: 1px solid var(--pnp-border);
-            border-radius: 6px;
-            background: #F8FAFC;
-            font-size: 0.82rem;
+            padding: 6px 9px;
+            border: 1px solid #E2E8F0;
+            border-radius: 5px;
+            background: #ffffff;
+            font-size: 0.78rem;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.12s ease;
         }
 
         .checkbox-item:hover {
@@ -215,346 +395,880 @@
         }
 
         .checkbox-item input {
-            width: auto;
-            margin: 0;
             cursor: pointer;
         }
 
-        .required-star {
-            color: var(--pnp-danger);
-            font-weight: bold;
-        }
-
-        .alt-id-section {
-            background: #FEF3C7;
-            border: 1px solid #FCD34D;
-            border-left: 4px solid var(--pnp-accent);
-            border-radius: 6px;
-            padding: 14px;
-            margin-bottom: 14px;
-            animation: fadeInAlt 0.2s ease-in-out;
-        }
-
-        .alt-id-banner {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .alt-id-badge {
-            background: #D97706;
-            color: #ffffff;
-            font-size: 0.7rem;
+        .checkbox-fee {
+            color: #64748B;
+            font-size: 0.72rem;
             font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 999px;
-            text-transform: uppercase;
             white-space: nowrap;
         }
 
-        .alt-id-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #92400E;
-            margin-bottom: 2px;
+        /* Fine & Override Toggle */
+        .override-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
+            font-size: 0.74rem;
+            color: #475569;
+            cursor: pointer;
         }
 
-        .alt-id-desc {
+        /* Media / Photo Attachment */
+        .evidence-upload-zone {
+            border: 1px dashed var(--pnp-border);
+            background: #F8FAFC;
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 0.78rem;
-            color: #78350F;
-            line-height: 1.35;
         }
 
-        @keyframes fadeInAlt {
-            from { opacity: 0; transform: translateY(-4px); }
-            to { opacity: 1; transform: translateY(0); }
+        .evidence-preview-thumb {
+            width: 42px;
+            height: 42px;
+            border-radius: 4px;
+            object-fit: cover;
+            border: 1px solid var(--pnp-border);
+            display: none;
         }
 
-        .field-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
+        /* Screening Multi-State Status Pill */
         .status-box {
-            margin-top: 12px;
-            padding: 12px;
+            margin-top: 10px;
+            padding: 10px;
             border-radius: 6px;
             background: #F8FAFC;
             border: 1px solid var(--pnp-border);
         }
 
-        .status-box strong {
-            display: block;
-            margin-bottom: 6px;
-            color: var(--pnp-navy);
-        }
-
         .status-pill {
-            display: inline-block;
-            padding: 4px 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 9px;
             border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 700;
+            font-size: 0.72rem;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
         .status-clear {
-            background: #DCFCE7;
+            background: var(--pnp-success-bg);
             color: var(--pnp-success);
+            border: 1px solid #86EFAC;
         }
 
         .status-warning {
-            background: #FEE2E2;
-            color: var(--pnp-danger);
+            background: var(--pnp-warning-bg);
+            color: var(--pnp-warning);
+            border: 1px solid #FCD34D;
         }
 
-        .search-bar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .alert-box {
-            padding: 10px 14px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            margin-bottom: 14px;
-            display: none;
-        }
-
-        .alert-danger {
-            background-color: #FEE2E2;
+        .status-alarm {
+            background: var(--pnp-danger-bg);
             color: var(--pnp-danger);
             border: 1px solid #FCA5A5;
+            animation: pulseAlarm 1.4s infinite;
         }
 
-        .alert-success {
-            background-color: #DCFCE7;
-            color: var(--pnp-success);
-            border: 1px solid #86EFAC;
+        @keyframes pulseAlarm {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 9px 14px;
+            background-color: var(--pnp-navy);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--pnp-navy-light);
+        }
+
+        .btn-secondary {
+            background-color: #475569;
+            width: auto;
+            padding: 7px 12px;
+            font-size: 0.8rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #334155;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.72rem;
+            border-radius: 4px;
+            width: auto;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--pnp-border);
+            color: #334155;
+        }
+        .btn-outline:hover {
+            background: #F1F5F9;
+        }
+
+        /* Search & Filter Bar */
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-chips-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.76rem;
+        }
+
+        .filter-label {
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+            font-size: 0.68rem;
+            margin-right: 2px;
+        }
+
+        .filter-chip {
+            padding: 3px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--pnp-border);
+            background: #F8FAFC;
+            color: #475569;
+            cursor: pointer;
+            font-weight: 600;
+            user-select: none;
+            transition: all 0.12s ease;
+        }
+
+        .filter-chip:hover {
+            background: #E2E8F0;
+        }
+
+        .filter-chip.active {
+            background: var(--pnp-navy);
+            color: #ffffff;
+            border-color: var(--pnp-navy);
+        }
+
+        /* Registry Table */
+        .table-responsive {
+            overflow-x: auto;
+            border: 1px solid var(--pnp-border);
+            border-radius: 6px;
+            background: #ffffff;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
-            margin-top: 10px;
+            font-size: 0.8rem;
         }
 
         th, td {
-            padding: 10px 12px;
+            padding: 9px 10px;
             text-align: left;
-            border-bottom: 1px solid var(--pnp-border);
+            border-bottom: 1px solid #E2E8F0;
+            vertical-align: middle;
         }
 
         th {
             background-color: #F8FAFC;
             color: var(--pnp-navy);
-            font-weight: 700;
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            position: sticky;
+            top: 0;
         }
 
         tr:hover {
-            background-color: #F1F5F9;
+            background-color: #F8FAFC;
+        }
+
+        .violation-pill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 230px;
+        }
+
+        .violation-pill {
+            display: inline-block;
+            padding: 2px 6px;
+            background: #E2E8F0;
+            color: #1E293B;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .violation-pill.more-pill {
+            background: #CBD5E1;
+            color: #0F172A;
+            cursor: help;
+            font-weight: 700;
         }
 
         .tag {
             display: inline-block;
-            padding: 3px 8px;
+            padding: 2px 6px;
             background: #E2E8F0;
             border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.72rem;
+            color: var(--pnp-navy);
+        }
+
+        .payment-pill {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .payment-unpaid {
+            background: #FEE2E2;
+            color: var(--pnp-danger);
+            border: 1px solid #FCA5A5;
+        }
+
+        .payment-paid {
+            background: #DCFCE7;
+            color: var(--pnp-success);
+            border: 1px solid #86EFAC;
+        }
+
+        .payment-void {
+            background: #E2E8F0;
+            color: #64748B;
+            border: 1px solid #CBD5E1;
+        }
+
+        .action-btn-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        /* Modal Dialogs */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            padding: 16px;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--pnp-border);
+        }
+
+        .modal-header {
+            padding: 14px 18px;
+            background: var(--pnp-navy);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 7px;
+            border-top-right-radius: 7px;
+        }
+
+        .modal-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 18px;
+            font-size: 0.85rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .detail-item strong {
+            display: block;
+            font-size: 0.72rem;
+            color: #64748B;
+            text-transform: uppercase;
+        }
+
+        .detail-item span {
+            font-size: 0.9rem;
             font-weight: 600;
-            font-size: 0.75rem;
+            color: var(--pnp-dark);
+        }
+
+        /* 58mm / 80mm Bluetooth Thermal Print Receipt */
+        #thermalReceiptArea {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #thermalReceiptArea, #thermalReceiptArea * {
+                visibility: visible !important;
+            }
+            #thermalReceiptArea {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 72mm; /* Standard width for 58mm / 80mm printers */
+                margin: 0;
+                padding: 4mm;
+                font-family: 'Courier New', Courier, monospace !important;
+                font-size: 11px !important;
+                line-height: 1.25 !important;
+                color: #000000 !important;
+                background: #ffffff !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        .receipt-container {
+            width: 100%;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            line-height: 1.3;
+            color: #000;
+        }
+
+        .receipt-divider {
+            border-top: 1px dashed #000;
+            margin: 6px 0;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            text-align: left;
+            margin: 2px 0;
+        }
+
+        .receipt-bold {
+            font-weight: 900;
+        }
+
+        .alert-box {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .alert-danger {
+            background-color: var(--pnp-danger-bg);
+            color: var(--pnp-danger);
+            border: 1px solid #FCA5A5;
+        }
+
+        .alert-success {
+            background-color: var(--pnp-success-bg);
+            color: var(--pnp-success);
+            border: 1px solid #86EFAC;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div>
-            <h1>PNP Checkpoint Violation Processing & Records Management System</h1>
-            <p id="stationName">Agoo Municipal Police Station | Local Operational Prototype</p>
+    <!-- MASTER HEADER -->
+    <header class="no-print">
+        <div class="header-title-box">
+            <div>
+                <h1>Philippine National Police — CVPRMS</h1>
+                <p id="stationNameDisplay">Agoo Municipal Police Station | Checkpoint Violation & Records System</p>
+            </div>
         </div>
         <div>
-            <span class="badge">PNP-CVPRMS v1.0</span>
+            <span class="badge" style="background: var(--pnp-accent); color: #000; font-weight: 800; padding: 4px 10px; border-radius: 4px; font-size: 0.72rem; text-transform: uppercase;">
+                Prototype v2.0-PRO
+            </span>
         </div>
     </header>
 
-    <section class="summary-grid" aria-label="Local record summary">
-        <div class="summary-card">
-            <span>Total Records</span>
-            <strong id="totalRecords">0</strong>
+    <!-- ACTIVE CHECKPOINT OPERATIONAL SESSION BAR -->
+    <section class="session-bar no-print" aria-label="Active Checkpoint Session">
+        <div class="session-controls">
+            <div class="session-item">
+                <label for="sessionPost">Checkpoint Post:</label>
+                <select id="sessionPost" class="session-select">
+                    <option value="Boundary Post - Brgy. San Nicolas Norte">Boundary Post - Brgy. San Nicolas Norte</option>
+                    <option value="Checkpoint 1 - Poblacion Plaza Junction">Checkpoint 1 - Poblacion Plaza Junction</option>
+                    <option value="Checkpoint 2 - MacArthur Highway Bypass">Checkpoint 2 - MacArthur Highway Bypass</option>
+                    <option value="Mobile Checkpoint Alpha">Mobile Checkpoint Alpha</option>
+                </select>
+            </div>
+
+            <div class="session-item">
+                <label for="sessionShift">Operational Shift:</label>
+                <select id="sessionShift" class="session-select">
+                    <option value="Shift 1: 06:00 - 14:00 (Day)">Shift 1: 06:00 - 14:00 (Day)</option>
+                    <option value="Shift 2: 14:00 - 22:00 (Afternoon)">Shift 2: 14:00 - 22:00 (Afternoon)</option>
+                    <option value="Shift 3: 22:00 - 06:00 (Night)">Shift 3: 22:00 - 06:00 (Night)</option>
+                </select>
+            </div>
+
+            <div class="session-item">
+                <label for="sessionOfficer">Active Officer:</label>
+                <select id="sessionOfficer" class="session-select">
+                    <option value="PNP-OFFICER-4491 (PO3 J. Del Rosario)">PO3 J. Del Rosario (PNP-4491)</option>
+                    <option value="PNP-OFFICER-1022 (PEMS M. Santos)">PEMS M. Santos (PNP-1022)</option>
+                    <option value="PNP-OFFICER-3318 (PCpl A. Valdez)">PCpl A. Valdez (PNP-3318)</option>
+                    <option value="CUSTOM">Custom Officer ID...</option>
+                </select>
+            </div>
         </div>
-        <div class="summary-card">
-            <span>Total Fines</span>
-            <strong id="totalFines">PHP 0.00</strong>
-        </div>
-        <div class="summary-card">
-            <span>Flagged Records</span>
-            <strong id="flaggedRecords">0</strong>
+
+        <div>
+            <span id="sessionTime" style="font-weight: 700; color: #475569;"></span>
         </div>
     </section>
 
-    <main class="container">
-        <!-- FORM SECTION: Record Violation -->
-        <section class="card">
-            <h2>Record Checkpoint Violation</h2>
-            
-            <div id="formAlert" class="alert-box"></div>
+    <!-- KPI SUMMARY GRID -->
+    <section class="summary-grid no-print" aria-label="System Metrics">
+        <div class="summary-card">
+            <span>Total Citations</span>
+            <strong id="totalRecords">0</strong>
+        </div>
+        <div class="summary-card">
+            <span>Total Statutory Fines</span>
+            <strong id="totalFines">₱0.00</strong>
+        </div>
+        <div class="summary-card warning">
+            <span>Flagged / Alarms</span>
+            <strong id="flaggedRecords">0</strong>
+        </div>
+        <div class="summary-card danger">
+            <span>Unsettled Violations</span>
+            <strong id="unsettledRecords">0</strong>
+        </div>
+    </section>
 
-            <form id="violationForm">
-                <div class="form-group">
-                    <label for="driver_name">Driver Full Name <span class="required-star">*</span></label>
-                    <input type="text" id="driver_name" name="driver_name" placeholder="e.g. Juan Dela Cruz" required>
+    <!-- MAIN TWO-COLUMN WORKSPACE -->
+    <main class="workspace no-print">
+
+        <!-- LEFT COLUMN: STICKY RECORDING FORM -->
+        <div class="form-column">
+            <section class="card">
+                <div class="card-header">
+                    <h2>Record Apprehension</h2>
+                    <span id="ticketBadge" style="font-size: 0.75rem; font-weight: 800; color: var(--pnp-navy); background: #E2E8F0; padding: 2px 8px; border-radius: 4px;">
+                        PNP-NEW
+                    </span>
                 </div>
 
-                <!-- DRIVER'S LICENSE INPUT GROUP (Active when licensed) -->
-                <div class="form-group" id="licenseFieldGroup">
-                    <label for="license_number">Driver's License No. <span class="required-star">*</span></label>
-                    <input type="text" id="license_number" name="license_number" placeholder="e.g. N01-12-345678" required>
-                </div>
+                <div id="formAlert" class="alert-box"></div>
 
-                <!-- ALTERNATIVE IDENTIFICATION SECTION (Dynamically displayed in place when 'No Driver's License' is checked) -->
-                <div id="altIdSection" class="alt-id-section" style="display: none;">
-                    <div class="alt-id-banner">
-                        <span class="alt-id-badge">Unlicensed Driver</span>
-                        <div>
-                            <div class="alt-id-title">Alternative Identification Required</div>
-                            <div class="alt-id-desc">Driver's License is set to <strong>N/A - Unlicensed</strong>. Record a valid government ID for apprehension records.</div>
+                <form id="violationForm">
+                    <!-- Driver Name -->
+                    <div class="form-group">
+                        <label for="driver_name">Driver Full Name <span class="required-star">*</span></label>
+                        <input type="text" id="driver_name" name="driver_name" placeholder="e.g. Juan Dela Cruz" required>
+                    </div>
+
+                    <!-- Licensed Driver License Group -->
+                    <div class="form-group" id="licenseFieldGroup">
+                        <label for="license_number">Driver's License No. <span class="required-star">*</span></label>
+                        <input type="text" id="license_number" name="license_number" placeholder="e.g. N01-12-345678" maxlength="13" required>
+                    </div>
+
+                    <!-- Unlicensed Alternative ID Group -->
+                    <div id="altIdSection" class="alt-id-section" style="display: none;">
+                        <div class="alt-id-banner">
+                            <span class="alt-id-badge">Unlicensed Driver</span>
+                            <span style="font-size: 0.72rem; color: #78350F; font-weight: 700;">License: N/A - Unlicensed</span>
+                        </div>
+                        <div class="alt-id-desc" style="margin-bottom: 8px;">
+                            Record alternative government identity document:
+                        </div>
+                        <div class="field-row">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="id_type">ID Type <span class="required-star">*</span></label>
+                                <select id="id_type" name="id_type">
+                                    <option value="">-- Select Valid ID --</option>
+                                    <option value="Philippine National ID">Philippine National ID (PhilID)</option>
+                                    <option value="Passport">Passport</option>
+                                    <option value="SSS/GSIS">SSS/GSIS UMID</option>
+                                    <option value="Voter's ID">Voter's ID / Certificate</option>
+                                    <option value="PRC ID">PRC ID</option>
+                                    <option value="Postal ID">Postal ID</option>
+                                    <option value="Senior Citizen / PWD ID">Senior / PWD ID</option>
+                                    <option value="Other Valid ID">Other Valid Government ID</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="id_number">ID Number <span class="required-star">*</span></label>
+                                <input type="text" id="id_number" name="id_number" placeholder="e.g. 1234-5678-9012">
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Vehicle Plate & Classification -->
                     <div class="field-row">
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label for="id_type">ID Type <span class="required-star">*</span></label>
-                            <select id="id_type" name="id_type">
-                                <option value="">-- Select Valid ID --</option>
-                                <option value="Philippine National ID">Philippine National ID (PhilID / ePhilID)</option>
-                                <option value="Passport">Passport</option>
-                                <option value="SSS/GSIS">SSS/GSIS UMID</option>
-                                <option value="Voter's ID">Voter's ID / Certificate</option>
-                                <option value="PRC ID">PRC ID (Professional Regulation Commission)</option>
-                                <option value="Postal ID">Postal ID</option>
-                                <option value="Senior Citizen / PWD ID">Senior Citizen / PWD ID</option>
-                                <option value="PhilHealth ID">PhilHealth ID</option>
-                                <option value="Other Valid ID">Other Valid Government ID</option>
+                        <div class="form-group">
+                            <label for="plate_number">Plate Number <span class="required-star">*</span></label>
+                            <input type="text" id="plate_number" name="plate_number" placeholder="e.g. ABC 1234" maxlength="8" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="vehicle_type">Vehicle Classification <span class="required-star">*</span></label>
+                            <select id="vehicle_type" name="vehicle_type" required>
+                                <option value="Private/Sedan (UV)">Private/Sedan (UV)</option>
+                                <option value="Motorcycle (MC)">Motorcycle (MC)</option>
+                                <option value="Tricycle (TC)">Tricycle (TC)</option>
+                                <option value="Commercial/Truck (HVF)">Commercial/Truck (HVF)</option>
                             </select>
                         </div>
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label for="id_number">ID Number <span class="required-star">*</span></label>
-                            <input type="text" id="id_number" name="id_number" placeholder="e.g. 1234-5678-9012">
+                    </div>
+
+                    <!-- Vehicle Disposition Controls -->
+                    <div class="field-row">
+                        <div class="form-group">
+                            <label for="vehicle_disposition">Vehicle Disposition <span class="required-star">*</span></label>
+                            <select id="vehicle_disposition" name="vehicle_disposition" required>
+                                <option value="Released with Citation">Released with Citation</option>
+                                <option value="Impounded">Impounded</option>
+                                <option value="Turned Over to HPG">Turned Over to HPG</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="impoundSlipGroup" style="display: none;">
+                            <label for="impound_receipt_no">Impound / Tow Slip # <span class="required-star">*</span></label>
+                            <input type="text" id="impound_receipt_no" name="impound_receipt_no" placeholder="e.g. IMP-2026-0041">
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="plate_number">Vehicle Plate Number <span class="required-star">*</span></label>
-                    <input type="text" id="plate_number" name="plate_number" placeholder="e.g. ABC 1234" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Apprehended Violations <span class="required-star">*</span></label>
-                    <div class="checkbox-group" id="violationChecklist">
-                        <label class="checkbox-item"><input type="checkbox" value="No Driver's License"> No Driver's License</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Failure to Carry Driver's License / OR-CR"> Failure to Carry Driver's License / OR-CR</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Expired Vehicle Registration"> Expired Vehicle Registration</label>
-                        <label class="checkbox-item"><input type="checkbox" value="No Helmet / Seatbelt"> No Helmet / Seatbelt</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Disregarding Traffic Signs (DTS) / Red Light Violation"> Disregarding Traffic Signs (DTS) / Red Light Violation</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Distracted Driving (RA 10913 - Mobile Device Use)"> Distracted Driving (RA 10913 - Mobile Device Use)</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Illegal Parking / Obstruction"> Illegal Parking / Obstruction</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Unified Vehicular Volume Reduction Program (Number Coding)"> Unified Vehicular Volume Reduction Program (Number Coding)</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Reckless Driving / Counterflow (Illegal Overtaking)"> Reckless Driving / Counterflow (Illegal Overtaking)</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Over-speeding"> Over-speeding</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Defective Equipment / Smoke Belching"> Defective Equipment / Smoke Belching</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Driving Under the Influence (DUI)"> Driving Under the Influence (DUI)</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Illegal Modification"> Illegal Modification</label>
-                    </div>
-                </div>
-
-                <div class="field-row">
+                    <!-- Searchable & Scrollable Violations Multi-Select Picker -->
                     <div class="form-group">
-                        <label for="fine_amount">Fine Amount (PHP)</label>
-                        <input type="number" id="fine_amount" name="fine_amount" min="1" step="0.01" placeholder="e.g. 1500.00" required readonly>
+                        <label>Apprehended Violations <span class="required-star">*</span></label>
+                        <div class="violation-picker-box">
+                            <input type="text" id="violationFilterInput" class="violation-search-input" placeholder="🔍 Filter violations (e.g. helmet, license, DTS, coding)...">
+                            <div class="violation-scroll-container" id="violationChecklist">
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="No Driver's License"> No Driver's License</span><span class="checkbox-fee">₱1,500.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Failure to Carry Driver's License / OR-CR"> Failure to Carry License / OR-CR</span><span class="checkbox-fee">₱1,000.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Expired Vehicle Registration"> Expired Vehicle Registration</span><span class="checkbox-fee">₱1,200.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="No Helmet / Seatbelt"> No Helmet / Seatbelt</span><span class="checkbox-fee">₱1,000.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Disregarding Traffic Signs (DTS) / Red Light Violation"> Disregarding Traffic Signs (DTS)</span><span class="checkbox-fee">₱1,000.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Distracted Driving (RA 10913 - Mobile Device Use)"> Distracted Driving (RA 10913)</span><span class="checkbox-fee">₱5,000.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Illegal Parking / Obstruction"> Illegal Parking / Obstruction</span><span class="checkbox-fee">₱1,000.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Unified Vehicular Volume Reduction Program (Number Coding)"> Number Coding Violation</span><span class="checkbox-fee">₱500.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Reckless Driving / Counterflow (Illegal Overtaking)"> Reckless Driving / Counterflow</span><span class="checkbox-fee">₱3,000.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Over-speeding"> Over-speeding</span><span class="checkbox-fee">₱1,200.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Defective Equipment / Smoke Belching"> Defective Equipment / Smoke</span><span class="checkbox-fee">₱1,500.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Driving Under the Influence (DUI)"> DUI (Alcohol / Drugs)</span><span class="checkbox-fee">₱5,000.00</span></label>
+                                <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Illegal Modification"> Illegal Modification</span><span class="checkbox-fee">₱2,500.00</span></label>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- Automated Fine with Manual Override -->
                     <div class="form-group">
-                        <label for="ticket_number_display">Ticket Number</label>
-                        <input type="text" id="ticket_number_display" value="PNP-NEW" readonly>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label for="fine_amount">Fine Amount (PHP) <span class="required-star">*</span></label>
+                            <label class="override-box">
+                                <input type="checkbox" id="fineOverrideToggle"> Manual Officer Discretion
+                            </label>
+                        </div>
+                        <input type="number" id="fine_amount" name="fine_amount" min="1" step="0.01" value="0.00" required readonly>
+                    </div>
+
+                    <!-- Evidence & Media Photo Capture -->
+                    <div class="form-group">
+                        <label>Evidence & Document Photo (Optional)</label>
+                        <div class="evidence-upload-zone">
+                            <input type="file" id="evidenceFileInput" accept="image/*" style="font-size: 0.75rem;">
+                            <img id="evidenceThumb" class="evidence-preview-thumb" alt="Evidence thumbnail">
+                            <button type="button" id="removePhotoBtn" class="btn btn-sm btn-outline" style="display: none; width: auto;">Remove</button>
+                        </div>
+                    </div>
+
+                    <!-- Apprehending Officer Session Display -->
+                    <div class="form-group">
+                        <label for="officer_id">Apprehending Officer ID/Badge <span class="required-star">*</span></label>
+                        <input type="text" id="officer_id" name="officer_id" value="PNP-OFFICER-4491" required readonly style="background: #F1F5F9; font-weight: 700;">
+                    </div>
+
+                    <!-- Real-Time Multi-State Screening Alert Box -->
+                    <div class="status-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="font-size: 0.76rem; text-transform: uppercase; color: var(--pnp-navy);">Checkpoint Screening Status:</strong>
+                            <span id="screeningStatusBadge" class="status-pill status-clear">CLEAR</span>
+                        </div>
+                        <div id="screeningStatusText" style="margin-top: 6px; color: #475569; font-size: 0.76rem; line-height: 1.35;">
+                            No screening alerts found in local rule set.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn" id="submitBtn" style="margin-top: 14px;">
+                        Submit & Register Citation
+                    </button>
+                </form>
+            </section>
+        </div>
+
+        <!-- RIGHT COLUMN: REGISTRY & ACTION TABLE -->
+        <div>
+            <section class="card">
+                <div class="card-header">
+                    <h2>Checkpoint Violation Registry</h2>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="exportVisibleRecords()">Export CSV</button>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="officer_id">Apprehending Officer Badge/ID</label>
-                    <input type="text" id="officer_id" name="officer_id" placeholder="e.g. PNP-OFFICER-4491" required>
+                <!-- Search and Quick Filter Bar -->
+                <div class="search-container">
+                    <div class="search-row">
+                        <input type="text" id="searchInput" placeholder="Search by Plate Number, License, Driver Name, or Ticket...">
+                        <button type="button" class="btn btn-secondary" onclick="executeSearch()">Search</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetSearchAndFilters()">Reset</button>
+                    </div>
+
+                    <div class="filter-chips-row">
+                        <span class="filter-label">Date:</span>
+                        <span class="filter-chip active" data-filter="date" data-value="all">All Dates</span>
+                        <span class="filter-chip" data-filter="date" data-value="today">Today</span>
+                        <span class="filter-chip" data-filter="date" data-value="shift">Active Shift</span>
+                        <span class="filter-chip" data-filter="date" data-value="7days">Last 7 Days</span>
+
+                        <span class="filter-label" style="margin-left: 12px;">Status:</span>
+                        <span class="filter-chip active" data-filter="status" data-value="all">All Status</span>
+                        <span class="filter-chip" data-filter="status" data-value="flagged">Flagged / Alarms</span>
+                        <span class="filter-chip" data-filter="status" data-value="unpaid">Unsettled Only</span>
+                    </div>
                 </div>
 
-                <div class="status-box">
-                    <strong>Screening Status</strong>
-                    <span id="screeningStatusBadge" class="status-pill status-clear">Clear</span>
-                    <div id="screeningStatusText" style="margin-top: 8px; color: #475569; font-size: 0.82rem;">No screening alerts found in local rule set.</div>
+                <!-- Registry Table -->
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket #</th>
+                                <th>Date / Shift</th>
+                                <th>Driver & ID</th>
+                                <th>Vehicle</th>
+                                <th>Apprehended Violations</th>
+                                <th>Fine</th>
+                                <th>Screening</th>
+                                <th>Status</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="violationsTableBody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; color: #64748B;">Loading checkpoint records...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <button type="submit" class="btn" id="submitBtn" style="margin-top: 16px;">Submit Violation Record</button>
-            </form>
-        </section>
-
-        <!-- DISPLAY SECTION: Records and Search -->
-        <section class="card">
-            <h2>Checkpoint Violation Registry</h2>
-
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search by Plate Number, License, or Driver Name...">
-                <button type="button" class="btn btn-secondary" onclick="executeSearch()">Search</button>
-                <button type="button" class="btn btn-secondary" onclick="loadAllViolations()">Reset</button>
-                <button type="button" class="btn btn-secondary" onclick="exportVisibleRecords()">Export CSV</button>
-            </div>
-
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date & Time</th>
-                            <th>Driver</th>
-                            <th>License</th>
-                            <th>Plate</th>
-                            <th>Violation</th>
-                            <th>Fine (PHP)</th>
-                            <th>Ticket</th>
-                            <th>Screening</th>
-                            <th>Officer</th>
-                        </tr>
-                    </thead>
-                    <tbody id="violationsTableBody">
-                        <tr>
-                            <td colspan="7" style="text-align: center; color: #64748B;">Loading records...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 
-    <script>
-        const form = document.getElementById('violationForm');
-        const alertBox = document.getElementById('formAlert');
-        const tableBody = document.getElementById('violationsTableBody');
-        const searchInput = document.getElementById('searchInput');
-        const screeningStatusBadge = document.getElementById('screeningStatusBadge');
-        const screeningStatusText = document.getElementById('screeningStatusText');
-        const fineAmountInput = document.getElementById('fine_amount');
-        const ticketNumberDisplay = document.getElementById('ticket_number_display');
-        const violationChecklist = document.getElementById('violationChecklist');
-        const licenseFieldGroup = document.getElementById('licenseFieldGroup');
-        const licenseInput = document.getElementById('license_number');
-        const altIdSection = document.getElementById('altIdSection');
-        const idTypeSelect = document.getElementById('id_type');
-        const idNumberInput = document.getElementById('id_number');
-        const totalRecords = document.getElementById('totalRecords');
-        const totalFines = document.getElementById('totalFines');
-        const flaggedRecords = document.getElementById('flaggedRecords');
-        let visibleRecords = [];
-        let rememberedLicense = '';
+    <!-- FULL RECORD DETAILS MODAL -->
+    <div id="recordModal" class="modal-overlay no-print" onclick="handleModalOverlayClick(event)">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTicketTitle">Citation Details</h3>
+                <button type="button" class="modal-close-btn" onclick="closeRecordModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <strong>Driver Name</strong>
+                        <span id="mDriverName">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>License / ID Document</strong>
+                        <span id="mLicenseNo">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Plate & Vehicle</strong>
+                        <span id="mPlateVehicle">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Vehicle Disposition</strong>
+                        <span id="mDisposition">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Checkpoint Location</strong>
+                        <span id="mCheckpointPost">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Operational Shift</strong>
+                        <span id="mShift">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Date & Time Recorded</strong>
+                        <span id="mDate">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Apprehending Officer</strong>
+                        <span id="mOfficer">—</span>
+                    </div>
+                </div>
 
+                <div style="margin-bottom: 14px;">
+                    <strong style="display:block; font-size: 0.72rem; color: #64748B; text-transform: uppercase;">Itemized Violations:</strong>
+                    <div id="mViolations" style="margin-top: 4px; font-weight: 600;">—</div>
+                </div>
+
+                <div style="margin-bottom: 14px; background: #F8FAFC; padding: 10px; border-radius: 6px; border: 1px solid var(--pnp-border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; color: var(--pnp-navy);">Total Fine Payable:</span>
+                        <strong id="mFine" style="font-size: 1.15rem; color: var(--pnp-navy);">₱0.00</strong>
+                    </div>
+                </div>
+
+                <div id="mEvidenceContainer" style="margin-bottom: 16px; display: none;">
+                    <strong style="display:block; font-size: 0.72rem; color: #64748B; text-transform: uppercase; margin-bottom: 6px;">Confiscated Document / Evidence Photo:</strong>
+                    <img id="mEvidenceImg" style="max-width: 100%; max-height: 220px; border-radius: 6px; border: 1px solid var(--pnp-border); object-fit: contain;" alt="Evidence photo">
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label for="mStatusSelect" style="font-size: 0.75rem; text-transform: uppercase; color: #64748B;">Settlement / Payment Status:</label>
+                    <select id="mStatusSelect" style="margin-top: 4px; font-weight: 700;">
+                        <option value="Unsettled / Unpaid">Unsettled / Unpaid</option>
+                        <option value="Settled / Paid at Treasury">Settled / Paid at Treasury</option>
+                        <option value="Voided / Contested">Voided / Contested</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button type="button" class="btn btn-secondary" onclick="printReceiptFromModal()">Print Citation Receipt</button>
+                    <button type="button" class="btn" onclick="saveStatusFromModal()">Save Status Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 58mm / 80mm THERMAL RECEIPT AREA FOR PRINTING -->
+    <div id="thermalReceiptArea">
+        <div class="receipt-container">
+            <div style="font-weight: 800; font-size: 13px;">REPUBLIC OF THE PHILIPPINES</div>
+            <div style="font-weight: 800;">PHILIPPINE NATIONAL POLICE</div>
+            <div id="rcptStation">Agoo Municipal Police Station</div>
+            <div style="font-size: 10px; margin-top: 2px;">CHECKPOINT CITATION TICKET</div>
+            <div class="receipt-divider"></div>
+
+            <div class="receipt-row"><span class="receipt-bold">TICKET NO:</span><span id="rcptTicket" class="receipt-bold">PNP-00000000</span></div>
+            <div class="receipt-row"><span>DATE/TIME:</span><span id="rcptDateTime">2026-09-24 00:00</span></div>
+            <div class="receipt-row"><span>SHIFT:</span><span id="rcptShift">Shift 1</span></div>
+            <div class="receipt-row"><span>POST:</span><span id="rcptPost">Boundary Post</span></div>
+            <div class="receipt-divider"></div>
+
+            <div class="receipt-row"><span class="receipt-bold">DRIVER:</span><span id="rcptDriver" class="receipt-bold">JUAN DELA CRUZ</span></div>
+            <div class="receipt-row"><span>LICENSE/ID:</span><span id="rcptLicense">N01-12-345678</span></div>
+            <div class="receipt-row"><span>PLATE NO:</span><span id="rcptPlate" class="receipt-bold">ABC 1234</span></div>
+            <div class="receipt-row"><span>VEHICLE:</span><span id="rcptVehType">Private/Sedan (UV)</span></div>
+            <div class="receipt-row"><span>DISPOSITION:</span><span id="rcptDisposition">Released with Citation</span></div>
+            <div id="rcptImpoundRow" class="receipt-row" style="display: none;"><span>IMPOUND SLIP:</span><span id="rcptImpoundNo">—</span></div>
+            <div class="receipt-divider"></div>
+
+            <div style="text-align: left; font-weight: 800; margin-bottom: 3px;">VIOLATIONS:</div>
+            <div id="rcptViolationsList" style="text-align: left;">
+                <!-- Dynamically populated itemized lines -->
+            </div>
+            <div class="receipt-divider"></div>
+
+            <div class="receipt-row" style="font-size: 13px;"><span class="receipt-bold">TOTAL FINE:</span><span id="rcptTotalFine" class="receipt-bold">₱0.00</span></div>
+            <div class="receipt-divider"></div>
+
+            <div class="receipt-row"><span>OFFICER ID:</span><span id="rcptOfficer">PNP-OFFICER-4491</span></div>
+            <div style="margin-top: 12px; font-size: 9px; line-height: 1.2;">
+                NOTICE: Violator must settle fine at Municipal Treasury within seven (7) working days.
+            </div>
+
+            <div style="margin-top: 24px; border-top: 1px solid #000; padding-top: 2px;">
+                SIGNATURE OVER PRINTED NAME OF DRIVER
+            </div>
+            <div style="margin-top: 18px; border-top: 1px solid #000; padding-top: 2px;">
+                APPREHENDING OFFICER SIGNATURE
+            </div>
+            <div style="margin-top: 10px; font-size: 8px;">
+                *** PNP-CVPRMS OFFICIAL CHECKPOINT CITATION ***
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT STATE MANAGEMENT & CLIENT LOGIC -->
+    <script>
         const OFFENSE_SCHEDULE = {
             "No Driver's License": 1500,
             "Expired Vehicle Registration": 1200,
@@ -572,30 +1286,125 @@
             "Defective Equipment / Smoke Belching": 1500
         };
 
-        function showAlert(message, type) {
-            alertBox.textContent = message;
-            alertBox.className = `alert-box alert-${type}`;
-            alertBox.style.display = 'block';
-            setTimeout(() => {
-                alertBox.style.display = 'none';
-            }, 5000);
+        // DOM References
+        const form = document.getElementById('violationForm');
+        const alertBox = document.getElementById('formAlert');
+        const tableBody = document.getElementById('violationsTableBody');
+        const searchInput = document.getElementById('searchInput');
+        const fineAmountInput = document.getElementById('fine_amount');
+        const fineOverrideToggle = document.getElementById('fineOverrideToggle');
+        const ticketBadge = document.getElementById('ticketBadge');
+        const violationChecklist = document.getElementById('violationChecklist');
+        const violationFilterInput = document.getElementById('violationFilterInput');
+        const licenseFieldGroup = document.getElementById('licenseFieldGroup');
+        const licenseInput = document.getElementById('license_number');
+        const altIdSection = document.getElementById('altIdSection');
+        const idTypeSelect = document.getElementById('id_type');
+        const idNumberInput = document.getElementById('id_number');
+        const plateInput = document.getElementById('plate_number');
+        const vehicleDispositionSelect = document.getElementById('vehicle_disposition');
+        const impoundSlipGroup = document.getElementById('impoundSlipGroup');
+        const impoundSlipInput = document.getElementById('impound_receipt_no');
+        const evidenceFileInput = document.getElementById('evidenceFileInput');
+        const evidenceThumb = document.getElementById('evidenceThumb');
+        const removePhotoBtn = document.getElementById('removePhotoBtn');
+        const screeningStatusBadge = document.getElementById('screeningStatusBadge');
+        const screeningStatusText = document.getElementById('screeningStatusText');
+        const officerIdInput = document.getElementById('officer_id');
+        const sessionPost = document.getElementById('sessionPost');
+        const sessionShift = document.getElementById('sessionShift');
+        const sessionOfficer = document.getElementById('sessionOfficer');
+
+        // Modal Elements
+        const recordModal = document.getElementById('recordModal');
+        let currentModalRecordId = null;
+
+        // KPI Elements
+        const totalRecordsEl = document.getElementById('totalRecords');
+        const totalFinesEl = document.getElementById('totalFines');
+        const flaggedRecordsEl = document.getElementById('flaggedRecords');
+        const unsettledRecordsEl = document.getElementById('unsettledRecords');
+
+        // State Variables
+        let allRecords = [];
+        let visibleRecords = [];
+        let rememberedLicense = '';
+        let base64EvidenceImage = null;
+        let activeDateFilter = 'all';
+        let activeStatusFilter = 'all';
+
+        // Format Currency Helper (₱XX,XXX.00)
+        function formatPHP(amount) {
+            const num = Number(amount || 0);
+            return '₱' + num.toLocaleString('en-PH', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
         }
 
-        // Remember user's typed license when actively editing
-        licenseInput.addEventListener('input', () => {
-            if (!licenseInput.disabled && licenseInput.value !== 'N/A - Unlicensed') {
-                rememberedLicense = licenseInput.value;
+        // Live Clock in Session Bar
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('sessionTime').textContent = now.toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Active Officer Session Handling
+        function syncOfficerSession() {
+            const val = sessionOfficer.value;
+            if (val === 'CUSTOM') {
+                const custom = prompt('Enter Apprehending Officer Badge/ID:', 'PNP-OFFICER-');
+                if (custom) {
+                    officerIdInput.value = custom.trim().toUpperCase();
+                } else {
+                    sessionOfficer.value = 'PNP-OFFICER-4491 (PO3 J. Del Rosario)';
+                    officerIdInput.value = 'PNP-OFFICER-4491';
+                }
+            } else {
+                const badgeMatch = val.match(/(PNP-OFFICER-\d+)/);
+                officerIdInput.value = badgeMatch ? badgeMatch[1] : val;
+            }
+        }
+        sessionOfficer.addEventListener('change', syncOfficerSession);
+        syncOfficerSession();
+
+        // Input Masking: Plate Number (Uppercase and format)
+        plateInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        // Input Masking: Driver License Number (Uppercase & standard formatting)
+        licenseInput.addEventListener('input', (e) => {
+            if (licenseInput.disabled) return;
+            let val = e.target.value.toUpperCase();
+            // Automatically insert hyphens for standard LTO pattern (e.g. N01-12-345678)
+            val = val.replace(/[^A-Z0-9-]/g, '');
+            e.target.value = val;
+            if (val !== 'N/A - UNLICENSED') {
+                rememberedLicense = val;
             }
         });
 
-        // State management logic for conditional Driver's License vs. Alternative ID
+        // Searchable Violation Filter
+        violationFilterInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            const items = violationChecklist.querySelectorAll('.checkbox-item');
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(term) ? 'flex' : 'none';
+            });
+        });
+
+        // Conditional Logic: Unlicensed Driver Handling
         function handleLicenseConditionalState() {
             const noLicenseBox = document.querySelector('#violationChecklist input[value="No Driver\'s License"]');
-            const isNoLicense = noLicenseBox ? noLicenseBox.checked : false;
+            const isUnlicensed = noLicenseBox ? noLicenseBox.checked : false;
 
-            if (isNoLicense) {
-                // When 'No Driver's License' is checked:
-                // Automatically disable and clear 'Driver's License No.' (set to N/A - Unlicensed)
+            if (isUnlicensed) {
                 if (licenseInput.value && licenseInput.value !== 'N/A - Unlicensed') {
                     rememberedLicense = licenseInput.value;
                 }
@@ -604,12 +1413,10 @@
                 licenseInput.required = false;
                 licenseFieldGroup.style.display = 'none';
 
-                // Dynamically display Alternative Identification section in its place
                 altIdSection.style.display = 'block';
                 idTypeSelect.required = true;
                 idNumberInput.required = true;
             } else {
-                // If unchecked, restore the 'Driver's License No.' input as active and required
                 licenseFieldGroup.style.display = 'block';
                 licenseInput.disabled = false;
                 licenseInput.required = true;
@@ -617,7 +1424,6 @@
                     licenseInput.value = rememberedLicense || '';
                 }
 
-                // Hide and clear Alternative Identification section
                 altIdSection.style.display = 'none';
                 idTypeSelect.required = false;
                 idNumberInput.required = false;
@@ -626,152 +1432,105 @@
             }
         }
 
+        // Vehicle Disposition: Conditional Impound Slip
+        vehicleDispositionSelect.addEventListener('change', () => {
+            const isImpounded = vehicleDispositionSelect.value === 'Impounded';
+            impoundSlipGroup.style.display = isImpounded ? 'block' : 'none';
+            impoundSlipInput.required = isImpounded;
+            if (!isImpounded) impoundSlipInput.value = '';
+        });
+
+        // Statutory Fine Calculation & Manual Override Toggle
         function updateFineTotal() {
+            if (fineOverrideToggle.checked) return; // Keep manual fine if override is active
+
             const checked = [...violationChecklist.querySelectorAll('input:checked')].map(input => input.value);
             const total = checked.reduce((sum, value) => sum + (OFFENSE_SCHEDULE[value] || 0), 0);
             fineAmountInput.value = total.toFixed(2);
-            ticketNumberDisplay.value = total > 0 ? 'PNP-NEW' : 'PNP-NEW';
         }
 
-        function updateScreeningResult(screeningStatus, flags) {
-            const isWarning = screeningStatus === 'warning';
-            screeningStatusBadge.textContent = isWarning ? 'Warning' : 'Clear';
-            screeningStatusBadge.className = `status-pill ${isWarning ? 'status-warning' : 'status-clear'}`;
-            screeningStatusText.textContent = Array.isArray(flags) && flags.length ? flags.join(' ') : 'No screening alerts found in local rule set.';
+        fineOverrideToggle.addEventListener('change', () => {
+            if (fineOverrideToggle.checked) {
+                fineAmountInput.readOnly = false;
+                fineAmountInput.style.background = '#FFFBEB';
+                fineAmountInput.style.borderColor = '#F59E0B';
+                fineAmountInput.focus();
+            } else {
+                fineAmountInput.readOnly = true;
+                fineAmountInput.style.background = '#ffffff';
+                fineAmountInput.style.borderColor = 'var(--pnp-border)';
+                updateFineTotal();
+            }
+        });
+
+        // Real-Time Local Screening Evaluator
+        function evaluateLocalScreening() {
+            const plate = plateInput.value.trim().toUpperCase();
+            const driver = document.getElementById('driver_name').value.trim();
+            const license = licenseInput.value.trim().toUpperCase();
+
+            // Client-side quick check against watchlist
+            const ALARM_PLATES = ['ABC-1234', 'XYZ-9876', 'ABC 1234', 'XYZ 9876'];
+            const ALARM_DRIVERS = ['JUAN DELA CRUZ', 'PEDRO SANTOS'];
+            const WARNING_LICENSES = ['N01-12-345678'];
+
+            if (ALARM_PLATES.includes(plate) || ALARM_DRIVERS.includes(driver.toUpperCase())) {
+                setScreeningBadge('alarm', 'ALARM / HPG WANTED', 'Vehicle plate or driver matches an active HPG Alarm or Warrant Watchlist!');
+            } else if (WARNING_LICENSES.includes(license) || license.includes('EXPIRED') || plate.includes('EXPIRED')) {
+                setScreeningBadge('warning', 'WARNING / REPEAT OFFENDER', 'Driver license or vehicle registration indicates suspension or past flags.');
+            } else {
+                setScreeningBadge('clear', 'CLEAR', 'No screening alerts found in local checkpoint rule set.');
+            }
         }
 
+        function setScreeningBadge(state, label, message) {
+            screeningStatusBadge.className = `status-pill status-${state}`;
+            screeningStatusBadge.textContent = label;
+            screeningStatusText.textContent = message;
+        }
+
+        plateInput.addEventListener('blur', evaluateLocalScreening);
+        document.getElementById('driver_name').addEventListener('blur', evaluateLocalScreening);
+        licenseInput.addEventListener('blur', evaluateLocalScreening);
+
+        // Evidence & Photo Upload with Thumbnail Preview
+        evidenceFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    base64EvidenceImage = event.target.result;
+                    evidenceThumb.src = base64EvidenceImage;
+                    evidenceThumb.style.display = 'block';
+                    removePhotoBtn.style.display = 'inline-block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removePhotoBtn.addEventListener('click', () => {
+            evidenceFileInput.value = '';
+            base64EvidenceImage = null;
+            evidenceThumb.style.display = 'none';
+            removePhotoBtn.style.display = 'none';
+        });
+
+        // Violation Checklist Changes
         violationChecklist.addEventListener('change', () => {
             updateFineTotal();
             handleLicenseConditionalState();
         });
 
-        form.addEventListener('reset', () => {
+        function showAlert(message, type) {
+            alertBox.textContent = message;
+            alertBox.className = `alert-box alert-${type}`;
+            alertBox.style.display = 'block';
             setTimeout(() => {
-                rememberedLicense = '';
-                updateFineTotal();
-                handleLicenseConditionalState();
-            }, 20);
-        });
-
-        async function loadAllViolations() {
-            searchInput.value = '';
-            try {
-                const response = await fetch('/api/violations');
-                const result = await response.json();
-                if (result.success) {
-                    renderTable(result.data);
-                    loadSummary();
-                } else {
-                    showAlert(result.message || 'Failed to fetch records.', 'danger');
-                }
-            } catch (err) {
-                showAlert('Network connection error.', 'danger');
-            }
+                alertBox.style.display = 'none';
+            }, 6000);
         }
 
-        async function executeSearch() {
-            const query = searchInput.value.trim();
-            if (!query) {
-                loadAllViolations();
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/violations/search?q=${encodeURIComponent(query)}`);
-                const result = await response.json();
-                if (result.success) {
-                    renderTable(result.data);
-                } else {
-                    showAlert(result.message || 'Search failed.', 'danger');
-                }
-            } catch (err) {
-                showAlert('Network error during search execution.', 'danger');
-            }
-        }
-
-        function renderTable(records) {
-            visibleRecords = records || [];
-            tableBody.innerHTML = '';
-            if (!records || records.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: #64748B;">No checkpoint violation records found.</td></tr>`;
-                return;
-            }
-
-            records.forEach(row => {
-                const tr = document.createElement('tr');
-                const status = row.screening_status || 'clear';
-                const ticketNumber = row.ticket_number || '—';
-
-                let licenseDisplay = escapeHtml(row.license_number);
-                if (row.license_number && row.license_number.toUpperCase().includes('UNLICENSED')) {
-                    const altDetail = (row.id_type && row.id_number)
-                        ? `<div style="font-size:0.75rem; color:#64748B; margin-top:2px;">${escapeHtml(row.id_type)}: <strong>${escapeHtml(row.id_number)}</strong></div>`
-                        : '';
-                    licenseDisplay = `<span class="tag" style="background:#FEE2E2; color:#B91C1C; font-weight:700;">Unlicensed</span>${altDetail}`;
-                } else if (row.id_type && row.id_number) {
-                    licenseDisplay += `<div style="font-size:0.75rem; color:#64748B; margin-top:2px;">${escapeHtml(row.id_type)}: <strong>${escapeHtml(row.id_number)}</strong></div>`;
-                }
-
-                tr.innerHTML = `
-                    <td>${row.date_recorded}</td>
-                    <td><strong>${escapeHtml(row.driver_name)}</strong></td>
-                    <td>${licenseDisplay}</td>
-                    <td><span class="tag">${escapeHtml(row.plate_number)}</span></td>
-                    <td>${escapeHtml(row.violation_type)}</td>
-                    <td>₱${parseFloat(row.fine_amount || 0).toFixed(2)}</td>
-                    <td>${escapeHtml(ticketNumber)}</td>
-                    <td><span class="status-pill ${status === 'warning' ? 'status-warning' : 'status-clear'}">${escapeHtml(status)}</span></td>
-                    <td>${escapeHtml(row.officer_id)}</td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        }
-
-        async function loadSummary() {
-            try {
-                const response = await fetch('/api/reports/summary');
-                const result = await response.json();
-                if (result.success) {
-                    totalRecords.textContent = result.data.total_records;
-                    totalFines.textContent = `PHP ${Number(result.data.total_fines).toFixed(2)}`;
-                    flaggedRecords.textContent = result.data.flagged_records;
-                }
-            } catch (err) {
-                totalRecords.textContent = 'Unavailable';
-                totalFines.textContent = 'Unavailable';
-                flaggedRecords.textContent = 'Unavailable';
-            }
-        }
-
-        function exportVisibleRecords() {
-            if (!visibleRecords.length) {
-                showAlert('There are no records to export.', 'danger');
-                return;
-            }
-
-            const columns = ['date_recorded', 'driver_name', 'license_number', 'id_type', 'id_number', 'plate_number', 'violation_type', 'fine_amount', 'ticket_number', 'screening_status', 'officer_id'];
-            const csv = [columns.join(','), ...visibleRecords.map(record => columns.map(column => csvValue(record[column])).join(','))].join('\n');
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'cvprms-violation-records.csv';
-            link.click();
-            URL.revokeObjectURL(link.href);
-        }
-
-        function csvValue(value) {
-            return `"${String(value ?? '').replace(/"/g, '""')}"`;
-        }
-
-        function escapeHtml(str) {
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
+        // Form Submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -785,21 +1544,27 @@
 
             if (isUnlicensed) {
                 if (!idTypeSelect.value) {
-                    showAlert('Please select an Alternative ID Type for the unlicensed driver.', 'danger');
+                    showAlert('Select an Alternative ID Type for the unlicensed driver.', 'danger');
                     idTypeSelect.focus();
                     return;
                 }
                 if (!idNumberInput.value.trim()) {
-                    showAlert('Please provide the Alternative ID Number for the unlicensed driver.', 'danger');
+                    showAlert('Enter the Alternative ID Number for the unlicensed driver.', 'danger');
                     idNumberInput.focus();
                     return;
                 }
             } else {
                 if (!licenseInput.value.trim() || licenseInput.value.trim().toUpperCase() === 'N/A - UNLICENSED') {
-                    showAlert('Please enter a valid Driver\'s License No.', 'danger');
+                    showAlert('Enter a valid Driver\'s License No.', 'danger');
                     licenseInput.focus();
                     return;
                 }
+            }
+
+            if (vehicleDispositionSelect.value === 'Impounded' && !impoundSlipInput.value.trim()) {
+                showAlert('Impound Receipt / Towing Slip Number is required when vehicle is impounded.', 'danger');
+                impoundSlipInput.focus();
+                return;
             }
 
             const payload = {
@@ -807,11 +1572,19 @@
                 license_number: isUnlicensed ? 'N/A - Unlicensed' : licenseInput.value.trim(),
                 id_type: isUnlicensed ? idTypeSelect.value : null,
                 id_number: isUnlicensed ? idNumberInput.value.trim() : null,
-                plate_number: document.getElementById('plate_number').value.trim(),
+                plate_number: plateInput.value.trim(),
+                vehicle_type: document.getElementById('vehicle_type').value,
+                vehicle_disposition: vehicleDispositionSelect.value,
+                impound_receipt_no: impoundSlipInput.value.trim() || null,
+                shift_info: sessionShift.value,
+                checkpoint_post: sessionPost.value,
+                evidence_image: base64EvidenceImage,
+                fine_override: fineOverrideToggle.checked ? 1 : 0,
                 violation_type: selectedViolations.join(', '),
                 violation_types: selectedViolations,
-                fine_amount: document.getElementById('fine_amount').value,
-                officer_id: document.getElementById('officer_id').value.trim()
+                fine_amount: fineAmountInput.value,
+                officer_id: officerIdInput.value.trim(),
+                payment_status: 'Unsettled / Unpaid'
             };
 
             try {
@@ -824,46 +1597,410 @@
                 const result = await response.json();
 
                 if (response.ok && result.success) {
-                    showAlert('Record registered successfully!', 'success');
-                    if (result.ticket_number) {
-                        ticketNumberDisplay.value = result.ticket_number;
-                    }
+                    showAlert(`Citation registered! Ticket: ${result.ticket_number}`, 'success');
+                    ticketBadge.textContent = result.ticket_number || 'PNP-NEW';
+
+                    // Update screening status indicator with server multi-tier result
                     if (result.screening_status) {
-                        updateScreeningResult(result.screening_status, result.screening_flags || []);
+                        const label = result.screening_status_label || (result.screening_status === 'alarm' ? 'ALARM / HPG WANTED' : (result.screening_status === 'warning' ? 'WARNING / REPEAT OFFENDER' : 'CLEAR'));
+                        setScreeningBadge(result.screening_status, label, (result.screening_flags || []).join(' '));
                     }
+
+                    // Prepare receipt for printing immediately if desired
+                    payload.ticket_number = result.ticket_number;
+                    payload.date_recorded = new Date().toISOString().replace('T', ' ').substring(0, 19);
+                    populateThermalReceipt(payload);
+
+                    // Reset form fields
                     form.reset();
                     rememberedLicense = '';
+                    base64EvidenceImage = null;
+                    evidenceThumb.style.display = 'none';
+                    removePhotoBtn.style.display = 'none';
+                    fineOverrideToggle.checked = false;
+                    fineAmountInput.readOnly = true;
+                    fineAmountInput.style.background = '#ffffff';
+                    fineAmountInput.style.borderColor = 'var(--pnp-border)';
                     handleLicenseConditionalState();
+                    syncOfficerSession();
                     updateFineTotal();
+
+                    // Refresh table & metrics
                     loadAllViolations();
                     loadSummary();
                 } else {
-                    const errorMessage = result.errors ? result.errors.join(' ') : result.message;
-                    showAlert(errorMessage || 'Failed to submit record.', 'danger');
+                    const msg = result.errors ? result.errors.join(' ') : result.message;
+                    showAlert(msg || 'Failed to submit citation record.', 'danger');
                 }
             } catch (err) {
-                showAlert('Network error while transmitting record.', 'danger');
+                showAlert('Network connection error while submitting citation.', 'danger');
             }
         });
 
-        // Initialize table on load
+        // Load Violations Registry from Server
+        async function loadAllViolations() {
+            try {
+                const response = await fetch('/api/violations');
+                const result = await response.json();
+                if (result.success) {
+                    allRecords = result.data || [];
+                    applyFiltersAndRender();
+                    loadSummary();
+                } else {
+                    showAlert(result.message || 'Failed to fetch registry records.', 'danger');
+                }
+            } catch (err) {
+                showAlert('Network error fetching violation registry.', 'danger');
+            }
+        }
+
+        // Search Execution
+        async function executeSearch() {
+            const query = searchInput.value.trim();
+            if (!query) {
+                loadAllViolations();
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/violations/search?q=${encodeURIComponent(query)}`);
+                const result = await response.json();
+                if (result.success) {
+                    allRecords = result.data || [];
+                    applyFiltersAndRender();
+                } else {
+                    showAlert(result.message || 'Search execution failed.', 'danger');
+                }
+            } catch (err) {
+                showAlert('Network error during search.', 'danger');
+            }
+        }
+
+        function resetSearchAndFilters() {
+            searchInput.value = '';
+            activeDateFilter = 'all';
+            activeStatusFilter = 'all';
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                if (chip.dataset.value === 'all') chip.classList.add('active');
+                else chip.classList.remove('active');
+            });
+            loadAllViolations();
+        }
+
+        // Quick Filter Chips Handling
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const filterType = chip.dataset.filter;
+                const value = chip.dataset.value;
+
+                document.querySelectorAll(`.filter-chip[data-filter="${filterType}"]`).forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+
+                if (filterType === 'date') activeDateFilter = value;
+                if (filterType === 'status') activeStatusFilter = value;
+
+                applyFiltersAndRender();
+            });
+        });
+
+        function applyFiltersAndRender() {
+            const now = new Date();
+            const todayStr = now.toISOString().slice(0, 10);
+            const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+            visibleRecords = allRecords.filter(record => {
+                const recordDateStr = (record.date_recorded || '').slice(0, 10);
+                const recordDate = new Date(record.date_recorded || '');
+
+                // Date Filtering
+                if (activeDateFilter === 'today' && recordDateStr !== todayStr) return false;
+                if (activeDateFilter === '7days' && recordDate < sevenDaysAgo) return false;
+                if (activeDateFilter === 'shift' && record.shift_info !== sessionShift.value) return false;
+
+                // Status Filtering
+                const isFlagged = ['alarm', 'warning', 'ALARM / HPG WANTED', 'WARNING / REPEAT OFFENDER'].includes(record.screening_status);
+                if (activeStatusFilter === 'flagged' && !isFlagged) return false;
+                if (activeStatusFilter === 'unpaid' && (record.payment_status && record.payment_status.includes('Paid'))) return false;
+
+                return true;
+            });
+
+            renderTable(visibleRecords);
+            updateSummaryCounters();
+        }
+
+        // Render Table with Compact Pill Badges and Standardized Currency
+        function renderTable(records) {
+            tableBody.innerHTML = '';
+            if (!records || records.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: #64748B; padding: 20px;">No checkpoint violation records found.</td></tr>`;
+                return;
+            }
+
+            records.forEach(row => {
+                const tr = document.createElement('tr');
+                const ticketNumber = row.ticket_number || '—';
+
+                // Format Driver & License
+                let driverIdHtml = `<strong>${escapeHtml(row.driver_name)}</strong>`;
+                if (row.license_number && row.license_number.toUpperCase().includes('UNLICENSED')) {
+                    const altDetail = (row.id_type && row.id_number)
+                        ? `<br><small style="color:#78350F; font-size:0.7rem; font-weight:700;">${escapeHtml(row.id_type)}: ${escapeHtml(row.id_number)}</small>`
+                        : '';
+                    driverIdHtml += `<br><span class="payment-pill payment-unpaid" style="font-size:0.65rem;">Unlicensed</span>${altDetail}`;
+                } else {
+                    driverIdHtml += `<br><small style="color:#64748B; font-size:0.72rem;">${escapeHtml(row.license_number || '—')}</small>`;
+                }
+
+                // Compact Violation Pill Group with Tooltip
+                const violationList = (row.violation_type || '').split(',').map(v => v.trim()).filter(Boolean);
+                let violationsHtml = '';
+                if (violationList.length <= 2) {
+                    violationsHtml = violationList.map(v => `<span class="violation-pill" title="${escapeHtml(v)}">${escapeHtml(v)}</span>`).join('');
+                } else {
+                    const firstTwo = violationList.slice(0, 2).map(v => `<span class="violation-pill" title="${escapeHtml(v)}">${escapeHtml(v)}</span>`).join('');
+                    const remaining = violationList.slice(2).join(', ');
+                    violationsHtml = `${firstTwo} <span class="violation-pill more-pill" title="${escapeHtml(row.violation_type)}">+${violationList.length - 2} more</span>`;
+                }
+
+                // Screening Alert Badge
+                const screenState = (row.screening_status || 'clear').toLowerCase();
+                let screenClass = 'status-clear';
+                let screenLabel = 'CLEAR';
+                if (screenState.includes('alarm')) {
+                    screenClass = 'status-alarm';
+                    screenLabel = 'ALARM';
+                } else if (screenState.includes('warning')) {
+                    screenClass = 'status-warning';
+                    screenLabel = 'WARNING';
+                }
+
+                // Settlement / Payment Status Pill
+                const paymentStatus = row.payment_status || 'Unsettled / Unpaid';
+                let payClass = 'payment-unpaid';
+                if (paymentStatus.includes('Paid')) payClass = 'payment-paid';
+                if (paymentStatus.includes('Void')) payClass = 'payment-void';
+
+                // Shift & Date
+                const dateShort = (row.date_recorded || '').substring(0, 16);
+                const shiftShort = row.shift_info ? `<br><small style="color:#64748B; font-size:0.7rem;">${escapeHtml(row.shift_info.slice(0, 7))}</small>` : '';
+
+                tr.innerHTML = `
+                    <td><strong style="color:var(--pnp-navy);">${escapeHtml(ticketNumber)}</strong></td>
+                    <td>${dateShort}${shiftShort}</td>
+                    <td>${driverIdHtml}</td>
+                    <td><span class="tag">${escapeHtml(row.plate_number)}</span><br><small style="font-size:0.7rem; color:#64748B;">${escapeHtml(row.vehicle_type || 'UV')}</small></td>
+                    <td><div class="violation-pill-group">${violationsHtml}</div></td>
+                    <td><strong style="color:var(--pnp-navy);">${formatPHP(row.fine_amount)}</strong></td>
+                    <td><span class="status-pill ${screenClass}">${screenLabel}</span></td>
+                    <td><span class="payment-pill ${payClass}">${escapeHtml(paymentStatus.split('/')[0].trim())}</span></td>
+                    <td style="text-align:center;">
+                        <div class="action-btn-group">
+                            <button type="button" class="btn btn-sm btn-outline" onclick="openRecordModal(${row.id})" title="View Complete Record">View</button>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="printReceiptForRecord(${row.id})" title="Print Thermal Citation Receipt">Print</button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Summary Counters & KPIs
+        async function loadSummary() {
+            try {
+                const response = await fetch('/api/reports/summary');
+                const result = await response.json();
+                if (result.success) {
+                    totalRecordsEl.textContent = Number(result.data.total_records || 0).toLocaleString();
+                    totalFinesEl.textContent = formatPHP(result.data.total_fines || 0);
+                    flaggedRecordsEl.textContent = Number(result.data.flagged_records || 0).toLocaleString();
+                }
+            } catch (err) {
+                totalRecordsEl.textContent = allRecords.length;
+            }
+            updateSummaryCounters();
+        }
+
+        function updateSummaryCounters() {
+            const unpaid = allRecords.filter(r => !r.payment_status || r.payment_status.includes('Unpaid') || r.payment_status.includes('Unsettled')).length;
+            unsettledRecordsEl.textContent = unpaid.toLocaleString();
+        }
+
+        // Full Record Modal Actions
+        function openRecordModal(id) {
+            const rec = allRecords.find(r => r.id === id);
+            if (!rec) return;
+
+            currentModalRecordId = id;
+            document.getElementById('modalTicketTitle').textContent = `Citation: ${rec.ticket_number || 'PNP-RECORD'}`;
+            document.getElementById('mDriverName').textContent = rec.driver_name;
+            
+            let licenseText = rec.license_number;
+            if (rec.license_number && rec.license_number.toUpperCase().includes('UNLICENSED')) {
+                licenseText = `Unlicensed (${rec.id_type || 'ID'}: ${rec.id_number || 'N/A'})`;
+            }
+            document.getElementById('mLicenseNo').textContent = licenseText;
+            document.getElementById('mPlateVehicle').textContent = `${rec.plate_number} (${rec.vehicle_type || 'Private/Sedan'})`;
+            document.getElementById('mDisposition').textContent = `${rec.vehicle_disposition || 'Released'}${rec.impound_receipt_no ? ' [Slip: ' + rec.impound_receipt_no + ']' : ''}`;
+            document.getElementById('mCheckpointPost').textContent = rec.checkpoint_post || 'Boundary Post';
+            document.getElementById('mShift').textContent = rec.shift_info || 'Regular Shift';
+            document.getElementById('mDate').textContent = rec.date_recorded;
+            document.getElementById('mOfficer').textContent = rec.officer_id;
+            document.getElementById('mViolations').textContent = rec.violation_type;
+            document.getElementById('mFine').textContent = formatPHP(rec.fine_amount);
+            document.getElementById('mStatusSelect').value = rec.payment_status || 'Unsettled / Unpaid';
+
+            const evidenceBox = document.getElementById('mEvidenceContainer');
+            const evidenceImg = document.getElementById('mEvidenceImg');
+            if (rec.evidence_image) {
+                evidenceImg.src = rec.evidence_image;
+                evidenceBox.style.display = 'block';
+            } else {
+                evidenceBox.style.display = 'none';
+            }
+
+            recordModal.classList.add('open');
+        }
+
+        function closeRecordModal() {
+            recordModal.classList.remove('open');
+            currentModalRecordId = null;
+        }
+
+        function handleModalOverlayClick(e) {
+            if (e.target === recordModal) closeRecordModal();
+        }
+
+        async function saveStatusFromModal() {
+            if (!currentModalRecordId) return;
+            const newStatus = document.getElementById('mStatusSelect').value;
+
+            try {
+                const response = await fetch(`/api/violations/${currentModalRecordId}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ payment_status: newStatus })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    const target = allRecords.find(r => r.id === currentModalRecordId);
+                    if (target) target.payment_status = newStatus;
+                    applyFiltersAndRender();
+                    closeRecordModal();
+                    showAlert(`Status updated to ${newStatus}`, 'success');
+                } else {
+                    showAlert(result.message || 'Failed to update payment status.', 'danger');
+                }
+            } catch (err) {
+                showAlert('Network error updating status.', 'danger');
+            }
+        }
+
+        // Thermal Bluetooth POS Printing (58mm / 80mm)
+        function populateThermalReceipt(rec) {
+            document.getElementById('rcptTicket').textContent = rec.ticket_number || 'PNP-00000000';
+            document.getElementById('rcptDateTime').textContent = rec.date_recorded || new Date().toISOString().replace('T', ' ').substring(0, 16);
+            document.getElementById('rcptShift').textContent = rec.shift_info || sessionShift.value;
+            document.getElementById('rcptPost').textContent = rec.checkpoint_post || sessionPost.value;
+            document.getElementById('rcptDriver').textContent = (rec.driver_name || '').toUpperCase();
+            
+            let lic = rec.license_number;
+            if (lic && lic.toUpperCase().includes('UNLICENSED')) {
+                lic = `UNLICENSED (${rec.id_type || 'ID'}: ${rec.id_number || 'N/A'})`;
+            }
+            document.getElementById('rcptLicense').textContent = lic || '—';
+            document.getElementById('rcptPlate').textContent = (rec.plate_number || '').toUpperCase();
+            document.getElementById('rcptVehType').textContent = rec.vehicle_type || 'Private/Sedan (UV)';
+            document.getElementById('rcptDisposition').textContent = rec.vehicle_disposition || 'Released with Citation';
+
+            const impoundRow = document.getElementById('rcptImpoundRow');
+            if (rec.vehicle_disposition === 'Impounded' && rec.impound_receipt_no) {
+                document.getElementById('rcptImpoundNo').textContent = rec.impound_receipt_no;
+                impoundRow.style.display = 'flex';
+            } else {
+                impoundRow.style.display = 'none';
+            }
+
+            // Populate itemized violations
+            const listContainer = document.getElementById('rcptViolationsList');
+            listContainer.innerHTML = '';
+            const violations = (rec.violation_type || '').split(',').map(v => v.trim()).filter(Boolean);
+            violations.forEach(v => {
+                const fee = OFFENSE_SCHEDULE[v] ? formatPHP(OFFENSE_SCHEDULE[v]) : '—';
+                const div = document.createElement('div');
+                div.className = 'receipt-row';
+                div.innerHTML = `<span>* ${escapeHtml(v)}</span><span>${fee}</span>`;
+                listContainer.appendChild(div);
+            });
+
+            document.getElementById('rcptTotalFine').textContent = formatPHP(rec.fine_amount);
+            document.getElementById('rcptOfficer').textContent = rec.officer_id || officerIdInput.value;
+        }
+
+        function printReceiptForRecord(id) {
+            const rec = allRecords.find(r => r.id === id);
+            if (!rec) return;
+            populateThermalReceipt(rec);
+            window.print();
+        }
+
+        function printReceiptFromModal() {
+            if (!currentModalRecordId) return;
+            printReceiptForRecord(currentModalRecordId);
+        }
+
+        // Export Filtered CSV
+        function exportVisibleRecords() {
+            if (!visibleRecords.length) {
+                showAlert('No records to export in the current view.', 'danger');
+                return;
+            }
+
+            const columns = [
+                'ticket_number', 'date_recorded', 'shift_info', 'checkpoint_post',
+                'driver_name', 'license_number', 'id_type', 'id_number',
+                'plate_number', 'vehicle_type', 'vehicle_disposition', 'impound_receipt_no',
+                'violation_type', 'fine_amount', 'payment_status', 'screening_status', 'officer_id'
+            ];
+
+            const headerRow = columns.join(',');
+            const rows = visibleRecords.map(rec => columns.map(c => `"${String(rec[c] ?? '').replace(/"/g, '""')}"`).join(','));
+            const csvContent = [headerRow, ...rows].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `pnp-cvprms-citations-${new Date().toISOString().slice(0, 10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Load Station Configuration from Backend
         async function loadConfig() {
             try {
                 const response = await fetch('/api/config');
                 const result = await response.json();
                 if (result.success && result.data.station_name) {
-                    document.getElementById('stationName').textContent = `${result.data.station_name} | Local Operational Prototype`;
+                    document.getElementById('stationNameDisplay').textContent = `${result.data.station_name} | Checkpoint Violation & Records System`;
+                    document.getElementById('rcptStation').textContent = result.data.station_name;
                 }
-            } catch (err) {
-            }
+            } catch (err) {}
         }
 
+        // Initialization
         handleLicenseConditionalState();
         updateFineTotal();
-        updateScreeningResult('clear', ['No screening alerts found in local rule set.']);
         loadConfig();
         loadAllViolations();
-        loadSummary();
     </script>
 </body>
 </html>

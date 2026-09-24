@@ -75,27 +75,35 @@ function assessScreening({ licenseNumber, plateNumber, driverName, idNumber }) {
     const normalizedPlate = String(plateNumber || '').trim().toUpperCase();
     const normalizedDriver = String(driverName || '').trim();
 
-    if (normalizedLicense && !normalizedLicense.includes('UNLICENSED') && SCREENING_BLACKLIST.license_numbers.includes(normalizedLicense)) {
-        flags.push('License record matches a flagged or expired local record.');
-    }
+    let isAlarm = false;
 
     if (SCREENING_BLACKLIST.plate_numbers.includes(normalizedPlate)) {
-        flags.push('Plate number matches a blacklisted or stolen local vehicle record.');
+        flags.push('Vehicle plate matches an active HPG Alarm / Stolen Vehicle record.');
+        isAlarm = true;
     }
 
     if (SCREENING_BLACKLIST.drivers.includes(normalizedDriver)) {
-        flags.push('Driver name appears in the local wanted/flagged watchlist.');
+        flags.push('Driver matches an active National Police Watchlist / Court Warrant.');
+        isAlarm = true;
+    }
+
+    if (normalizedLicense && !normalizedLicense.includes('UNLICENSED') && SCREENING_BLACKLIST.license_numbers.includes(normalizedLicense)) {
+        flags.push('License record matches a flagged suspension or repeat offender record.');
     }
 
     if (!flags.length && ((!normalizedLicense.includes('UNLICENSED') && normalizedLicense.includes('EXPIRED')) || normalizedPlate.includes('EXPIRED'))) {
-        flags.push('License or plate data indicates expiry-related review.');
+        flags.push('License or plate indicates expired status requiring verification.');
     }
 
     if (flags.length === 0) {
-        return { status: 'clear', flags: ['No screening alerts found in local rule set.'] };
+        return { status: 'clear', status_label: 'CLEAR', flags: ['No screening alerts found in local rule set.'] };
     }
 
-    return { status: flags.length > 1 ? 'warning' : 'warning', flags };
+    if (isAlarm) {
+        return { status: 'alarm', status_label: 'ALARM / HPG WANTED', flags };
+    }
+
+    return { status: 'warning', status_label: 'WARNING / REPEAT OFFENDER', flags };
 }
 
 // ==========================================
@@ -140,6 +148,14 @@ function initializeSchema() {
             id_type TEXT,
             id_number TEXT,
             plate_number TEXT NOT NULL,
+            vehicle_type TEXT DEFAULT 'Private/Sedan (UV)',
+            vehicle_disposition TEXT DEFAULT 'Released with Citation',
+            impound_receipt_no TEXT,
+            shift_info TEXT,
+            checkpoint_post TEXT,
+            payment_status TEXT DEFAULT 'Unsettled / Unpaid',
+            evidence_image TEXT,
+            fine_override INTEGER DEFAULT 0,
             violation_type TEXT NOT NULL,
             fine_amount REAL NOT NULL,
             officer_id TEXT NOT NULL,
@@ -166,7 +182,15 @@ function initializeSchema() {
                 { name: 'ticket_number', sql: "ALTER TABLE violations ADD COLUMN ticket_number TEXT" },
                 { name: 'screening_status', sql: "ALTER TABLE violations ADD COLUMN screening_status TEXT DEFAULT 'clear'" },
                 { name: 'id_type', sql: "ALTER TABLE violations ADD COLUMN id_type TEXT" },
-                { name: 'id_number', sql: "ALTER TABLE violations ADD COLUMN id_number TEXT" }
+                { name: 'id_number', sql: "ALTER TABLE violations ADD COLUMN id_number TEXT" },
+                { name: 'vehicle_type', sql: "ALTER TABLE violations ADD COLUMN vehicle_type TEXT DEFAULT 'Private/Sedan (UV)'" },
+                { name: 'vehicle_disposition', sql: "ALTER TABLE violations ADD COLUMN vehicle_disposition TEXT DEFAULT 'Released with Citation'" },
+                { name: 'impound_receipt_no', sql: "ALTER TABLE violations ADD COLUMN impound_receipt_no TEXT" },
+                { name: 'shift_info', sql: "ALTER TABLE violations ADD COLUMN shift_info TEXT" },
+                { name: 'checkpoint_post', sql: "ALTER TABLE violations ADD COLUMN checkpoint_post TEXT" },
+                { name: 'payment_status', sql: "ALTER TABLE violations ADD COLUMN payment_status TEXT DEFAULT 'Unsettled / Unpaid'" },
+                { name: 'evidence_image', sql: "ALTER TABLE violations ADD COLUMN evidence_image TEXT" },
+                { name: 'fine_override', sql: "ALTER TABLE violations ADD COLUMN fine_override INTEGER DEFAULT 0" }
             ];
 
             const pending = migrationSteps.filter((step) => !existingColumns.has(step.name));
@@ -239,9 +263,19 @@ function validateViolationPayload(data) {
         errors.push('Fine amount must be a positive numerical value.');
     }
 
-    const totalExpected = calculateViolationTotal(violationList);
-    if (Number.isFinite(fine) && Math.round(fine) !== Math.round(totalExpected)) {
-        errors.push(`Matching fine total required for selected violations: ₱${totalExpected.toFixed(2)}.`);
+    const isFineOverride = Boolean(data.fine_override);
+    if (!isFineOverride) {
+        const totalExpected = calculateViolationTotal(violationList);
+        if (Number.isFinite(fine) && Math.round(fine) !== Math.round(totalExpected)) {
+            errors.push(`Matching fine total required for selected violations: ₱${totalExpected.toFixed(2)}.`);
+        }
+    }
+
+    // Vehicle disposition check
+    if (data.vehicle_disposition === 'Impounded') {
+        if (!data.impound_receipt_no || typeof data.impound_receipt_no !== 'string' || data.impound_receipt_no.trim() === '') {
+            errors.push('Impound Receipt / Towing Slip Number is required when vehicle disposition is Impounded.');
+        }
     }
 
     return {
@@ -295,7 +329,7 @@ app.get('/api/reports/summary', (req, res) => {
         SELECT 
             COUNT(*) AS total_records,
             COALESCE(SUM(fine_amount), 0) AS total_fines,
-            COUNT(CASE WHEN screening_status = 'warning' THEN 1 END) AS flagged_records
+            COUNT(CASE WHEN screening_status IN ('warning', 'alarm') THEN 1 END) AS flagged_records
         FROM violations
     `;
 
@@ -316,7 +350,7 @@ app.get('/api/reports/summary', (req, res) => {
     });
 });
 
-// POST /api/violations - Record a new violation
+// POST /api/violations - Record a new violation with operational checkpoint metadata
 app.post('/api/violations', (req, res) => {
     try {
         const validation = validateViolationPayload(req.body);
@@ -324,7 +358,23 @@ app.post('/api/violations', (req, res) => {
             return res.status(422).json({ success: false, errors: validation.errors });
         }
 
-        const { driver_name, license_number, id_type, id_number, plate_number, officer_id } = req.body;
+        const {
+            driver_name,
+            license_number,
+            id_type,
+            id_number,
+            plate_number,
+            vehicle_type,
+            vehicle_disposition,
+            impound_receipt_no,
+            shift_info,
+            checkpoint_post,
+            payment_status,
+            evidence_image,
+            fine_override,
+            officer_id
+        } = req.body;
+
         const violationList = normalizeViolations(req.body.violation_type || req.body.violation_types);
         const fineAmount = Number(req.body.fine_amount);
         const date_recorded = new Date().toISOString().replace('T', ' ').substring(0, 19);
@@ -338,9 +388,11 @@ app.post('/api/violations', (req, res) => {
 
         const insertSql = `
             INSERT INTO violations (
-                driver_name, license_number, id_type, id_number, plate_number, violation_type, fine_amount,
-                officer_id, date_recorded, ticket_number, screening_status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                driver_name, license_number, id_type, id_number, plate_number,
+                vehicle_type, vehicle_disposition, impound_receipt_no,
+                shift_info, checkpoint_post, payment_status, evidence_image, fine_override,
+                violation_type, fine_amount, officer_id, date_recorded, ticket_number, screening_status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         const params = [
@@ -349,6 +401,14 @@ app.post('/api/violations', (req, res) => {
             id_type ? String(id_type).trim() : null,
             id_number ? String(id_number).trim().toUpperCase() : null,
             plate_number.trim().toUpperCase(),
+            vehicle_type ? String(vehicle_type).trim() : 'Private/Sedan (UV)',
+            vehicle_disposition ? String(vehicle_disposition).trim() : 'Released with Citation',
+            impound_receipt_no ? String(impound_receipt_no).trim() : null,
+            shift_info ? String(shift_info).trim() : null,
+            checkpoint_post ? String(checkpoint_post).trim() : null,
+            payment_status ? String(payment_status).trim() : 'Unsettled / Unpaid',
+            evidence_image ? String(evidence_image) : null,
+            fine_override ? 1 : 0,
             violationList.join(', '),
             fineAmount,
             officer_id.trim(),
@@ -368,14 +428,46 @@ app.post('/api/violations', (req, res) => {
                 recordId: this.lastID,
                 ticket_number: tickets,
                 screening_status: screening.status,
+                screening_status_label: screening.status_label,
                 screening_flags: screening.flags,
-                total_fine: fineAmount
+                total_fine: fineAmount,
+                payment_status: payment_status || 'Unsettled / Unpaid'
             });
         });
     } catch (unexpectedError) {
         console.error('[FATAL ERROR] Unexpected exception in violation handler:', unexpectedError);
         return res.status(500).json({ success: false, message: 'An internal server error occurred.' });
     }
+});
+
+// PATCH /api/violations/:id/status - Update violation payment/settlement status
+app.patch('/api/violations/:id/status', (req, res) => {
+    const violationId = req.params.id;
+    const { payment_status } = req.body;
+
+    const allowedStatuses = ['Unsettled / Unpaid', 'Settled / Paid at Treasury', 'Voided / Contested'];
+    if (!payment_status || !allowedStatuses.includes(payment_status)) {
+        return res.status(400).json({
+            success: false,
+            message: `Invalid status. Must be one of: ${allowedStatuses.join(', ')}`
+        });
+    }
+
+    const sql = `UPDATE violations SET payment_status = ? WHERE id = ?`;
+    db.run(sql, [payment_status, violationId], function(err) {
+        if (err) {
+            console.error('[ERROR] Failed to update violation status:', err.message);
+            return res.status(500).json({ success: false, message: 'Database error updating status.' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ success: false, message: 'Violation record not found.' });
+        }
+        return res.status(200).json({
+            success: true,
+            message: `Status updated to ${payment_status}`,
+            payment_status
+        });
+    });
 });
 
 // ==========================================
