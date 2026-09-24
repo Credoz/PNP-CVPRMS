@@ -776,28 +776,46 @@
         }
 
         @media print {
+            @page {
+                margin: 8mm auto;
+                size: auto;
+            }
+            html, body {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+            }
+            body {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: flex-start !important;
+            }
             body * {
                 visibility: hidden !important;
+            }
+            body > :not(#thermalReceiptArea),
+            .no-print {
+                display: none !important;
             }
             #thermalReceiptArea, #thermalReceiptArea * {
                 visibility: visible !important;
             }
             #thermalReceiptArea {
                 display: block !important;
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 72mm; /* Standard width for 58mm / 80mm printers */
-                margin: 0;
-                padding: 4mm;
+                position: relative !important;
+                left: auto !important;
+                top: auto !important;
+                margin: 6mm auto !important;
+                width: 72mm !important; /* Standard width for 58mm / 80mm printers */
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                padding: 4mm !important;
                 font-family: 'Courier New', Courier, monospace !important;
                 font-size: 11px !important;
                 line-height: 1.25 !important;
                 color: #000000 !important;
                 background: #ffffff !important;
-            }
-            .no-print {
-                display: none !important;
             }
         }
 
@@ -985,7 +1003,7 @@
                     <div class="field-row">
                         <div class="form-group">
                             <label for="plate_number">Plate Number <span class="required-star">*</span></label>
-                            <input type="text" id="plate_number" name="plate_number" placeholder="e.g. ABC 1234" maxlength="8" required>
+                            <input type="text" id="plate_number" name="plate_number" placeholder="e.g. ABC 1234" maxlength="16" required>
                         </div>
                         <div class="form-group">
                             <label for="vehicle_type">Vehicle Classification <span class="required-star">*</span></label>
@@ -1342,6 +1360,18 @@
             });
         }
 
+        // Local Date-Time Formatter (YYYY-MM-DD HH:mm:ss)
+        function getLocalDateTimeString(d = new Date()) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const year = d.getFullYear();
+            const month = pad(d.getMonth() + 1);
+            const day = pad(d.getDate());
+            const hours = pad(d.getHours());
+            const minutes = pad(d.getMinutes());
+            const seconds = pad(d.getSeconds());
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
         // Live Clock in Session Bar
         function updateClock() {
             const now = new Date();
@@ -1371,6 +1401,12 @@
         }
         sessionOfficer.addEventListener('change', syncOfficerSession);
         syncOfficerSession();
+
+        sessionShift.addEventListener('change', () => {
+            if (activeDateFilter === 'shift') {
+                applyFiltersAndRender();
+            }
+        });
 
         // Input Masking: Plate Number (Uppercase and format)
         plateInput.addEventListener('input', (e) => {
@@ -1493,24 +1529,56 @@
         document.getElementById('driver_name').addEventListener('blur', evaluateLocalScreening);
         licenseInput.addEventListener('blur', evaluateLocalScreening);
 
+        // Client-Side Canvas Image Downscaler (keeps photos under ~200KB for rapid storage)
+        function processEvidenceImage(file, callback) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const maxDim = 1200;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxDim || h > maxDim) {
+                        if (w > h) {
+                            h = Math.round((h * maxDim) / w);
+                            w = maxDim;
+                        } else {
+                            w = Math.round((w * maxDim) / h);
+                            h = maxDim;
+                        }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const compressed = canvas.toDataURL('image/jpeg', 0.82);
+                    callback(compressed);
+                };
+                img.onerror = () => callback(e.target.result);
+                img.src = e.target.result;
+            };
+            reader.onerror = () => showAlert('Failed to read image file.', 'danger');
+            reader.readAsDataURL(file);
+        }
+
         // Evidence & Photo Upload with Thumbnail Preview
         evidenceFileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    base64EvidenceImage = event.target.result;
+                processEvidenceImage(file, (processedDataUrl) => {
+                    base64EvidenceImage = processedDataUrl;
                     evidenceThumb.src = base64EvidenceImage;
                     evidenceThumb.style.display = 'block';
                     removePhotoBtn.style.display = 'inline-block';
-                };
-                reader.readAsDataURL(file);
+                });
             }
         });
 
         removePhotoBtn.addEventListener('click', () => {
             evidenceFileInput.value = '';
             base64EvidenceImage = null;
+            evidenceThumb.src = '';
             evidenceThumb.style.display = 'none';
             removePhotoBtn.style.display = 'none';
         });
@@ -1608,13 +1676,14 @@
 
                     // Prepare receipt for printing immediately if desired
                     payload.ticket_number = result.ticket_number;
-                    payload.date_recorded = new Date().toISOString().replace('T', ' ').substring(0, 19);
+                    payload.date_recorded = result.date_recorded || getLocalDateTimeString();
                     populateThermalReceipt(payload);
 
                     // Reset form fields
                     form.reset();
                     rememberedLicense = '';
                     base64EvidenceImage = null;
+                    evidenceThumb.src = '';
                     evidenceThumb.style.display = 'none';
                     removePhotoBtn.style.display = 'none';
                     fineOverrideToggle.checked = false;
@@ -1676,6 +1745,13 @@
             }
         }
 
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                executeSearch();
+            }
+        });
+
         function resetSearchAndFilters() {
             searchInput.value = '';
             activeDateFilter = 'all';
@@ -1705,12 +1781,16 @@
 
         function applyFiltersAndRender() {
             const now = new Date();
-            const todayStr = now.toISOString().slice(0, 10);
+            const localY = now.getFullYear();
+            const localM = String(now.getMonth() + 1).padStart(2, '0');
+            const localD = String(now.getDate()).padStart(2, '0');
+            const todayStr = `${localY}-${localM}-${localD}`;
             const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
             visibleRecords = allRecords.filter(record => {
                 const recordDateStr = (record.date_recorded || '').slice(0, 10);
-                const recordDate = new Date(record.date_recorded || '');
+                const safeDateStr = String(record.date_recorded || '').replace(' ', 'T');
+                const recordDate = new Date(safeDateStr);
 
                 // Date Filtering
                 if (activeDateFilter === 'today' && recordDateStr !== todayStr) return false;
@@ -1810,15 +1890,20 @@
             try {
                 const response = await fetch('/api/reports/summary');
                 const result = await response.json();
-                if (result.success) {
+                if (result.success && result.data) {
                     totalRecordsEl.textContent = Number(result.data.total_records || 0).toLocaleString();
                     totalFinesEl.textContent = formatPHP(result.data.total_fines || 0);
                     flaggedRecordsEl.textContent = Number(result.data.flagged_records || 0).toLocaleString();
+                    if (result.data.unsettled_records !== undefined) {
+                        unsettledRecordsEl.textContent = Number(result.data.unsettled_records || 0).toLocaleString();
+                    } else {
+                        updateSummaryCounters();
+                    }
                 }
             } catch (err) {
                 totalRecordsEl.textContent = allRecords.length;
+                updateSummaryCounters();
             }
-            updateSummaryCounters();
         }
 
         function updateSummaryCounters() {
@@ -1856,6 +1941,7 @@
                 evidenceImg.src = rec.evidence_image;
                 evidenceBox.style.display = 'block';
             } else {
+                evidenceImg.src = '';
                 evidenceBox.style.display = 'none';
             }
 
@@ -1864,6 +1950,8 @@
 
         function closeRecordModal() {
             recordModal.classList.remove('open');
+            const evidenceImg = document.getElementById('mEvidenceImg');
+            if (evidenceImg) evidenceImg.src = '';
             currentModalRecordId = null;
         }
 
@@ -1886,6 +1974,7 @@
                     const target = allRecords.find(r => r.id === currentModalRecordId);
                     if (target) target.payment_status = newStatus;
                     applyFiltersAndRender();
+                    loadSummary();
                     closeRecordModal();
                     showAlert(`Status updated to ${newStatus}`, 'success');
                 } else {
@@ -1899,7 +1988,7 @@
         // Thermal Bluetooth POS Printing (58mm / 80mm)
         function populateThermalReceipt(rec) {
             document.getElementById('rcptTicket').textContent = rec.ticket_number || 'PNP-00000000';
-            document.getElementById('rcptDateTime').textContent = rec.date_recorded || new Date().toISOString().replace('T', ' ').substring(0, 16);
+            document.getElementById('rcptDateTime').textContent = rec.date_recorded || getLocalDateTimeString().substring(0, 16);
             document.getElementById('rcptShift').textContent = rec.shift_info || sessionShift.value;
             document.getElementById('rcptPost').textContent = rec.checkpoint_post || sessionPost.value;
             document.getElementById('rcptDriver').textContent = (rec.driver_name || '').toUpperCase();
@@ -1949,7 +2038,7 @@
             printReceiptForRecord(currentModalRecordId);
         }
 
-        // Export Filtered CSV
+        // Export Filtered CSV (with Excel UTF-8 BOM)
         function exportVisibleRecords() {
             if (!visibleRecords.length) {
                 showAlert('No records to export in the current view.', 'danger');
@@ -1967,10 +2056,15 @@
             const rows = visibleRecords.map(rec => columns.map(c => `"${String(rec[c] ?? '').replace(/"/g, '""')}"`).join(','));
             const csvContent = [headerRow, ...rows].join('\n');
 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            // Prepend UTF-8 BOM (\uFEFF) for proper Excel Windows rendering of Currency/Accents
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `pnp-cvprms-citations-${new Date().toISOString().slice(0, 10)}.csv`;
+            const now = new Date();
+            const localY = now.getFullYear();
+            const localM = String(now.getMonth() + 1).padStart(2, '0');
+            const localD = String(now.getDate()).padStart(2, '0');
+            link.download = `pnp-cvprms-citations-${localY}-${localM}-${localD}.csv`;
             link.click();
             URL.revokeObjectURL(link.href);
         }

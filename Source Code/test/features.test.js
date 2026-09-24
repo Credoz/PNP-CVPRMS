@@ -222,3 +222,131 @@ test('PATCH /api/violations/:id/status updates settlement state and rejects inva
   }
 });
 
+test('GET /api/violations/search finds records by ticket number and officer ID', async () => {
+  const http = require('http');
+  const { app, db } = require('../server.js');
+
+  const server = app.listen(0);
+  const port = server.address().port;
+
+  try {
+    const testTicket = 'PNP-TEST-TKT-9999';
+    const testOfficer = 'PNP-OFFICER-9988';
+    const insertId = await new Promise((resolve, reject) => {
+      db.run(
+        `INSERT INTO violations (ticket_number, driver_name, license_number, plate_number, violation_type, fine_amount, officer_id, date_recorded)
+         VALUES (?, 'Search Test Driver', 'N01-99-887766', 'SCH-9999', 'Over-speeding', 1200, ?, '2026-09-24 10:00:00')`,
+        [testTicket, testOfficer],
+        function(err) {
+          if (err) reject(err);
+          else resolve(this.lastID);
+        }
+      );
+    });
+
+    function getSearch(query) {
+      return new Promise((resolve, reject) => {
+        http.get(`http://localhost:${port}/api/violations/search?q=${encodeURIComponent(query)}`, (res) => {
+          let data = '';
+          res.on('data', chunk => data += chunk);
+          res.on('end', () => resolve({ status: res.statusCode, body: JSON.parse(data) }));
+        }).on('error', reject);
+      });
+    }
+
+    // Search by ticket number
+    const resTicket = await getSearch('TKT-9999');
+    assert.equal(resTicket.status, 200);
+    assert.ok(resTicket.body.data.some(r => r.ticket_number === testTicket));
+
+    // Search by officer ID
+    const resOfficer = await getSearch('OFFICER-9988');
+    assert.equal(resOfficer.status, 200);
+    assert.ok(resOfficer.body.data.some(r => r.officer_id === testOfficer));
+
+    // Cleanup
+    await new Promise((resolve) => db.run('DELETE FROM violations WHERE id = ?', [insertId], resolve));
+  } finally {
+    server.close();
+  }
+});
+
+test('GET /api/reports/summary includes unsettled_records count', async () => {
+  const http = require('http');
+  const { app, db } = require('../server.js');
+
+  const server = app.listen(0);
+  const port = server.address().port;
+
+  try {
+    const res = await new Promise((resolve, reject) => {
+      http.get(`http://localhost:${port}/api/reports/summary`, (r) => {
+        let data = '';
+        r.on('data', chunk => data += chunk);
+        r.on('end', () => resolve({ status: r.statusCode, body: JSON.parse(data) }));
+      }).on('error', reject);
+    });
+
+    assert.equal(res.status, 200);
+    assert.equal(res.body.success, true);
+    assert.ok(typeof res.body.data.unsettled_records === 'number');
+    assert.ok(typeof res.body.data.total_records === 'number');
+    assert.ok(typeof res.body.data.total_fines === 'number');
+    assert.ok(typeof res.body.data.flagged_records === 'number');
+  } finally {
+    server.close();
+  }
+});
+
+test('POST /api/violations accepts large evidence payload (>100KB) without 413 error', async () => {
+  const http = require('http');
+  const { app, db } = require('../server.js');
+
+  const server = app.listen(0);
+  const port = server.address().port;
+
+  try {
+    // Generate ~300KB dummy base64 string
+    const largeDummyData = 'data:image/jpeg;base64,' + 'A'.repeat(300 * 1024);
+    const payload = JSON.stringify({
+      driver_name: 'Photo Test Driver',
+      license_number: 'N01-44-556677',
+      plate_number: 'PHT-1234',
+      violation_type: 'No Helmet / Seatbelt',
+      fine_amount: 1000,
+      officer_id: 'PNP-TEST-IMG',
+      evidence_image: largeDummyData
+    });
+
+    const res = await new Promise((resolve, reject) => {
+      const req = http.request({
+        hostname: 'localhost',
+        port: port,
+        path: '/api/violations',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload)
+        }
+      }, (r) => {
+        let data = '';
+        r.on('data', chunk => data += chunk);
+        r.on('end', () => resolve({ status: r.statusCode, body: JSON.parse(data) }));
+      });
+      req.on('error', reject);
+      req.write(payload);
+      req.end();
+    });
+
+    assert.equal(res.status, 201);
+    assert.equal(res.body.success, true);
+    assert.ok(res.body.recordId);
+
+    // Cleanup
+    await new Promise((resolve) => db.run('DELETE FROM violations WHERE id = ?', [res.body.recordId], resolve));
+  } finally {
+    server.close();
+  }
+});
+
+

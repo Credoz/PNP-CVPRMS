@@ -69,6 +69,17 @@ function generateTicketNumber() {
     return `PNP-${timeStamp}-${suffix}`;
 }
 
+function getLocalDateTimeString(d = new Date()) {
+    const pad = (n) => String(n).padStart(2, '0');
+    const year = d.getFullYear();
+    const month = pad(d.getMonth() + 1);
+    const day = pad(d.getDate());
+    const hours = pad(d.getHours());
+    const minutes = pad(d.getMinutes());
+    const seconds = pad(d.getSeconds());
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 function assessScreening({ licenseNumber, plateNumber, driverName, idNumber }) {
     const flags = [];
     const normalizedLicense = String(licenseNumber || '').trim().toUpperCase();
@@ -109,8 +120,8 @@ function assessScreening({ licenseNumber, plateNumber, driverName, idNumber }) {
 // ==========================================
 // MIDDLEWARE CONFIGURATION
 // ==========================================
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
@@ -130,7 +141,8 @@ app.get('/api/config', (req, res) => {
 // ==========================================
 // DATABASE INITIALIZATION
 // ==========================================
-const db = new sqlite3.Database('./pnp_checkpoint.db', (err) => {
+const dbPath = path.join(__dirname, 'pnp_checkpoint.db');
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('[DATABASE ERROR] Failed to connect to SQLite database:', err.message);
     } else {
@@ -263,10 +275,10 @@ function validateViolationPayload(data) {
         errors.push('Fine amount must be a positive numerical value.');
     }
 
-    const isFineOverride = Boolean(data.fine_override);
+    const isFineOverride = data.fine_override === 1 || data.fine_override === '1' || data.fine_override === true || data.fine_override === 'true';
     if (!isFineOverride) {
         const totalExpected = calculateViolationTotal(violationList);
-        if (Number.isFinite(fine) && Math.round(fine) !== Math.round(totalExpected)) {
+        if (Number.isFinite(fine) && Math.abs(fine - totalExpected) > 0.05) {
             errors.push(`Matching fine total required for selected violations: ₱${totalExpected.toFixed(2)}.`);
         }
     }
@@ -300,7 +312,7 @@ app.get('/api/violations', (req, res) => {
     });
 });
 
-// GET /api/violations/search - Search violations by license, plate, driver, or alternative ID
+// GET /api/violations/search - Search violations by ticket, license, plate, driver, ID, officer, or violation
 app.get('/api/violations/search', (req, res) => {
     const searchTerm = req.query.q;
 
@@ -311,11 +323,19 @@ app.get('/api/violations/search', (req, res) => {
     const queryPattern = `%${searchTerm.trim()}%`;
     const sql = `
         SELECT * FROM violations 
-        WHERE license_number LIKE ? OR plate_number LIKE ? OR driver_name LIKE ? OR id_number LIKE ? OR id_type LIKE ?
+        WHERE ticket_number LIKE ?
+           OR license_number LIKE ?
+           OR plate_number LIKE ?
+           OR driver_name LIKE ?
+           OR id_number LIKE ?
+           OR id_type LIKE ?
+           OR officer_id LIKE ?
+           OR violation_type LIKE ?
         ORDER BY id DESC
     `;
 
-    db.all(sql, [queryPattern, queryPattern, queryPattern, queryPattern, queryPattern], (err, rows) => {
+    const searchParams = Array(8).fill(queryPattern);
+    db.all(sql, searchParams, (err, rows) => {
         if (err) {
             console.error('[ERROR] Search query failed:', err.message);
             return res.status(500).json({ success: false, message: 'Database search query failed.' });
@@ -329,7 +349,8 @@ app.get('/api/reports/summary', (req, res) => {
         SELECT 
             COUNT(*) AS total_records,
             COALESCE(SUM(fine_amount), 0) AS total_fines,
-            COUNT(CASE WHEN screening_status IN ('warning', 'alarm') THEN 1 END) AS flagged_records
+            COUNT(CASE WHEN screening_status IN ('warning', 'alarm') THEN 1 END) AS flagged_records,
+            COUNT(CASE WHEN payment_status IS NULL OR payment_status NOT LIKE '%Paid%' THEN 1 END) AS unsettled_records
         FROM violations
     `;
 
@@ -344,7 +365,8 @@ app.get('/api/reports/summary', (req, res) => {
             data: {
                 total_records: Number(summary.total_records || 0),
                 total_fines: Number(summary.total_fines || 0),
-                flagged_records: Number(summary.flagged_records || 0)
+                flagged_records: Number(summary.flagged_records || 0),
+                unsettled_records: Number(summary.unsettled_records || 0)
             }
         });
     });
@@ -377,7 +399,7 @@ app.post('/api/violations', (req, res) => {
 
         const violationList = normalizeViolations(req.body.violation_type || req.body.violation_types);
         const fineAmount = Number(req.body.fine_amount);
-        const date_recorded = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        const date_recorded = getLocalDateTimeString();
         const tickets = generateTicketNumber();
         const screening = assessScreening({
             licenseNumber: license_number,
@@ -431,7 +453,8 @@ app.post('/api/violations', (req, res) => {
                 screening_status_label: screening.status_label,
                 screening_flags: screening.flags,
                 total_fine: fineAmount,
-                payment_status: payment_status || 'Unsettled / Unpaid'
+                payment_status: payment_status || 'Unsettled / Unpaid',
+                date_recorded
             });
         });
     } catch (unexpectedError) {
@@ -442,7 +465,10 @@ app.post('/api/violations', (req, res) => {
 
 // PATCH /api/violations/:id/status - Update violation payment/settlement status
 app.patch('/api/violations/:id/status', (req, res) => {
-    const violationId = req.params.id;
+    const violationId = parseInt(req.params.id, 10);
+    if (isNaN(violationId) || violationId <= 0) {
+        return res.status(400).json({ success: false, message: 'Invalid violation ID parameter.' });
+    }
     const { payment_status } = req.body;
 
     const allowedStatuses = ['Unsettled / Unpaid', 'Settled / Paid at Treasury', 'Voided / Contested'];
@@ -514,5 +540,6 @@ module.exports = {
     generateTicketNumber,
     assessScreening,
     normalizeViolations,
-    validateViolationPayload
+    validateViolationPayload,
+    getLocalDateTimeString
 };
