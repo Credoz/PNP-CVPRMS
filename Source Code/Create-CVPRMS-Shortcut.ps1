@@ -177,3 +177,16 @@ if ($selectedIconPath) {
     Write-Host " Icon:     $selectedIconPath" -ForegroundColor White
 }
 Write-Host "=================================================" -ForegroundColor Green
+
+# Check if running directly from a removable USB flash drive
+$driveLetter = [System.IO.Path]::GetPathRoot($projectRoot).TrimEnd('\')
+if ($driveLetter) {
+    $driveInfo = Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$driveLetter'" -ErrorAction SilentlyContinue
+    if ($driveInfo -and $driveInfo.DriveType -eq 2) {
+        Write-Host ""
+        Write-Warning "NOTICE: You created a shortcut pointing to a USB Flash Drive ($driveLetter)!"
+        Write-Warning "If you remove the flash drive, this desktop shortcut will not find the files."
+        Write-Warning "RECOMMENDATION: Extract/copy the folder to your local drive (e.g. C:\ or Documents), then run this shortcut creator again."
+        Write-Host ""
+    }
+}
