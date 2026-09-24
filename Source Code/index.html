@@ -194,16 +194,81 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 8px;
+            padding: 7px 10px;
             border: 1px solid var(--pnp-border);
             border-radius: 6px;
             background: #F8FAFC;
             font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .checkbox-item:hover {
+            background: #EFF6FF;
+            border-color: #93C5FD;
+        }
+
+        .checkbox-item:has(input:checked) {
+            background: #EFF6FF;
+            border-color: var(--pnp-navy);
+            font-weight: 600;
         }
 
         .checkbox-item input {
             width: auto;
             margin: 0;
+            cursor: pointer;
+        }
+
+        .required-star {
+            color: var(--pnp-danger);
+            font-weight: bold;
+        }
+
+        .alt-id-section {
+            background: #FEF3C7;
+            border: 1px solid #FCD34D;
+            border-left: 4px solid var(--pnp-accent);
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 14px;
+            animation: fadeInAlt 0.2s ease-in-out;
+        }
+
+        .alt-id-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .alt-id-badge {
+            background: #D97706;
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .alt-id-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #92400E;
+            margin-bottom: 2px;
+        }
+
+        .alt-id-desc {
+            font-size: 0.78rem;
+            color: #78350F;
+            line-height: 1.35;
+        }
+
+        @keyframes fadeInAlt {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .field-row {
@@ -340,29 +405,69 @@
 
             <form id="violationForm">
                 <div class="form-group">
-                    <label for="driver_name">Driver Full Name</label>
+                    <label for="driver_name">Driver Full Name <span class="required-star">*</span></label>
                     <input type="text" id="driver_name" name="driver_name" placeholder="e.g. Juan Dela Cruz" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="license_number">Driver's License No.</label>
+                <!-- DRIVER'S LICENSE INPUT GROUP (Active when licensed) -->
+                <div class="form-group" id="licenseFieldGroup">
+                    <label for="license_number">Driver's License No. <span class="required-star">*</span></label>
                     <input type="text" id="license_number" name="license_number" placeholder="e.g. N01-12-345678" required>
                 </div>
 
+                <!-- ALTERNATIVE IDENTIFICATION SECTION (Dynamically displayed in place when 'No Driver's License' is checked) -->
+                <div id="altIdSection" class="alt-id-section" style="display: none;">
+                    <div class="alt-id-banner">
+                        <span class="alt-id-badge">Unlicensed Driver</span>
+                        <div>
+                            <div class="alt-id-title">Alternative Identification Required</div>
+                            <div class="alt-id-desc">Driver's License is set to <strong>N/A - Unlicensed</strong>. Record a valid government ID for apprehension records.</div>
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="id_type">ID Type <span class="required-star">*</span></label>
+                            <select id="id_type" name="id_type">
+                                <option value="">-- Select Valid ID --</option>
+                                <option value="Philippine National ID">Philippine National ID (PhilID / ePhilID)</option>
+                                <option value="Passport">Passport</option>
+                                <option value="SSS/GSIS">SSS/GSIS UMID</option>
+                                <option value="Voter's ID">Voter's ID / Certificate</option>
+                                <option value="PRC ID">PRC ID (Professional Regulation Commission)</option>
+                                <option value="Postal ID">Postal ID</option>
+                                <option value="Senior Citizen / PWD ID">Senior Citizen / PWD ID</option>
+                                <option value="PhilHealth ID">PhilHealth ID</option>
+                                <option value="Other Valid ID">Other Valid Government ID</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="id_number">ID Number <span class="required-star">*</span></label>
+                            <input type="text" id="id_number" name="id_number" placeholder="e.g. 1234-5678-9012">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label for="plate_number">Vehicle Plate Number</label>
+                    <label for="plate_number">Vehicle Plate Number <span class="required-star">*</span></label>
                     <input type="text" id="plate_number" name="plate_number" placeholder="e.g. ABC 1234" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Apprehended Violations</label>
+                    <label>Apprehended Violations <span class="required-star">*</span></label>
                     <div class="checkbox-group" id="violationChecklist">
                         <label class="checkbox-item"><input type="checkbox" value="No Driver's License"> No Driver's License</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Failure to Carry Driver's License / OR-CR"> Failure to Carry Driver's License / OR-CR</label>
                         <label class="checkbox-item"><input type="checkbox" value="Expired Vehicle Registration"> Expired Vehicle Registration</label>
                         <label class="checkbox-item"><input type="checkbox" value="No Helmet / Seatbelt"> No Helmet / Seatbelt</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Disregarding Traffic Signs (DTS) / Red Light Violation"> Disregarding Traffic Signs (DTS) / Red Light Violation</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Distracted Driving (RA 10913 - Mobile Device Use)"> Distracted Driving (RA 10913 - Mobile Device Use)</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Illegal Parking / Obstruction"> Illegal Parking / Obstruction</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Unified Vehicular Volume Reduction Program (Number Coding)"> Unified Vehicular Volume Reduction Program (Number Coding)</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Reckless Driving / Counterflow (Illegal Overtaking)"> Reckless Driving / Counterflow (Illegal Overtaking)</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Over-speeding"> Over-speeding</label>
+                        <label class="checkbox-item"><input type="checkbox" value="Defective Equipment / Smoke Belching"> Defective Equipment / Smoke Belching</label>
                         <label class="checkbox-item"><input type="checkbox" value="Driving Under the Influence (DUI)"> Driving Under the Influence (DUI)</label>
                         <label class="checkbox-item"><input type="checkbox" value="Illegal Modification"> Illegal Modification</label>
-                        <label class="checkbox-item"><input type="checkbox" value="Reckless Driving"> Reckless Driving</label>
                     </div>
                 </div>
 
@@ -439,10 +544,16 @@
         const fineAmountInput = document.getElementById('fine_amount');
         const ticketNumberDisplay = document.getElementById('ticket_number_display');
         const violationChecklist = document.getElementById('violationChecklist');
+        const licenseFieldGroup = document.getElementById('licenseFieldGroup');
+        const licenseInput = document.getElementById('license_number');
+        const altIdSection = document.getElementById('altIdSection');
+        const idTypeSelect = document.getElementById('id_type');
+        const idNumberInput = document.getElementById('id_number');
         const totalRecords = document.getElementById('totalRecords');
         const totalFines = document.getElementById('totalFines');
         const flaggedRecords = document.getElementById('flaggedRecords');
         let visibleRecords = [];
+        let rememberedLicense = '';
 
         const OFFENSE_SCHEDULE = {
             "No Driver's License": 1500,
@@ -450,7 +561,15 @@
             "No Helmet / Seatbelt": 1000,
             "Driving Under the Influence (DUI)": 5000,
             "Illegal Modification": 2500,
-            "Reckless Driving": 3000
+            "Reckless Driving": 3000,
+            "Failure to Carry Driver's License / OR-CR": 1000,
+            "Disregarding Traffic Signs (DTS) / Red Light Violation": 1000,
+            "Distracted Driving (RA 10913 - Mobile Device Use)": 5000,
+            "Illegal Parking / Obstruction": 1000,
+            "Unified Vehicular Volume Reduction Program (Number Coding)": 500,
+            "Reckless Driving / Counterflow (Illegal Overtaking)": 3000,
+            "Over-speeding": 1200,
+            "Defective Equipment / Smoke Belching": 1500
         };
 
         function showAlert(message, type) {
@@ -460,6 +579,51 @@
             setTimeout(() => {
                 alertBox.style.display = 'none';
             }, 5000);
+        }
+
+        // Remember user's typed license when actively editing
+        licenseInput.addEventListener('input', () => {
+            if (!licenseInput.disabled && licenseInput.value !== 'N/A - Unlicensed') {
+                rememberedLicense = licenseInput.value;
+            }
+        });
+
+        // State management logic for conditional Driver's License vs. Alternative ID
+        function handleLicenseConditionalState() {
+            const noLicenseBox = document.querySelector('#violationChecklist input[value="No Driver\'s License"]');
+            const isNoLicense = noLicenseBox ? noLicenseBox.checked : false;
+
+            if (isNoLicense) {
+                // When 'No Driver's License' is checked:
+                // Automatically disable and clear 'Driver's License No.' (set to N/A - Unlicensed)
+                if (licenseInput.value && licenseInput.value !== 'N/A - Unlicensed') {
+                    rememberedLicense = licenseInput.value;
+                }
+                licenseInput.value = 'N/A - Unlicensed';
+                licenseInput.disabled = true;
+                licenseInput.required = false;
+                licenseFieldGroup.style.display = 'none';
+
+                // Dynamically display Alternative Identification section in its place
+                altIdSection.style.display = 'block';
+                idTypeSelect.required = true;
+                idNumberInput.required = true;
+            } else {
+                // If unchecked, restore the 'Driver's License No.' input as active and required
+                licenseFieldGroup.style.display = 'block';
+                licenseInput.disabled = false;
+                licenseInput.required = true;
+                if (licenseInput.value === 'N/A - Unlicensed') {
+                    licenseInput.value = rememberedLicense || '';
+                }
+
+                // Hide and clear Alternative Identification section
+                altIdSection.style.display = 'none';
+                idTypeSelect.required = false;
+                idNumberInput.required = false;
+                idTypeSelect.value = '';
+                idNumberInput.value = '';
+            }
         }
 
         function updateFineTotal() {
@@ -476,7 +640,18 @@
             screeningStatusText.textContent = Array.isArray(flags) && flags.length ? flags.join(' ') : 'No screening alerts found in local rule set.';
         }
 
-        violationChecklist.addEventListener('change', updateFineTotal);
+        violationChecklist.addEventListener('change', () => {
+            updateFineTotal();
+            handleLicenseConditionalState();
+        });
+
+        form.addEventListener('reset', () => {
+            setTimeout(() => {
+                rememberedLicense = '';
+                updateFineTotal();
+                handleLicenseConditionalState();
+            }, 20);
+        });
 
         async function loadAllViolations() {
             searchInput.value = '';
@@ -526,10 +701,21 @@
                 const tr = document.createElement('tr');
                 const status = row.screening_status || 'clear';
                 const ticketNumber = row.ticket_number || '—';
+
+                let licenseDisplay = escapeHtml(row.license_number);
+                if (row.license_number && row.license_number.toUpperCase().includes('UNLICENSED')) {
+                    const altDetail = (row.id_type && row.id_number)
+                        ? `<div style="font-size:0.75rem; color:#64748B; margin-top:2px;">${escapeHtml(row.id_type)}: <strong>${escapeHtml(row.id_number)}</strong></div>`
+                        : '';
+                    licenseDisplay = `<span class="tag" style="background:#FEE2E2; color:#B91C1C; font-weight:700;">Unlicensed</span>${altDetail}`;
+                } else if (row.id_type && row.id_number) {
+                    licenseDisplay += `<div style="font-size:0.75rem; color:#64748B; margin-top:2px;">${escapeHtml(row.id_type)}: <strong>${escapeHtml(row.id_number)}</strong></div>`;
+                }
+
                 tr.innerHTML = `
                     <td>${row.date_recorded}</td>
                     <td><strong>${escapeHtml(row.driver_name)}</strong></td>
-                    <td>${escapeHtml(row.license_number)}</td>
+                    <td>${licenseDisplay}</td>
                     <td><span class="tag">${escapeHtml(row.plate_number)}</span></td>
                     <td>${escapeHtml(row.violation_type)}</td>
                     <td>₱${parseFloat(row.fine_amount || 0).toFixed(2)}</td>
@@ -563,7 +749,7 @@
                 return;
             }
 
-            const columns = ['date_recorded', 'driver_name', 'license_number', 'plate_number', 'violation_type', 'fine_amount', 'ticket_number', 'screening_status', 'officer_id'];
+            const columns = ['date_recorded', 'driver_name', 'license_number', 'id_type', 'id_number', 'plate_number', 'violation_type', 'fine_amount', 'ticket_number', 'screening_status', 'officer_id'];
             const csv = [columns.join(','), ...visibleRecords.map(record => columns.map(column => csvValue(record[column])).join(','))].join('\n');
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
@@ -590,20 +776,43 @@
             e.preventDefault();
 
             const selectedViolations = [...violationChecklist.querySelectorAll('input:checked')].map(input => input.value);
-            const payload = {
-                driver_name: document.getElementById('driver_name').value,
-                license_number: document.getElementById('license_number').value,
-                plate_number: document.getElementById('plate_number').value,
-                violation_type: selectedViolations.join(', '),
-                violation_types: selectedViolations,
-                fine_amount: document.getElementById('fine_amount').value,
-                officer_id: document.getElementById('officer_id').value
-            };
+            const isUnlicensed = selectedViolations.includes("No Driver's License");
 
             if (selectedViolations.length === 0) {
                 showAlert('Select at least one violation before submitting.', 'danger');
                 return;
             }
+
+            if (isUnlicensed) {
+                if (!idTypeSelect.value) {
+                    showAlert('Please select an Alternative ID Type for the unlicensed driver.', 'danger');
+                    idTypeSelect.focus();
+                    return;
+                }
+                if (!idNumberInput.value.trim()) {
+                    showAlert('Please provide the Alternative ID Number for the unlicensed driver.', 'danger');
+                    idNumberInput.focus();
+                    return;
+                }
+            } else {
+                if (!licenseInput.value.trim() || licenseInput.value.trim().toUpperCase() === 'N/A - UNLICENSED') {
+                    showAlert('Please enter a valid Driver\'s License No.', 'danger');
+                    licenseInput.focus();
+                    return;
+                }
+            }
+
+            const payload = {
+                driver_name: document.getElementById('driver_name').value.trim(),
+                license_number: isUnlicensed ? 'N/A - Unlicensed' : licenseInput.value.trim(),
+                id_type: isUnlicensed ? idTypeSelect.value : null,
+                id_number: isUnlicensed ? idNumberInput.value.trim() : null,
+                plate_number: document.getElementById('plate_number').value.trim(),
+                violation_type: selectedViolations.join(', '),
+                violation_types: selectedViolations,
+                fine_amount: document.getElementById('fine_amount').value,
+                officer_id: document.getElementById('officer_id').value.trim()
+            };
 
             try {
                 const response = await fetch('/api/violations', {
@@ -623,6 +832,8 @@
                         updateScreeningResult(result.screening_status, result.screening_flags || []);
                     }
                     form.reset();
+                    rememberedLicense = '';
+                    handleLicenseConditionalState();
                     updateFineTotal();
                     loadAllViolations();
                     loadSummary();
@@ -647,6 +858,7 @@
             }
         }
 
+        handleLicenseConditionalState();
         updateFineTotal();
         updateScreeningResult('clear', ['No screening alerts found in local rule set.']);
         loadConfig();
