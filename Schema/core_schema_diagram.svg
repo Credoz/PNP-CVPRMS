@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1220 680" width="100%" height="100%" style="background-color: #ffffff;">
+  <defs>
+    <style>
+      .table-card {
+        fill: #ffffff;
+        stroke: #0a0a0a;
+        stroke-width: 2.8px;
+      }
+      .table-title {
+        font-family: 'Consolas', 'Courier New', ui-monospace, Menlo, Monaco, monospace;
+        font-weight: 700;
+        font-size: 22px;
+        fill: #000000;
+        letter-spacing: 0.8px;
+      }
+      .col-name {
+        font-family: 'Consolas', 'Courier New', ui-monospace, Menlo, Monaco, monospace;
+        font-size: 15px;
+        fill: #111111;
+      }
+      .col-pk {
+        font-style: italic;
+        font-weight: 600;
+      }
+      .col-type {
+        font-family: 'Consolas', 'Courier New', ui-monospace, Menlo, Monaco, monospace;
+        font-size: 13px;
+        font-weight: 500;
+        fill: #222222;
+        text-anchor: end;
+        letter-spacing: 0.4px;
+      }
+      .divider-line {
+        stroke: #0a0a0a;
+        stroke-width: 2.8px;
+      }
+      .conn-line {
+        stroke: #0a0a0a;
+        stroke-width: 2.4px;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+  </defs>
+
+  <!-- Connectors -->
+  <g class="connectors-group">
+    <path class="conn-line" d="M 435 475 L 418 475 L 418 105 L 400 105" />
+    <path class="conn-line" d="M 785 505 L 802 505 L 802 105 L 820 105" />
+  </g>
+
+  <!-- Tables -->
+  <g class="tables-group">
+    <!-- TABLE: violators -->
+    <g id="table-violators">
+      <rect class="table-card" x="50" y="40" width="350" height="244" rx="16" ry="16" />
+      <text class="table-title" x="225" y="72" text-anchor="middle">violators</text>
+      <line class="divider-line" x1="50" y1="88" x2="400" y2="88" />
+      <text class="col-name col-pk" x="70" y="109">violator_id</text>
+      <text class="col-type" x="380" y="109">BIGINT</text>
+      <text class="col-name" x="70" y="139">first_name</text>
+      <text class="col-type" x="380" y="139">STRING</text>
+      <text class="col-name" x="70" y="169">last_name</text>
+      <text class="col-type" x="380" y="169">STRING</text>
+      <text class="col-name" x="70" y="199">license_number</text>
+      <text class="col-type" x="380" y="199">STRING</text>
+      <text class="col-name" x="70" y="229">address</text>
+      <text class="col-type" x="380" y="229">STRING</text>
+      <text class="col-name" x="70" y="259">contact_number</text>
+      <text class="col-type" x="380" y="259">STRING</text>
+    </g>
+    <!-- TABLE: vehicles -->
+    <g id="table-vehicles">
+      <rect class="table-card" x="820" y="40" width="350" height="244" rx="16" ry="16" />
+      <text class="table-title" x="995" y="72" text-anchor="middle">vehicles</text>
+      <line class="divider-line" x1="820" y1="88" x2="1170" y2="88" />
+      <text class="col-name col-pk" x="840" y="109">vehicle_id</text>
+      <text class="col-type" x="1150" y="109">BIGINT</text>
+      <text class="col-name" x="840" y="139">plate_number</text>
+      <text class="col-type" x="1150" y="139">STRING</text>
+      <text class="col-name" x="840" y="169">vehicle_type</text>
+      <text class="col-type" x="1150" y="169">STRING</text>
+      <text class="col-name" x="840" y="199">make</text>
+      <text class="col-type" x="1150" y="199">STRING</text>
+      <text class="col-name" x="840" y="229">model</text>
+      <text class="col-type" x="1150" y="229">STRING</text>
+      <text class="col-name" x="840" y="259">registered_owner</text>
+      <text class="col-type" x="1150" y="259">STRING</text>
+    </g>
+    <!-- TABLE: tickets -->
+    <g id="table-tickets">
+      <rect class="table-card" x="435" y="350" width="350" height="274" rx="16" ry="16" />
+      <text class="table-title" x="610" y="382" text-anchor="middle">tickets</text>
+      <line class="divider-line" x1="435" y1="398" x2="785" y2="398" />
+      <text class="col-name col-pk" x="455" y="419">ticket_id</text>
+      <text class="col-type" x="765" y="419">BIGINT</text>
+      <text class="col-name" x="455" y="449">ticket_number</text>
+      <text class="col-type" x="765" y="449">STRING</text>
+      <text class="col-name" x="455" y="479">violator</text>
+      <text class="col-type" x="765" y="479">BIGINT</text>
+      <text class="col-name" x="455" y="509">vehicle_involved</text>
+      <text class="col-type" x="765" y="509">BIGINT</text>
+      <text class="col-name" x="455" y="539">violation_type</text>
+      <text class="col-type" x="765" y="539">STRING</text>
+      <text class="col-name" x="455" y="569">fine_amount</text>
+      <text class="col-type" x="765" y="569">DECIMAL</text>
+      <text class="col-name" x="455" y="599">status</text>
+      <text class="col-type" x="765" y="599">STRING</text>
+    </g>
+  </g>
+</svg>
