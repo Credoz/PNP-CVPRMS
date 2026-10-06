@@ -6,7 +6,6 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -80,25 +79,30 @@ function getLocalDateTimeString(d = new Date()) {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-function assessScreening({ licenseNumber, plateNumber, driverName, idNumber }) {
+function assessScreening({ licenseNumber, plateNumber, driverName }) {
     const flags = [];
     const normalizedLicense = String(licenseNumber || '').trim().toUpperCase();
     const normalizedPlate = String(plateNumber || '').trim().toUpperCase();
-    const normalizedDriver = String(driverName || '').trim();
+    const normalizedDriver = String(driverName || '').trim().toUpperCase();
 
     let isAlarm = false;
 
-    if (SCREENING_BLACKLIST.plate_numbers.includes(normalizedPlate)) {
+    const cleanPlate = normalizedPlate.replace(/[-\s]/g, '');
+    const blacklistPlates = SCREENING_BLACKLIST.plate_numbers.map(p => p.replace(/[-\s]/g, '').toUpperCase());
+    if (cleanPlate && blacklistPlates.includes(cleanPlate)) {
         flags.push('Vehicle plate matches an active HPG Alarm / Stolen Vehicle record.');
         isAlarm = true;
     }
 
-    if (SCREENING_BLACKLIST.drivers.includes(normalizedDriver)) {
+    const blacklistDrivers = SCREENING_BLACKLIST.drivers.map(d => d.toUpperCase());
+    if (normalizedDriver && blacklistDrivers.includes(normalizedDriver)) {
         flags.push('Driver matches an active National Police Watchlist / Court Warrant.');
         isAlarm = true;
     }
 
-    if (normalizedLicense && !normalizedLicense.includes('UNLICENSED') && SCREENING_BLACKLIST.license_numbers.includes(normalizedLicense)) {
+    const cleanLicense = normalizedLicense.replace(/[-\s]/g, '');
+    const blacklistLicenses = SCREENING_BLACKLIST.license_numbers.map(l => l.replace(/[-\s]/g, '').toUpperCase());
+    if (cleanLicense && !normalizedLicense.includes('UNLICENSED') && blacklistLicenses.includes(cleanLicense)) {
         flags.push('License record matches a flagged suspension or repeat offender record.');
     }
 
@@ -241,7 +245,7 @@ function validateViolationPayload(data) {
     const isUnlicensed = violationList.includes("No Driver's License");
 
     if (isUnlicensed) {
-        if (!data.license_number || typeof data.license_number !== 'string' || data.license_number.trim() === '') {
+        if (!data.license_number || typeof data.license_number !== 'string' || data.license_number.trim().toUpperCase() !== 'N/A - UNLICENSED') {
             errors.push("Driver license number must be set to 'N/A - Unlicensed' when 'No Driver's License' is selected.");
         }
         if (!data.id_type || typeof data.id_type !== 'string' || data.id_type.trim() === '') {
@@ -350,7 +354,7 @@ app.get('/api/reports/summary', (req, res) => {
             COUNT(*) AS total_records,
             COALESCE(SUM(fine_amount), 0) AS total_fines,
             COUNT(CASE WHEN screening_status IN ('warning', 'alarm') THEN 1 END) AS flagged_records,
-            COUNT(CASE WHEN payment_status IS NULL OR payment_status NOT LIKE '%Paid%' THEN 1 END) AS unsettled_records
+            COUNT(CASE WHEN payment_status IS NULL OR payment_status LIKE '%Unpaid%' OR payment_status LIKE '%Unsettled%' THEN 1 END) AS unsettled_records
         FROM violations
     `;
 
@@ -404,8 +408,7 @@ app.post('/api/violations', (req, res) => {
         const screening = assessScreening({
             licenseNumber: license_number,
             plateNumber: plate_number,
-            driverName: driver_name,
-            idNumber: id_number
+            driverName: driver_name
         });
 
         const insertSql = `
@@ -430,7 +433,7 @@ app.post('/api/violations', (req, res) => {
             checkpoint_post ? String(checkpoint_post).trim() : null,
             payment_status ? String(payment_status).trim() : 'Unsettled / Unpaid',
             evidence_image ? String(evidence_image) : null,
-            fine_override ? 1 : 0,
+            (fine_override === 1 || fine_override === '1' || fine_override === true || fine_override === 'true') ? 1 : 0,
             violationList.join(', '),
             fineAmount,
             officer_id.trim(),
@@ -497,28 +500,15 @@ app.patch('/api/violations/:id/status', (req, res) => {
 });
 
 // ==========================================
-// SAFE AUDIT LOG ENDPOINT
-// ==========================================
-app.post('/api/audit/log', (req, res) => {
-    try {
-        const rawNote = typeof req.body.note === 'string' ? req.body.note.trim() : '';
-
-        if (!rawNote) {
-            return res.status(400).json({ success: false, message: 'Audit note is required.' });
-        }
-
-        const safeEntry = `${new Date().toISOString()} | ${rawNote.replace(/\r?\n/g, ' ')}\n`;
-        fs.appendFileSync(path.join(__dirname, 'audit_dump.txt'), safeEntry, 'utf8');
-        return res.status(201).json({ success: true, message: 'Audit note saved securely.' });
-    } catch (error) {
-        console.error('[ERROR] Safe audit log failed:', error.message);
-        return res.status(500).json({ success: false, message: 'Unable to save audit log securely.' });
-    }
-});
-
-// ==========================================
 // GLOBAL ERROR & 404 HANDLERS
 // ==========================================
+app.use((err, req, res, next) => {
+    if (err.type === 'entity.too.large') {
+        return res.status(413).json({ success: false, message: 'Uploaded file payload exceeds server limit (15MB).' });
+    }
+    return res.status(err.status || 500).json({ success: false, message: err.message || 'Internal server error.' });
+});
+
 app.use((req, res) => {
     res.status(404).json({ success: false, message: 'Requested endpoint does not exist.' });
 });

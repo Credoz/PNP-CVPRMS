@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PNP-CVPRMS Core Routines Pseudocode</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    padding: 30px;
+    width: 1720px;
+    overflow: hidden;
+  }
+  ::-webkit-scrollbar { display: none; }
+  .header-card {
+    background: linear-gradient(135deg, #002244 0%, #003366 100%);
+    color: #ffffff;
+    padding: 22px 30px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    border-bottom: 4px solid #c5a059;
+    box-shadow: 0 4px 12px rgba(0,34,68,0.1);
+  }
+  .header-card h1 {
+    font-size: 26px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .header-card .subtitle {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-top: 6px;
+  }
+  .meta-badges {
+    margin-top: 10px;
+    display: flex;
+    gap: 12px;
+  }
+  .meta-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .code-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 16px;
+  }
+  .algo-card {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+  }
+  .algo-header {
+    background: #002244;
+    color: #ffffff;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #c5a059;
+  }
+  .algo-title {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .algo-ref {
+    font-size: 10px;
+    background: rgba(255,255,255,0.2);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+  }
+  .algo-body {
+    padding: 12px 14px;
+    background: #f8fafc;
+    flex-grow: 1;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 11px;
+    line-height: 1.45;
+    color: #0f172a;
+    border-top: 1px solid #e2e8f0;
+    white-space: pre-wrap;
+  }
+  .kw { color: #1d4ed8; font-weight: bold; }
+  .str { color: #b45309; }
+  .cmt { color: #64748b; font-style: italic; }
+  .fn { color: #003366; font-weight: bold; }
+  .num { color: #15803d; font-weight: bold; }
+  .footer-note {
+    font-size: 11px;
+    color: #64748B;
+    text-align: right;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-card">
+  <h1>Core Procedural Routines & Algorithms (Pseudocode)</h1>
+  <div class="subtitle">Algorithmic Blueprints for Watchlist Triage, Fine Valuation, Defensive Validation, and Storage Pipeline</div>
+  <div class="meta-badges">
+    <span class="meta-badge">6 Core Operational Algorithms</span>
+    <span class="meta-badge">Deterministic Control Flows</span>
+    <span class="meta-badge">Single Source of Truth: Source Code/server.js & Source Code/index.html</span>
+  </div>
+</div>
+
+<div class="code-grid">
+  <!-- ALGORITHM 1 -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-title">Algo 1: Watchlist Triage</span>
+      <span class="algo-ref">assessScreening()</span>
+    </div>
+    <div class="algo-body">
+<span class="kw">ALGORITHM</span> <span class="fn">EvaluateScreening</span>(lic, plt, drv):
+  <span class="cmt">// 1. Normalize and clean inputs</span>
+  normLic &larr; <span class="fn">UPPERCASE</span>(<span class="fn">TRIM</span>(lic))
+  cleanPlt &larr; <span class="fn">STRIP_DASH</span>(<span class="fn">UPPERCASE</span>(plt))
+  normDrv &larr; <span class="fn">UPPERCASE</span>(<span class="fn">TRIM</span>(drv))
+  flags &larr; [], isAlarm &larr; <span class="kw">FALSE</span>
+
+  <span class="cmt">// 2. Cross-match HPG stolen plates</span>
+  <span class="kw">IF</span> cleanPlt <span class="kw">IN</span> Blacklist.plates <span class="kw">THEN</span>
+    flags.push(<span class="str">"HPG Stolen Vehicle Record"</span>)
+    isAlarm &larr; <span class="kw">TRUE</span>
+  <span class="kw">ENDIF</span>
+
+  <span class="cmt">// 3. Cross-match court warrants</span>
+  <span class="kw">IF</span> normDrv <span class="kw">IN</span> Blacklist.drivers <span class="kw">THEN</span>
+    flags.push(<span class="str">"Active Court Warrant Found"</span>)
+    isAlarm &larr; <span class="kw">TRUE</span>
+  <span class="kw">ENDIF</span>
+
+  <span class="cmt">// 4. Suspensions & heuristics</span>
+  <span class="kw">IF</span> normLic <span class="kw">IN</span> Blacklist.licenses <span class="kw">THEN</span>
+    flags.push(<span class="str">"License Suspended / Flagged"</span>)
+  <span class="kw">ENDIF</span>
+
+  <span class="cmt">// 5. Tri-state classification</span>
+  <span class="kw">IF</span> flags.length == <span class="num">0</span> <span class="kw">THEN</span> <span class="kw">RETURN</span> <span class="str">'clear'</span>
+  <span class="kw">IF</span> isAlarm <span class="kw">THEN</span> <span class="kw">RETURN</span> <span class="str">'alarm'</span>
+  <span class="kw">RETURN</span> <span class="str">'warning'</span>
+    </div>
+  </div>
+
+  <!-- ALGORITHM 2 -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-title">Algo 2: Fine Calculation</span>
+      <span class="algo-ref">calculateViolationTotal()</span>
+    </div>
+    <div class="algo-body">
+<span class="kw">ALGORITHM</span> <span class="fn">CalculateFineSum</span>(violations, override):
+  <span class="cmt">// 1. Split, deduplicate, and clean</span>
+  items &larr; <span class="fn">UNIQUE</span>(<span class="fn">SPLIT</span>(violations, <span class="str">','</span>))
+  statutorySum &larr; <span class="num">0.00</span>
+
+  <span class="cmt">// 2. Accumulate statutory schedule</span>
+  <span class="kw">FOR EACH</span> offense <span class="kw">IN</span> items <span class="kw">DO</span>
+    amount &larr; OFFENSE_SCHEDULE[offense]
+    <span class="kw">IF</span> amount &gt; <span class="num">0</span> <span class="kw">THEN</span>
+      statutorySum &larr; statutorySum + amount
+    <span class="kw">ENDIF</span>
+  <span class="kw">ENDFOR</span>
+
+  <span class="cmt">// 3. Handle manual officer override</span>
+  <span class="kw">IF</span> override.active == <span class="kw">TRUE</span> <span class="kw">THEN</span>
+    <span class="kw">ASSERT</span> override.amount &gt; <span class="num">0</span>
+    <span class="kw">RETURN</span> override.amount
+  <span class="kw">ELSE</span>
+    <span class="kw">RETURN</span> statutorySum
+  <span class="kw">ENDIF</span>
+    </div>
+  </div>
+
+  <!-- ALGORITHM 3 -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-title">Algo 3: Defensive Validation</span>
+      <span class="algo-ref">validateViolationPayload()</span>
+    </div>
+    <div class="algo-body">
+<span class="kw">ALGORITHM</span> <span class="fn">ValidatePayload</span>(data):
+  errors &larr; []
+
+  <span class="cmt">// 1. Mandatory core strings</span>
+  <span class="kw">IF</span> <span class="fn">IS_EMPTY</span>(data.driver_name) <span class="kw">THEN</span> errors.push(...)
+  <span class="kw">IF</span> <span class="fn">IS_EMPTY</span>(data.plate_number) <span class="kw">THEN</span> errors.push(...)
+  <span class="kw">IF</span> <span class="fn">IS_EMPTY</span>(data.officer_id) <span class="kw">THEN</span> errors.push(...)
+
+  <span class="cmt">// 2. Unlicensed driver protocol</span>
+  <span class="kw">IF</span> data.violations <span class="kw">CONTAINS</span> <span class="str">"No Driver's License"</span> <span class="kw">THEN</span>
+    <span class="kw">IF</span> <span class="fn">IS_EMPTY</span>(data.id_type) <span class="kw">OR</span> <span class="fn">IS_EMPTY</span>(data.id_number) <span class="kw">THEN</span>
+      errors.push(<span class="str">"Alt ID required for unlicensed"</span>)
+    <span class="kw">ENDIF</span>
+  <span class="kw">ENDIF</span>
+
+  <span class="cmt">// 3. Vehicle impound slip check</span>
+  <span class="kw">IF</span> data.disposition == <span class="str">"Impounded"</span> <span class="kw">THEN</span>
+    <span class="kw">IF</span> <span class="fn">IS_EMPTY</span>(data.impound_receipt_no) <span class="kw">THEN</span>
+      errors.push(<span class="str">"Impound receipt slip required"</span>)
+    <span class="kw">ENDIF</span>
+  <span class="kw">ENDIF</span>
+
+  <span class="kw">RETURN</span> { isValid: errors.length == <span class="num">0</span>, errors }
+    </div>
+  </div>
+
+  <!-- ALGORITHM 4 -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-title">Algo 4: Ticket Seed Generator</span>
+      <span class="algo-ref">generateTicketNumber()</span>
+    </div>
+    <div class="algo-body">
+<span class="kw">ALGORITHM</span> <span class="fn">GenerateTicketID</span>():
+  <span class="cmt">// 1. High-resolution timestamp slice</span>
+  ts &larr; <span class="fn">NOW_MILLIS</span>().toString().slice(-<span class="num">8</span>)
+
+  <span class="cmt">// 2. 6-character cryptographic entropy</span>
+  charset &larr; <span class="str">"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"</span>
+  suffix &larr; <span class="str">""</span>
+  <span class="kw">FOR</span> i &larr; <span class="num">1</span> <span class="kw">TO</span> <span class="num">6</span> <span class="kw">DO</span>
+    randIdx &larr; <span class="fn">FLOOR</span>(<span class="fn">RANDOM</span>() * charset.length)
+    suffix &larr; suffix + charset[randIdx]
+  <span class="kw">ENDFOR</span>
+
+  <span class="cmt">// 3. Format official ticket seed</span>
+  <span class="kw">RETURN</span> <span class="str">"PNP-"</span> + ts + <span class="str">"-"</span> + suffix
+    </div>
+  </div>
+
+  <!-- ALGORITHM 5 -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-title">Algo 5: Canvas Downscaler</span>
+      <span class="algo-ref">processEvidenceImage()</span>
+    </div>
+    <div class="algo-body">
+<span class="kw">ALGORITHM</span> <span class="fn">DownscaleEvidencePhoto</span>(file):
+  <span class="kw">ASSERT</span> file.size &le; <span class="num">10MB</span> <span class="kw">AND</span> file.type.startsWith(<span class="str">"image/"</span>)
+  img &larr; <span class="fn">LOAD_IMAGE</span>(file)
+
+  <span class="cmt">// 1. Bounded aspect ratio scaling</span>
+  maxDim &larr; <span class="num">1200</span>
+  w &larr; img.width, h &larr; img.height
+  <span class="kw">IF</span> w &gt; maxDim <span class="kw">OR</span> h &gt; maxDim <span class="kw">THEN</span>
+    <span class="kw">IF</span> w &gt; h <span class="kw">THEN</span>
+      h &larr; <span class="fn">ROUND</span>((h * maxDim) / w)
+      w &larr; maxDim
+    <span class="kw">ELSE</span>
+      w &larr; <span class="fn">ROUND</span>((w * maxDim) / h)
+      h &larr; maxDim
+    <span class="kw">ENDIF</span>
+  <span class="kw">ENDIF</span>
+
+  <span class="cmt">// 2. Canvas rasterization & JPEG compression</span>
+  canvas &larr; <span class="fn">CREATE_CANVAS</span>(w, h)
+  canvas.ctx.<span class="fn">drawImage</span>(img, <span class="num">0</span>, <span class="num">0</span>, w, h)
+  <span class="kw">RETURN</span> canvas.<span class="fn">toDataURL</span>(<span class="str">"image/jpeg"</span>, <span class="num">0.82</span>)
+    </div>
+  </div>
+
+  <!-- ALGORITHM 6 -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-title">Algo 6: Multi-Field View Filter</span>
+      <span class="algo-ref">applyFiltersAndRender()</span>
+    </div>
+    <div class="algo-body">
+<span class="kw">ALGORITHM</span> <span class="fn">FilterRegistryView</span>(records, dateOpt, statOpt):
+  now &larr; <span class="fn">CURRENT_TIME</span>()
+  todayStr &larr; <span class="fn">FORMAT_DATE</span>(now, <span class="str">"YYYY-MM-DD"</span>)
+  sevenDaysAgo &larr; now - <span class="num">7</span> * <span class="num">24</span> * <span class="num">3600</span>
+
+  <span class="kw">RETURN</span> records.<span class="fn">FILTER</span>(row &rarr;
+    recDate &larr; row.date_recorded.slice(<span class="num">0</span>, <span class="num">10</span>)
+
+    <span class="cmt">// Date dimension checks</span>
+    <span class="kw">IF</span> dateOpt == <span class="str">'today'</span> <span class="kw">AND</span> recDate != todayStr <span class="kw">THEN</span> <span class="kw">RETURN FALSE</span>
+    <span class="kw">IF</span> dateOpt == <span class="str">'7days'</span> <span class="kw">AND</span> row.date &lt; sevenDaysAgo <span class="kw">THEN</span> <span class="kw">RETURN FALSE</span>
+
+    <span class="cmt">// Status dimension checks</span>
+    <span class="kw">IF</span> statOpt == <span class="str">'flagged'</span> <span class="kw">AND</span> row.screen != <span class="str">'alarm'</span> <span class="kw">THEN</span> <span class="kw">RETURN FALSE</span>
+    <span class="kw">IF</span> statOpt == <span class="str">'unpaid'</span> <span class="kw">AND</span> !row.status.includes(<span class="str">'Unpaid'</span>) <span class="kw">THEN</span> <span class="kw">RETURN FALSE</span>
+
+    <span class="kw">RETURN TRUE</span>
+  )
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">
+  Single Source of Truth: Source Code/server.js & Source Code/index.html — PNP-CVPRMS Technical Documentation
+</div>
+
+</body>
+</html>

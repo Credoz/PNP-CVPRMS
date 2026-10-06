@@ -1036,7 +1036,7 @@
                     <div class="form-group">
                         <label>Apprehended Violations <span class="required-star">*</span></label>
                         <div class="violation-picker-box">
-                            <input type="text" id="violationFilterInput" class="violation-search-input" placeholder="🔍 Filter violations (e.g. helmet, license, DTS, coding)...">
+                            <input type="text" id="violationFilterInput" class="violation-search-input" placeholder="🔍 Filter violations (e.g. helmet, license, DTS, coding)..." aria-label="Filter violations checklist">
                             <div class="violation-scroll-container" id="violationChecklist">
                                 <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="No Driver's License"> No Driver's License</span><span class="checkbox-fee">₱1,500.00</span></label>
                                 <label class="checkbox-item"><span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" value="Failure to Carry Driver's License / OR-CR"> Failure to Carry License / OR-CR</span><span class="checkbox-fee">₱1,000.00</span></label>
@@ -1068,7 +1068,7 @@
 
                     <!-- Evidence & Media Photo Capture -->
                     <div class="form-group">
-                        <label>Evidence & Document Photo (Optional)</label>
+                        <label for="evidenceFileInput">Evidence & Document Photo (Optional)</label>
                         <div class="evidence-upload-zone">
                             <input type="file" id="evidenceFileInput" accept="image/*" style="font-size: 0.75rem;">
                             <img id="evidenceThumb" class="evidence-preview-thumb" alt="Evidence thumbnail">
@@ -1113,7 +1113,7 @@
                 <!-- Search and Quick Filter Bar -->
                 <div class="search-container">
                     <div class="search-row">
-                        <input type="text" id="searchInput" placeholder="Search by Plate Number, License, Driver Name, or Ticket...">
+                        <input type="text" id="searchInput" placeholder="Search by Plate Number, License, Driver Name, or Ticket..." aria-label="Search violations registry">
                         <button type="button" class="btn btn-secondary" onclick="executeSearch()">Search</button>
                         <button type="button" class="btn btn-secondary" onclick="resetSearchAndFilters()">Reset</button>
                     </div>
@@ -1388,8 +1388,15 @@
             const val = sessionOfficer.value;
             if (val === 'CUSTOM') {
                 const custom = prompt('Enter Apprehending Officer Badge/ID:', 'PNP-OFFICER-');
-                if (custom) {
-                    officerIdInput.value = custom.trim().toUpperCase();
+                if (custom && custom.trim()) {
+                    const formatted = custom.trim().toUpperCase();
+                    let opt = Array.from(sessionOfficer.options).find(o => o.value === formatted);
+                    if (!opt) {
+                        opt = new Option(`Custom (${formatted})`, formatted, true, true);
+                        sessionOfficer.add(opt, sessionOfficer.options.length - 1);
+                    }
+                    sessionOfficer.value = formatted;
+                    officerIdInput.value = formatted;
                 } else {
                     sessionOfficer.value = 'PNP-OFFICER-4491 (PO3 J. Del Rosario)';
                     officerIdInput.value = 'PNP-OFFICER-4491';
@@ -1555,24 +1562,47 @@
                     const compressed = canvas.toDataURL('image/jpeg', 0.82);
                     callback(compressed);
                 };
-                img.onerror = () => callback(e.target.result);
+                img.onerror = () => {
+                    showAlert('Selected file could not be parsed as an image.', 'danger');
+                    callback(null);
+                };
                 img.src = e.target.result;
             };
-            reader.onerror = () => showAlert('Failed to read image file.', 'danger');
+            reader.onerror = () => {
+                showAlert('Failed to read image file.', 'danger');
+                callback(null);
+            };
             reader.readAsDataURL(file);
         }
 
         // Evidence & Photo Upload with Thumbnail Preview
         evidenceFileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (file) {
-                processEvidenceImage(file, (processedDataUrl) => {
-                    base64EvidenceImage = processedDataUrl;
-                    evidenceThumb.src = base64EvidenceImage;
-                    evidenceThumb.style.display = 'block';
-                    removePhotoBtn.style.display = 'inline-block';
-                });
+            if (!file) return;
+
+            if (file.type && !file.type.startsWith('image/')) {
+                showAlert('Selected file must be an image (JPEG, PNG, etc.).', 'danger');
+                evidenceFileInput.value = '';
+                return;
             }
+
+            if (file.size > 10 * 1024 * 1024) {
+                showAlert('Selected photo exceeds 10MB limit. Please choose a smaller image.', 'danger');
+                evidenceFileInput.value = '';
+                return;
+            }
+
+            processEvidenceImage(file, (processedDataUrl) => {
+                if (!processedDataUrl) {
+                    evidenceFileInput.value = '';
+                    base64EvidenceImage = null;
+                    return;
+                }
+                base64EvidenceImage = processedDataUrl;
+                evidenceThumb.src = base64EvidenceImage;
+                evidenceThumb.style.display = 'block';
+                removePhotoBtn.style.display = 'inline-block';
+            });
         });
 
         removePhotoBtn.addEventListener('click', () => {
@@ -1655,6 +1685,10 @@
                 payment_status: 'Unsettled / Unpaid'
             };
 
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Registering Citation...';
+
             try {
                 const response = await fetch('/api/violations', {
                     method: 'POST',
@@ -1662,17 +1696,16 @@
                     body: JSON.stringify(payload)
                 });
 
-                const result = await response.json();
+                let result;
+                try {
+                    result = await response.json();
+                } catch (jsonErr) {
+                    showAlert(`Server returned ${response.status}: Unable to parse response.`, 'danger');
+                    return;
+                }
 
                 if (response.ok && result.success) {
                     showAlert(`Citation registered! Ticket: ${result.ticket_number}`, 'success');
-                    ticketBadge.textContent = result.ticket_number || 'PNP-NEW';
-
-                    // Update screening status indicator with server multi-tier result
-                    if (result.screening_status) {
-                        const label = result.screening_status_label || (result.screening_status === 'alarm' ? 'ALARM / HPG WANTED' : (result.screening_status === 'warning' ? 'WARNING / REPEAT OFFENDER' : 'CLEAR'));
-                        setScreeningBadge(result.screening_status, label, (result.screening_flags || []).join(' '));
-                    }
 
                     // Prepare receipt for printing immediately if desired
                     payload.ticket_number = result.ticket_number;
@@ -1690,9 +1723,17 @@
                     fineAmountInput.readOnly = true;
                     fineAmountInput.style.background = '#ffffff';
                     fineAmountInput.style.borderColor = 'var(--pnp-border)';
+                    impoundSlipGroup.style.display = 'none';
+                    impoundSlipInput.required = false;
+                    impoundSlipInput.value = '';
+                    violationChecklist.querySelectorAll('.checkbox-item').forEach(item => {
+                        item.style.display = 'flex';
+                    });
                     handleLicenseConditionalState();
                     syncOfficerSession();
                     updateFineTotal();
+                    ticketBadge.textContent = 'PNP-NEW';
+                    setScreeningBadge('clear', 'CLEAR', 'No screening alerts found in local checkpoint rule set.');
 
                     // Refresh table & metrics
                     loadAllViolations();
@@ -1703,6 +1744,9 @@
                 }
             } catch (err) {
                 showAlert('Network connection error while submitting citation.', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit & Register Citation';
             }
         });
 
@@ -1791,16 +1835,18 @@
                 const recordDateStr = (record.date_recorded || '').slice(0, 10);
                 const safeDateStr = String(record.date_recorded || '').replace(' ', 'T');
                 const recordDate = new Date(safeDateStr);
+                const isDateValid = !isNaN(recordDate.getTime());
 
                 // Date Filtering
                 if (activeDateFilter === 'today' && recordDateStr !== todayStr) return false;
-                if (activeDateFilter === '7days' && recordDate < sevenDaysAgo) return false;
-                if (activeDateFilter === 'shift' && record.shift_info !== sessionShift.value) return false;
+                if (activeDateFilter === '7days' && (!isDateValid || recordDate < sevenDaysAgo)) return false;
+                if (activeDateFilter === 'shift' && (recordDateStr !== todayStr || record.shift_info !== sessionShift.value)) return false;
 
                 // Status Filtering
                 const isFlagged = ['alarm', 'warning', 'ALARM / HPG WANTED', 'WARNING / REPEAT OFFENDER'].includes(record.screening_status);
                 if (activeStatusFilter === 'flagged' && !isFlagged) return false;
-                if (activeStatusFilter === 'unpaid' && (record.payment_status && record.payment_status.includes('Paid'))) return false;
+                const isUnpaid = !record.payment_status || record.payment_status.includes('Unpaid') || record.payment_status.includes('Unsettled');
+                if (activeStatusFilter === 'unpaid' && !isUnpaid) return false;
 
                 return true;
             });
@@ -1978,12 +2024,18 @@
                     closeRecordModal();
                     showAlert(`Status updated to ${newStatus}`, 'success');
                 } else {
-                    showAlert(result.message || 'Failed to update payment status.', 'danger');
+                    alert(result.message || 'Failed to update payment status.');
                 }
             } catch (err) {
-                showAlert('Network error updating status.', 'danger');
+                alert('Network error updating status.');
             }
         }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && recordModal.classList.contains('open')) {
+                closeRecordModal();
+            }
+        });
 
         // Thermal Bluetooth POS Printing (58mm / 80mm)
         function populateThermalReceipt(rec) {
@@ -2065,8 +2117,10 @@
             const localM = String(now.getMonth() + 1).padStart(2, '0');
             const localD = String(now.getDate()).padStart(2, '0');
             link.download = `pnp-cvprms-citations-${localY}-${localM}-${localD}.csv`;
+            document.body.appendChild(link);
             link.click();
-            URL.revokeObjectURL(link.href);
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(link.href), 1000);
         }
 
         function escapeHtml(str) {

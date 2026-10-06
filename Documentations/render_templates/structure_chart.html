@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PNP-CVPRMS Structure Chart</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    padding: 30px;
+    width: 1720px;
+    overflow: hidden;
+  }
+  ::-webkit-scrollbar { display: none; }
+  .header-card {
+    background: linear-gradient(135deg, #002244 0%, #003366 100%);
+    color: #ffffff;
+    padding: 22px 30px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    border-bottom: 4px solid #c5a059;
+    box-shadow: 0 4px 12px rgba(0,34,68,0.1);
+  }
+  .header-card h1 {
+    font-size: 26px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .header-card .subtitle {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-top: 6px;
+  }
+  .meta-badges {
+    margin-top: 10px;
+    display: flex;
+    gap: 12px;
+  }
+  .meta-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .section-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #002244;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    border-left: 5px solid #003366;
+    padding-left: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .diagram-container {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+  }
+  svg { background: #ffffff; }
+  .mod-root {
+    fill: #002244;
+    stroke: #c5a059;
+    stroke-width: 2.5;
+    rx: 8;
+  }
+  .mod-client {
+    fill: #eff6ff;
+    stroke: #2563eb;
+    stroke-width: 2;
+    rx: 6;
+  }
+  .mod-server {
+    fill: #fefce8;
+    stroke: #ca8a04;
+    stroke-width: 2;
+    rx: 6;
+  }
+  .mod-leaf {
+    fill: #ffffff;
+    stroke: #94a3b8;
+    stroke-width: 1.5;
+    rx: 4;
+  }
+  .tree-line {
+    fill: none;
+    stroke: #003366;
+    stroke-width: 1.8;
+  }
+  .couple-data {
+    font-size: 9.5px;
+    font-weight: 700;
+    fill: #0369a1;
+  }
+  .couple-ctrl {
+    font-size: 9.5px;
+    font-weight: 800;
+    fill: #b91c1c;
+  }
+  .legend-bar {
+    display: flex;
+    gap: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #475569;
+    padding: 6px 12px;
+    background: #f8fafc;
+    border-radius: 6px;
+    margin-bottom: 14px;
+    border: 1px solid #e2e8f0;
+  }
+  .footer-note {
+    font-size: 11px;
+    color: #64748B;
+    text-align: right;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-card">
+  <h1>Hierarchical Structure Chart Architecture</h1>
+  <div class="subtitle">Calling Hierarchy, Parameter Data Couples [d:] & Control Flags [c:] across Frontend and Backend Runtimes</div>
+  <div class="meta-badges">
+    <span class="meta-badge">Client Runtime: index.html (26 Modules)</span>
+    <span class="meta-badge">Server Runtime: server.js (13 Modules)</span>
+    <span class="meta-badge">Couples: Open Circle Data Couples / Solid Circle Control Flags</span>
+  </div>
+</div>
+
+<div class="legend-bar">
+  <span><strong>NOTATION KEY:</strong></span>
+  <span><span style="color:#0369a1;">○ [d: parameter]</span> = Data Couple (Pure Data Passed)</span>
+  <span><span style="color:#b91c1c;">● [c: flag]</span> = Control Flag (Branching / Status Direction)</span>
+  <span><span style="color:#2563eb;">■ Blue Box</span> = Frontend Client Module</span>
+  <span><span style="color:#ca8a04;">■ Gold Box</span> = Backend Server Module</span>
+</div>
+
+<!-- SECTION 1: SYSTEM CALLING TREE -->
+<div class="diagram-container">
+  <div class="section-title">
+    <span>1. System Modular Calling Hierarchy & Couple Flow</span>
+    <span style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: none;">Root Executive -> Subsystems -> Operational Handlers -> Leaf Modules</span>
+  </div>
+  <svg width="1640" height="540" viewBox="0 0 1640 540">
+    <!-- Level 0 System Root -->
+    <rect x="670" y="10" width="300" height="50" class="mod-root" />
+    <text x="820" y="32" style="font-size:12px; font-weight:800; fill:#ffffff; text-anchor:middle;">0.0 PNP-CVPRMS CENTRAL SYSTEM</text>
+    <text x="820" y="48" style="font-size:10px; font-weight:600; fill:#cbd5e1; text-anchor:middle;">Dual-Runtime Orchestrator</text>
+
+    <!-- Master Trunk Down -->
+    <line x1="820" y1="60" x2="820" y2="85" class="tree-line" />
+    <line x1="410" y1="85" x2="1230" y2="85" class="tree-line" />
+
+    <!-- Two Primary Runtime Executives -->
+    <!-- Left: Client Runtime -->
+    <line x1="410" y1="85" x2="410" y2="105" class="tree-line" />
+    <rect x="250" y="105" width="320" height="55" class="mod-client" />
+    <text x="410" y="128" style="font-size:13px; font-weight:800; fill:#1e3a8a; text-anchor:middle;">0.1 Client Executive (index.html)</text>
+    <text x="410" y="146" style="font-size:10.5px; fill:#3b82f6; text-anchor:middle;">Browser UI, DOM Listeners & Canvas</text>
+
+    <!-- Right: Server Runtime -->
+    <line x1="1230" y1="85" x2="1230" y2="105" class="tree-line" />
+    <rect x="1070" y="105" width="320" height="55" class="mod-server" />
+    <text x="1230" y="128" style="font-size:13px; font-weight:800; fill:#854d0e; text-anchor:middle;">0.2 Server Executive (server.js)</text>
+    <text x="1230" y="146" style="font-size:10.5px; fill:#b45309; text-anchor:middle;">Express REST API & SQLite Services</text>
+
+    <!-- ============================================== -->
+    <!-- CLIENT SUB-BRANCHES (Level 2) -->
+    <!-- ============================================== -->
+    <line x1="410" y1="160" x2="410" y2="185" class="tree-line" />
+    <line x1="100" y1="185" x2="720" y2="185" class="tree-line" />
+
+    <!-- C1: Ingestion Controller -->
+    <line x1="100" y1="185" x2="100" y2="210" class="tree-line" />
+    <rect x="10" y="210" width="180" height="50" class="mod-client" />
+    <text x="100" y="232" style="font-size:11px; font-weight:800; fill:#1e3a8a; text-anchor:middle;">Citation Ingestion</text>
+    <text x="100" y="248" style="font-size:9.5px; fill:#475569; text-anchor:middle;">form.onsubmit</text>
+
+    <!-- C2: Screening Blur -->
+    <line x1="310" y1="185" x2="310" y2="210" class="tree-line" />
+    <rect x="220" y="210" width="180" height="50" class="mod-client" />
+    <text x="310" y="232" style="font-size:11px; font-weight:800; fill:#1e3a8a; text-anchor:middle;">Local Triage Engine</text>
+    <text x="310" y="248" style="font-size:9.5px; fill:#475569; text-anchor:middle;">evaluateLocalScreening()</text>
+
+    <!-- C3: Canvas Compressor -->
+    <line x1="510" y1="185" x2="510" y2="210" class="tree-line" />
+    <rect x="420" y="210" width="180" height="50" class="mod-client" />
+    <text x="510" y="232" style="font-size:11px; font-weight:800; fill:#1e3a8a; text-anchor:middle;">Canvas Downscaler</text>
+    <text x="510" y="248" style="font-size:9.5px; fill:#475569; text-anchor:middle;">processEvidenceImage()</text>
+
+    <!-- C4: Presentation & Filter -->
+    <line x1="720" y1="185" x2="720" y2="210" class="tree-line" />
+    <rect x="630" y="210" width="180" height="50" class="mod-client" />
+    <text x="720" y="232" style="font-size:11px; font-weight:800; fill:#1e3a8a; text-anchor:middle;">Registry Filter & Table</text>
+    <text x="720" y="248" style="font-size:9.5px; fill:#475569; text-anchor:middle;">applyFiltersAndRender()</text>
+
+    <!-- Client Leaf Calls & Couples -->
+    <!-- Under C1 -->
+    <line x1="100" y1="260" x2="100" y2="300" class="tree-line" />
+    <rect x="15" y="300" width="170" height="40" class="mod-leaf" />
+    <text x="100" y="325" style="font-size:10px; font-weight:700; fill:#0f172a; text-anchor:middle;">handleLicenseState()</text>
+    <text x="105" y="280" class="couple-ctrl">● [c: isUnlicensed]</text>
+
+    <line x1="100" y1="340" x2="100" y2="375" class="tree-line" />
+    <rect x="15" y="375" width="170" height="40" class="mod-leaf" />
+    <text x="100" y="400" style="font-size:10px; font-weight:700; fill:#0f172a; text-anchor:middle;">updateFineTotal()</text>
+    <text x="105" y="360" class="couple-ctrl">● [c: fine_override]</text>
+
+    <!-- Under C2 -->
+    <line x1="310" y1="260" x2="310" y2="300" class="tree-line" />
+    <rect x="225" y="300" width="170" height="40" class="mod-leaf" />
+    <text x="310" y="325" style="font-size:10px; font-weight:700; fill:#0f172a; text-anchor:middle;">setScreeningBadge()</text>
+    <text x="315" y="280" class="couple-ctrl">● [c: state: clear/alarm]</text>
+
+    <!-- Under C3 -->
+    <line x1="510" y1="260" x2="510" y2="300" class="tree-line" />
+    <rect x="425" y="300" width="170" height="40" class="mod-leaf" />
+    <text x="510" y="325" style="font-size:10px; font-weight:700; fill:#0f172a; text-anchor:middle;">canvas.toDataURL()</text>
+    <text x="515" y="280" class="couple-data">○ [d: maxDim=1200, q=0.82]</text>
+
+    <!-- Under C4 -->
+    <line x1="720" y1="260" x2="720" y2="300" class="tree-line" />
+    <rect x="635" y="300" width="170" height="40" class="mod-leaf" />
+    <text x="720" y="325" style="font-size:10px; font-weight:700; fill:#0f172a; text-anchor:middle;">renderTable()</text>
+    <text x="725" y="280" class="couple-data">○ [d: visibleRecords]</text>
+
+    <!-- ============================================== -->
+    <!-- SERVER SUB-BRANCHES (Level 2) -->
+    <!-- ============================================== -->
+    <line x1="1230" y1="160" x2="1230" y2="185" class="tree-line" />
+    <line x1="920" y1="185" x2="1540" y2="185" class="tree-line" />
+
+    <!-- S1: Ingestion Route -->
+    <line x1="920" y1="185" x2="920" y2="210" class="tree-line" />
+    <rect x="830" y="210" width="180" height="50" class="mod-server" />
+    <text x="920" y="232" style="font-size:11px; font-weight:800; fill:#854d0e; text-anchor:middle;">POST /api/violations</text>
+    <text x="920" y="248" style="font-size:9.5px; fill:#475569; text-anchor:middle;">Ingestion Controller</text>
+
+    <!-- S2: Validation Service -->
+    <line x1="1130" y1="185" x2="1130" y2="210" class="tree-line" />
+    <rect x="1040" y="210" width="180" height="50" class="mod-server" />
+    <text x="1130" y="232" style="font-size:11px; font-weight:800; fill:#854d0e; text-anchor:middle;">Payload Validator</text>
+    <text x="1130" y="248" style="font-size:9.5px; fill:#475569; text-anchor:middle;">validateViolationPayload()</text>
+
+    <!-- S3: Watchlist Assessor -->
+    <line x1="1335" y1="185" x2="1335" y2="210" class="tree-line" />
+    <rect x="1245" y="210" width="180" height="50" class="mod-server" />
+    <text x="1335" y="232" style="font-size:11px; font-weight:800; fill:#854d0e; text-anchor:middle;">Watchlist Assessor</text>
+    <text x="1335" y="248" style="font-size:9.5px; fill:#475569; text-anchor:middle;">assessScreening()</text>
+
+    <!-- S4: Settlement Route -->
+    <line x1="1540" y1="185" x2="1540" y2="210" class="tree-line" />
+    <rect x="1450" y="210" width="180" height="50" class="mod-server" />
+    <text x="1540" y="232" style="font-size:11px; font-weight:800; fill:#854d0e; text-anchor:middle;">PATCH .../status</text>
+    <text x="1540" y="248" style="font-size:9.5px; fill:#475569; text-anchor:middle;">Settlement Controller</text>
+
+    <!-- Server Leaf Calls & Couples -->
+    <!-- Under S1 -->
+    <line x1="920" y1="260" x2="920" y2="300" class="tree-line" />
+    <rect x="835" y="300" width="170" height="40" class="mod-leaf" />
+    <text x="920" y="325" style="font-size:10px; font-weight:700; fill:#0f172a; text-anchor:middle;">generateTicketNumber()</text>
+    <text x="925" y="280" class="couple-data">○ [d: ticket_number]</text>
+
+    <line x1="920" y1="340" x2="920" y2="375" class="tree-line" />
+    <rect x="835" y="375" width="170" height="40" class="mod-leaf" />
+    <text x="920" y="400" style="font-size:10px; font-weight:700; fill:#0f172a; text-anchor:middle;">db.run(INSERT SQL)</text>
+    <text x="925" y="360" class="couple-data">○ [d: 19 params]</text>
+
+    <!-- Under S2 -->
+    <line x1="1130" y1="260" x2="1130" y2="300" class="tree-line" />
+    <rect x="1045" y="300" width="170" height="40" class="mod-leaf" />
+    <text x="1130" y="325" style="font-size:10px; font-weight:700; fill:#0f172a; text-anchor:middle;">calculateViolationTotal()</text>
+    <text x="1135" y="280" class="couple-ctrl">● [c: isFineOverride]</text>
+
+    <!-- Under S3 -->
+    <line x1="1335" y1="260" x2="1335" y2="300" class="tree-line" />
+    <rect x="1250" y="300" width="170" height="40" class="mod-leaf" />
+    <text x="1335" y="325" style="font-size:10px; font-weight:700; fill:#0f172a; text-anchor:middle;">SCREENING_BLACKLIST</text>
+    <text x="1340" y="280" class="couple-ctrl">● [c: isAlarm flag]</text>
+
+    <!-- Under S4 -->
+    <line x1="1540" y1="260" x2="1540" y2="300" class="tree-line" />
+    <rect x="1455" y="300" width="170" height="40" class="mod-leaf" />
+    <text x="1540" y="325" style="font-size:10px; font-weight:700; fill:#0f172a; text-anchor:middle;">db.run(UPDATE SQL)</text>
+    <text x="1545" y="280" class="couple-ctrl">● [c: payment_status]</text>
+
+    <!-- CROSS-RUNTIME NETWORK DATA COUPLE (Between Client & Server Executives) -->
+    <path d="M 570 132 L 1070 132" stroke="#1d4ed8" stroke-width="2" stroke-dasharray="4" fill="none" />
+    <rect x="710" y="120" width="220" height="24" rx="4" fill="#eff6ff" stroke="#2563eb" />
+    <text x="820" y="136" style="font-size:10px; font-weight:800; fill:#1e40af; text-anchor:middle;">HTTP REST API (POST, PATCH, GET)</text>
+  </svg>
+</div>
+
+<div class="footer-note">
+  Single Source of Truth: Source Code/server.js & Source Code/index.html — PNP-CVPRMS Technical Documentation
+</div>
+
+</body>
+</html>

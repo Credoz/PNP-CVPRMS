@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PNP-CVPRMS Structured English Logic Specifications</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    padding: 30px;
+    width: 1720px;
+    overflow: hidden;
+  }
+  ::-webkit-scrollbar { display: none; }
+  .header-card {
+    background: linear-gradient(135deg, #002244 0%, #003366 100%);
+    color: #ffffff;
+    padding: 22px 30px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    border-bottom: 4px solid #c5a059;
+    box-shadow: 0 4px 12px rgba(0,34,68,0.1);
+  }
+  .header-card h1 {
+    font-size: 26px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .header-card .subtitle {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-top: 6px;
+  }
+  .meta-badges {
+    margin-top: 10px;
+    display: flex;
+    gap: 12px;
+  }
+  .meta-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+  .logic-card {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+  }
+  .logic-header {
+    background: #002244;
+    color: #ffffff;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #c5a059;
+  }
+  .logic-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .logic-badge {
+    font-size: 10px;
+    background: rgba(255,255,255,0.2);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-weight: 600;
+  }
+  .logic-body {
+    padding: 12px 14px;
+    background: #f8fafc;
+    flex-grow: 1;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 11px;
+    line-height: 1.45;
+    color: #0f172a;
+    border-top: 1px solid #e2e8f0;
+    white-space: pre-wrap;
+  }
+  .kw { color: #1d4ed8; font-weight: bold; }
+  .str { color: #b45309; }
+  .cmt { color: #64748b; font-style: italic; }
+  .fn { color: #003366; font-weight: bold; }
+  .err { color: #dc2626; font-weight: bold; }
+  .footer-note {
+    font-size: 11px;
+    color: #64748B;
+    text-align: right;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-card">
+  <h1>Structured English Logic Specifications</h1>
+  <div class="subtitle">Formal IF-THEN-ELSE Business Rules for Screening, Fine Valuation, Alt-ID, and Vehicle Impoundment</div>
+  <div class="meta-badges">
+    <span class="meta-badge">Structured Natural Language Specifications</span>
+    <span class="meta-badge">Keywords: IF, THEN, ELSE, SELECT CASE, VALIDATE, EMIT</span>
+    <span class="meta-badge">Single Source of Truth: Source Code/server.js & Source Code/index.html</span>
+  </div>
+</div>
+
+<div class="grid-2x2">
+  <!-- LOGIC 1: SCREENING PROTOCOL -->
+  <div class="logic-card">
+    <div class="logic-header">
+      <span class="logic-title">Logic 1: Watchlist & HPG Alarm Screening</span>
+      <span class="logic-badge">server.js:82 & index.html:1510</span>
+    </div>
+    <div class="logic-body">
+<span class="kw">FUNCTION</span> <span class="fn">assessScreening</span>(licenseNumber, plateNumber, driverName):
+  <span class="kw">SET</span> cleanPlate &larr; <span class="fn">STRIP_HYPHENS_UPPERCASE</span>(plateNumber)
+  <span class="kw">SET</span> normDriver &larr; <span class="fn">UPPERCASE</span>(driverName)
+  <span class="kw">SET</span> cleanLicense &larr; <span class="fn">STRIP_HYPHENS_UPPERCASE</span>(licenseNumber)
+  <span class="kw">INITIALIZE</span> flags &larr; [], isAlarm &larr; <span class="kw">FALSE</span>
+
+  <span class="cmt">// 1. Check vehicle plate against HPG Stolen Vehicle registry</span>
+  <span class="kw">IF</span> cleanPlate IS NOT EMPTY <span class="kw">AND</span> cleanPlate <span class="kw">EXISTS IN</span> Blacklist.plates <span class="kw">THEN</span>
+    <span class="kw">ADD</span> <span class="str">"Vehicle plate matches active HPG Alarm / Stolen record"</span> <span class="kw">TO</span> flags
+    <span class="kw">SET</span> isAlarm &larr; <span class="kw">TRUE</span>
+  <span class="kw">END IF</span>
+
+  <span class="cmt">// 2. Check driver against National Court Warrant Watchlist</span>
+  <span class="kw">IF</span> normDriver IS NOT EMPTY <span class="kw">AND</span> normDriver <span class="kw">EXISTS IN</span> Blacklist.drivers <span class="kw">THEN</span>
+    <span class="kw">ADD</span> <span class="str">"Driver matches active Police Watchlist / Court Warrant"</span> <span class="kw">TO</span> flags
+    <span class="kw">SET</span> isAlarm &larr; <span class="kw">TRUE</span>
+  <span class="kw">END IF</span>
+
+  <span class="cmt">// 3. Check license against LTO suspension list</span>
+  <span class="kw">IF</span> cleanLicense IS NOT EMPTY <span class="kw">AND</span> cleanLicense <span class="kw">EXISTS IN</span> Blacklist.licenses <span class="kw">THEN</span>
+    <span class="kw">ADD</span> <span class="str">"License record matches flagged suspension / past violations"</span> <span class="kw">TO</span> flags
+  <span class="kw">END IF</span>
+
+  <span class="cmt">// 4. Tri-State outcome classification</span>
+  <span class="kw">IF</span> flags IS EMPTY <span class="kw">THEN</span>
+    <span class="kw">RETURN</span> { status: <span class="str">"clear"</span>, label: <span class="str">"CLEAR"</span> }
+  <span class="kw">ELSE IF</span> isAlarm IS <span class="kw">TRUE THEN</span>
+    <span class="kw">RETURN</span> { status: <span class="str">"alarm"</span>, label: <span class="str">"ALARM / HPG WANTED"</span>, flags }
+  <span class="kw">ELSE</span>
+    <span class="kw">RETURN</span> { status: <span class="str">"warning"</span>, label: <span class="str">"WARNING / REPEAT OFFENDER"</span>, flags }
+  <span class="kw">END IF</span>
+    </div>
+  </div>
+
+  <!-- LOGIC 2: UNLICENSED DRIVER PROTOCOL -->
+  <div class="logic-card">
+    <div class="logic-header">
+      <span class="logic-title">Logic 2: Unlicensed Driver & Alt-ID Protocol</span>
+      <span class="logic-badge">server.js:245 & index.html:1446</span>
+    </div>
+    <div class="logic-body">
+<span class="kw">PROCEDURE</span> <span class="fn">enforceDriverIdentification</span>(violationList, licenseInput, altIdType, altIdNumber):
+  <span class="kw">IF</span> violationList <span class="kw">CONTAINS</span> <span class="str">"No Driver's License"</span> <span class="kw">THEN</span>
+    <span class="cmt">// Unlicensed motorist branch</span>
+    <span class="kw">SET</span> isUnlicensed &larr; <span class="kw">TRUE</span>
+    <span class="kw">DISABLE</span> licenseInput
+    <span class="kw">SET</span> licenseInput.value &larr; <span class="str">"N/A - Unlicensed"</span>
+    <span class="kw">SHOW</span> altIdInputGroup
+
+    <span class="kw">VALIDATE</span> altIdType IS NOT EMPTY
+    <span class="kw">IF</span> VALIDATION FAILS <span class="kw">THEN</span>
+      <span class="err">EMIT ERROR</span> <span class="str">"Alternative ID type is required for unlicensed drivers."</span>
+    <span class="kw">END IF</span>
+
+    <span class="kw">VALIDATE</span> altIdNumber IS NOT EMPTY
+    <span class="kw">IF</span> VALIDATION FAILS <span class="kw">THEN</span>
+      <span class="err">EMIT ERROR</span> <span class="str">"Alternative ID number is required for unlicensed drivers."</span>
+    <span class="kw">END IF</span>
+
+  <span class="kw">ELSE</span>
+    <span class="cmt">// Standard licensed driver branch</span>
+    <span class="kw">SET</span> isUnlicensed &larr; <span class="kw">FALSE</span>
+    <span class="kw">ENABLE</span> licenseInput
+    <span class="kw">HIDE</span> altIdInputGroup
+
+    <span class="kw">VALIDATE</span> licenseInput.value IS NOT EMPTY <span class="kw">AND</span> != <span class="str">"N/A - UNLICENSED"</span>
+    <span class="kw">IF</span> VALIDATION FAILS <span class="kw">THEN</span>
+      <span class="err">EMIT ERROR</span> <span class="str">"Valid Driver's License Number is mandatory."</span>
+    <span class="kw">END IF</span>
+
+    <span class="kw">SET</span> altIdType &larr; <span class="kw">NULL</span>, altIdNumber &larr; <span class="kw">NULL</span>
+  <span class="kw">END IF</span>
+    </div>
+  </div>
+
+  <!-- LOGIC 3: STATUTORY VS OVERRIDE FINE -->
+  <div class="logic-card">
+    <div class="logic-header">
+      <span class="logic-title">Logic 3: Statutory Fines vs Discretionary Override</span>
+      <span class="logic-badge">server.js:54, 277 & index.html:1487</span>
+    </div>
+    <div class="logic-body">
+<span class="kw">FUNCTION</span> <span class="fn">reconcileFineTotal</span>(selectedViolations, fineAmount, fineOverrideFlag):
+  <span class="kw">INITIALIZE</span> statutorySum &larr; <span class="num">0.00</span>
+
+  <span class="cmt">// Compute exact statutory baseline from Schedule</span>
+  <span class="kw">FOR EACH</span> violation <span class="kw">IN</span> selectedViolations <span class="kw">DO</span>
+    <span class="kw">SELECT CASE</span> violation
+      <span class="kw">CASE</span> <span class="str">"No Driver's License"</span>:      statutorySum &larr; statutorySum + <span class="num">1500.00</span>
+      <span class="kw">CASE</span> <span class="str">"Expired Registration"</span>:    statutorySum &larr; statutorySum + <span class="num">1200.00</span>
+      <span class="kw">CASE</span> <span class="str">"No Helmet / Seatbelt"</span>:     statutorySum &larr; statutorySum + <span class="num">1000.00</span>
+      <span class="kw">CASE</span> <span class="str">"DUI / Impaired Driving"</span>:   statutorySum &larr; statutorySum + <span class="num">5000.00</span>
+      <span class="kw">CASE</span> <span class="str">"Illegal Modification"</span>:     statutorySum &larr; statutorySum + <span class="num">2500.00</span>
+      <span class="kw">CASE</span> <span class="str">"Reckless Driving"</span>:         statutorySum &larr; statutorySum + <span class="num">3000.00</span>
+      <span class="kw">CASE DEFAULT</span>:                    statutorySum &larr; statutorySum + <span class="num">1000.00</span>
+    <span class="kw">END SELECT</span>
+  <span class="kw">END FOR</span>
+
+  <span class="cmt">// Enforce non-negative numeric fine</span>
+  <span class="kw">VALIDATE</span> fineAmount IS FINITE <span class="kw">AND</span> fineAmount &gt; <span class="num">0.00</span>
+  <span class="kw">IF</span> VALIDATION FAILS <span class="kw">THEN</span>
+    <span class="err">EMIT ERROR</span> <span class="str">"Fine amount must be a positive numerical value."</span>
+  <span class="kw">END IF</span>
+
+  <span class="cmt">// Branch based on discretionary override toggle</span>
+  <span class="kw">IF</span> fineOverrideFlag == <span class="num">1</span> <span class="kw">THEN</span>
+    <span class="kw">RETURN</span> { isValid: <span class="kw">TRUE</span>, amount: fineAmount, isOverridden: <span class="num">1</span> }
+  <span class="kw">ELSE</span>
+    <span class="kw">IF</span> <span class="fn">ABS</span>(fineAmount - statutorySum) &gt; <span class="num">0.05</span> <span class="kw">THEN</span>
+      <span class="err">EMIT ERROR</span> <span class="str">"Matching fine total required: ₱"</span> + statutorySum
+      <span class="kw">RETURN</span> { isValid: <span class="kw">FALSE</span> }
+    <span class="kw">END IF</span>
+    <span class="kw">RETURN</span> { isValid: <span class="kw">TRUE</span>, amount: statutorySum, isOverridden: <span class="num">0</span> }
+  <span class="kw">END IF</span>
+    </div>
+  </div>
+
+  <!-- LOGIC 4: VEHICLE IMPOUNDMENT -->
+  <div class="logic-card">
+    <div class="logic-header">
+      <span class="logic-title">Logic 4: Vehicle Disposition & Mandatory Impound Slip</span>
+      <span class="logic-badge">server.js:291 & index.html:1479</span>
+    </div>
+    <div class="logic-body">
+<span class="kw">PROCEDURE</span> <span class="fn">enforceVehicleDisposition</span>(disposition, impoundReceiptInput):
+  <span class="cmt">// Check if disposition entails impounding at police station</span>
+  <span class="kw">IF</span> disposition == <span class="str">"Impounded"</span> <span class="kw">OR</span> disposition == <span class="str">"Impounded at Base / Station"</span> <span class="kw">THEN</span>
+    <span class="kw">SHOW</span> impoundReceiptContainer
+    <span class="kw">SET</span> impoundReceiptInput.required &larr; <span class="kw">TRUE</span>
+
+    <span class="cmt">// Mandate towing slip serial number</span>
+    <span class="kw">VALIDATE</span> impoundReceiptInput.value IS NOT EMPTY
+    <span class="kw">IF</span> VALIDATION FAILS <span class="kw">THEN</span>
+      <span class="err">EMIT ERROR</span> <span class="str">"Impound Receipt / Towing Slip Number is required when vehicle disposition is Impounded."</span>
+      <span class="kw">HALT INGESTION</span>
+    <span class="kw">END IF</span>
+
+    <span class="kw">SET</span> storedSlipNo &larr; <span class="fn">TRIM</span>(impoundReceiptInput.value)
+
+  <span class="kw">ELSE</span>
+    <span class="cmt">// Vehicle released with citation or turned over</span>
+    <span class="kw">HIDE</span> impoundReceiptContainer
+    <span class="kw">SET</span> impoundReceiptInput.required &larr; <span class="kw">FALSE</span>
+    <span class="kw">CLEAR</span> impoundReceiptInput.value
+    <span class="kw">SET</span> storedSlipNo &larr; <span class="kw">NULL</span>
+  <span class="kw">END IF</span>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">
+  Single Source of Truth: Source Code/server.js & Source Code/index.html — PNP-CVPRMS Technical Documentation
+</div>
+
+</body>
+</html>

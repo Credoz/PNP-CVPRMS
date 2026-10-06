@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PNP-CVPRMS Data Dictionary</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    padding: 30px;
+    width: 1700px;
+    overflow: hidden;
+  }
+  ::-webkit-scrollbar { display: none; }
+  .header-card {
+    background: linear-gradient(135deg, #002244 0%, #003366 100%);
+    color: #ffffff;
+    padding: 24px 30px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    border-bottom: 4px solid #c5a059;
+    box-shadow: 0 4px 12px rgba(0,34,68,0.1);
+  }
+  .header-card h1 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+  .header-card .subtitle {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+  .meta-badges {
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+  }
+  .meta-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .section-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #002244;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-left: 5px solid #003366;
+    padding-left: 10px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    font-size: 13px;
+  }
+  th {
+    background: #f1f5f9;
+    color: #002244;
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 2px solid #cbd5e1;
+  }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+  }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .col-name { font-weight: 700; color: #003366; font-family: monospace; font-size: 13px; }
+  .type-pill {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: monospace;
+  }
+  .type-int { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+  .type-text { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+  .type-real { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .constraint-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+  }
+  .constraint-pk { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+  .constraint-nn { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .card {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #002244;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 6px;
+  }
+  .fee-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+    font-size: 12px;
+  }
+  .fee-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 8px;
+    background: #f8fafc;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+  }
+  .fee-name { font-weight: 600; color: #334155; }
+  .fee-amount { font-weight: 800; color: #003366; }
+  .footer-note {
+    font-size: 11px;
+    color: #64748B;
+    text-align: right;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-card">
+  <h1>Philippine National Police — Checkpoint Violation Processing & Records Management System</h1>
+  <div class="subtitle">Official Physical Database Schema & Reference Domain Data Dictionary</div>
+  <div class="meta-badges">
+    <span class="meta-badge">Target Database: SQLite (pnp_checkpoint.db)</span>
+    <span class="meta-badge">Primary Table: violations (20 Columns)</span>
+    <span class="meta-badge">Source of Truth: Source Code/server.js & Source Code/index.html</span>
+  </div>
+</div>
+
+<div class="section-title">1. Violations Physical Table Schema (SQLite 3.x)</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width: 40px;">#</th>
+      <th style="width: 170px;">Column Name</th>
+      <th style="width: 110px;">Data Type</th>
+      <th style="width: 160px;">Constraints</th>
+      <th style="width: 170px;">Default Value</th>
+      <th>Description & Operational Business Rules</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td class="col-name">id</td>
+      <td><span class="type-pill type-int">INTEGER</span></td>
+      <td><span class="constraint-tag constraint-pk">PRIMARY KEY</span> <span class="constraint-tag">AUTOINCREMENT</span></td>
+      <td>Auto-generated</td>
+      <td>Unique surrogate primary key automatically incremented by the SQLite storage engine.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td class="col-name">driver_name</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag constraint-nn">NOT NULL</span></td>
+      <td>None</td>
+      <td>Full legal name of apprehended motorist as stated on license or alternative government ID.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td class="col-name">license_number</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag constraint-nn">NOT NULL</span></td>
+      <td>None</td>
+      <td>LTO Driver's License number (e.g. N01-12-345678). Explicitly set to 'N/A - Unlicensed' if unlicensed.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td class="col-name">id_type</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">NULLABLE</span></td>
+      <td>NULL</td>
+      <td>Government ID type (PhilSys, Passport, UMID, PRC, Postal ID, Voter's ID) required if driver is unlicensed.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td class="col-name">id_number</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">NULLABLE</span></td>
+      <td>NULL</td>
+      <td>Identification number on alternative government document presented by unlicensed motorists.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td class="col-name">plate_number</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag constraint-nn">NOT NULL</span></td>
+      <td>None</td>
+      <td>Vehicle license plate or temporary MV file number (e.g. ABC-1234, 1234-567890).</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td class="col-name">vehicle_type</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">NULLABLE</span></td>
+      <td>'Private/Sedan (UV)'</td>
+      <td>Classification: Motorcycle (MC), Tricycle (TC), Private/Sedan (UV), SUV/AUV, Commercial/Truck.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td class="col-name">vehicle_disposition</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">NULLABLE</span></td>
+      <td>'Released with Citation'</td>
+      <td>Disposition state: 'Released with Citation', 'Impounded at Base / Station', 'Turned over to LTO / HPG'.</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td class="col-name">impound_receipt_no</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">CONDITIONAL</span></td>
+      <td>NULL</td>
+      <td>Mandatory serial number of physical towing slip / impound receipt when vehicle_disposition is Impounded.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td class="col-name">shift_info</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">NULLABLE</span></td>
+      <td>NULL</td>
+      <td>Operational checkpoint duty shift: 'Shift 1 (06:00 - 14:00)', 'Shift 2 (14:00 - 22:00)', 'Shift 3 (22:00 - 06:00)'.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td class="col-name">checkpoint_post</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">NULLABLE</span></td>
+      <td>NULL</td>
+      <td>Designated checkpoint post name / location (e.g. 'Boundary Post Alpha', 'National Highway Bravo').</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td class="col-name">payment_status</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">CHECK ENUM</span></td>
+      <td>'Unsettled / Unpaid'</td>
+      <td>Treasury settlement status: 'Unsettled / Unpaid', 'Settled / Paid at Treasury', or 'Voided / Contested'.</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td class="col-name">evidence_image</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">NULLABLE</span></td>
+      <td>NULL</td>
+      <td>Lossy Base64 Data URL (data:image/jpeg;base64,...) of downscaled confiscated document or plate photo.</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td class="col-name">fine_override</td>
+      <td><span class="type-pill type-int">INTEGER</span></td>
+      <td><span class="constraint-tag">BOOLEAN FLAG</span></td>
+      <td>0</td>
+      <td>Flag: 0 = Statutory schedule enforced; 1 = Officer authorized manual fine override entered.</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td class="col-name">violation_type</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag constraint-nn">NOT NULL</span></td>
+      <td>None</td>
+      <td>Comma-delimited string of itemized statutory traffic offenses cited during checkpoint stop.</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td class="col-name">fine_amount</td>
+      <td><span class="type-pill type-real">REAL</span></td>
+      <td><span class="constraint-tag constraint-nn">NOT NULL</span> <span class="constraint-tag">&gt; 0</span></td>
+      <td>None</td>
+      <td>Total assessed monetary penalty in Philippine Pesos (PHP). Must strictly equal schedule sum unless overridden.</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td class="col-name">officer_id</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag constraint-nn">NOT NULL</span></td>
+      <td>None</td>
+      <td>Unique badge ID of apprehending PNP checkpoint officer (e.g. 'PNP-OFFICER-4491').</td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td class="col-name">date_recorded</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag constraint-nn">NOT NULL</span></td>
+      <td>None</td>
+      <td>ISO-formatted timestamp of citation creation in local Philippine Standard Time (YYYY-MM-DD HH:mm:ss).</td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td class="col-name">ticket_number</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">UNIQUE SEED</span></td>
+      <td>None</td>
+      <td>Unique citation ticket identifier format: PNP-&lt;timestamp_suffix&gt;-&lt;6_char_random&gt; (e.g. PNP-24891102-K8M4Q2).</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td class="col-name">screening_status</td>
+      <td><span class="type-pill type-text">TEXT</span></td>
+      <td><span class="constraint-tag">CHECK ENUM</span></td>
+      <td>'clear'</td>
+      <td>Automated triage result against watchlist: 'clear' (No flags), 'warning' (Suspended), or 'alarm' (HPG Wanted).</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>2. Statutory Offense Schedule (OFFENSE_SCHEDULE)</h3>
+    <div class="fee-grid">
+      <div class="fee-item"><span class="fee-name">No Driver's License</span><span class="fee-amount">₱1,500.00</span></div>
+      <div class="fee-item"><span class="fee-name">Expired Vehicle Registration</span><span class="fee-amount">₱1,200.00</span></div>
+      <div class="fee-item"><span class="fee-name">No Helmet / Seatbelt</span><span class="fee-amount">₱1,000.00</span></div>
+      <div class="fee-item"><span class="fee-name">DUI / Impaired Driving</span><span class="fee-amount">₱5,000.00</span></div>
+      <div class="fee-item"><span class="fee-name">Illegal Modification</span><span class="fee-amount">₱2,500.00</span></div>
+      <div class="fee-item"><span class="fee-name">Reckless Driving</span><span class="fee-amount">₱3,000.00</span></div>
+      <div class="fee-item"><span class="fee-name">Failure to Carry OR-CR / License</span><span class="fee-amount">₱1,000.00</span></div>
+      <div class="fee-item"><span class="fee-name">Disregarding Traffic Signs (DTS)</span><span class="fee-amount">₱1,000.00</span></div>
+      <div class="fee-item"><span class="fee-name">Distracted Driving (RA 10913)</span><span class="fee-amount">₱5,000.00</span></div>
+      <div class="fee-item"><span class="fee-name">Illegal Parking / Obstruction</span><span class="fee-amount">₱1,000.00</span></div>
+      <div class="fee-item"><span class="fee-name">Number Coding Violation</span><span class="fee-amount">₱500.00</span></div>
+      <div class="fee-item"><span class="fee-name">Counterflow / Illegal Overtaking</span><span class="fee-amount">₱3,000.00</span></div>
+      <div class="fee-item"><span class="fee-name">Over-speeding</span><span class="fee-amount">₱1,200.00</span></div>
+      <div class="fee-item"><span class="fee-name">Smoke Belching / Defective Gear</span><span class="fee-amount">₱1,500.00</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>3. Screening Watchlist Domains (SCREENING_BLACKLIST)</h3>
+    <table style="margin-bottom: 0; font-size: 12px;">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Blacklisted Entities</th>
+          <th>Triggered Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>HPG Stolen Vehicle Plates</strong></td>
+          <td><code>ABC-1234</code>, <code>XYZ-9876</code></td>
+          <td><span class="type-pill type-int" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">HPG ALARM</span> Hold vehicle immediately</td>
+        </tr>
+        <tr>
+          <td><strong>National Court Warrants</strong></td>
+          <td><code>Juan Dela Cruz</code>, <code>Pedro Santos</code></td>
+          <td><span class="type-pill type-int" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">COURT ALARM</span> Apprehend & verify warrant</td>
+        </tr>
+        <tr>
+          <td><strong>LTO Suspended Licenses</strong></td>
+          <td><code>N01-12-345678</code></td>
+          <td><span class="type-pill type-text">WARNING</span> Impound or verify status</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="footer-note">
+  Generated directly from running SQLite schema and active runtime constants — PNP-CVPRMS Technical Documentation
+</div>
+
+</body>
+</html>

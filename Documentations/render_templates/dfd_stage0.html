@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PNP-CVPRMS DFD Stage 0 (Context Diagram)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    padding: 30px;
+    width: 1720px;
+    overflow: hidden;
+  }
+  ::-webkit-scrollbar { display: none; }
+  .header-card {
+    background: linear-gradient(135deg, #002244 0%, #003366 100%);
+    color: #ffffff;
+    padding: 22px 30px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    border-bottom: 4px solid #c5a059;
+    box-shadow: 0 4px 12px rgba(0,34,68,0.1);
+  }
+  .header-card h1 {
+    font-size: 26px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .header-card .subtitle {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-top: 6px;
+  }
+  .meta-badges {
+    margin-top: 10px;
+    display: flex;
+    gap: 12px;
+  }
+  .meta-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .diagram-container {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+  }
+  svg {
+    background: #ffffff;
+  }
+  .entity-box {
+    fill: #f8fafc;
+    stroke: #003366;
+    stroke-width: 2.5;
+    rx: 8;
+  }
+  .entity-title {
+    font-size: 15px;
+    font-weight: 800;
+    fill: #002244;
+    text-anchor: middle;
+  }
+  .entity-sub {
+    font-size: 12px;
+    font-weight: 600;
+    fill: #64748b;
+    text-anchor: middle;
+  }
+  .process-circle {
+    fill: #eff6ff;
+    stroke: #1d4ed8;
+    stroke-width: 3.5;
+  }
+  .process-id {
+    font-size: 14px;
+    font-weight: 800;
+    fill: #1e40af;
+    text-anchor: middle;
+  }
+  .process-title {
+    font-size: 16px;
+    font-weight: 800;
+    fill: #002244;
+    text-anchor: middle;
+  }
+  .process-sub {
+    font-size: 12px;
+    font-weight: 600;
+    fill: #475569;
+    text-anchor: middle;
+  }
+  .flow-line {
+    fill: none;
+    stroke: #003366;
+    stroke-width: 2;
+  }
+  .flow-label-bg {
+    fill: #ffffff;
+    stroke: #e2e8f0;
+    stroke-width: 1;
+    rx: 4;
+  }
+  .flow-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    fill: #0f172a;
+    text-anchor: middle;
+  }
+  .footer-note {
+    font-size: 12px;
+    color: #64748B;
+    text-align: right;
+    margin-top: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-card">
+  <h1>Data Flow Diagram — Stage 0 (Context Level)</h1>
+  <div class="subtitle">System Boundary & Environmental Interfaces for Philippine National Police Checkpoint Operations</div>
+  <div class="meta-badges">
+    <span class="meta-badge">Process: 0.0 PNP-CVPRMS</span>
+    <span class="meta-badge">4 External Entities</span>
+    <span class="meta-badge">Single Source of Truth: Source Code/server.js & Source Code/index.html</span>
+  </div>
+</div>
+
+<div class="diagram-container">
+  <svg width="1620" height="880" viewBox="0 0 1620 880">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" fill="#003366" />
+      </marker>
+      <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+        <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#002244" flood-opacity="0.08"/>
+      </filter>
+    </defs>
+
+    <!-- CENTER: PROCESS 0.0 -->
+    <g filter="url(#shadow)">
+      <circle cx="810" cy="460" r="145" class="process-circle" />
+      <text x="810" y="415" class="process-id">PROCESS 0.0</text>
+      <text x="810" y="445" class="process-title">PNP Checkpoint Violation</text>
+      <text x="810" y="470" class="process-title">Processing & Records</text>
+      <text x="810" y="495" class="process-title">Management System</text>
+      <text x="810" y="525" class="process-sub">(PNP-CVPRMS)</text>
+    </g>
+
+    <!-- ENTITY 1: TOP (PNP / HPG NATIONAL DATABASE) -->
+    <g filter="url(#shadow)">
+      <rect x="660" y="30" width="300" height="110" class="entity-box" />
+      <text x="810" y="70" class="entity-title">PNP / HPG NATIONAL DATABASE</text>
+      <text x="810" y="95" class="entity-sub">External Government Repository</text>
+      <text x="810" y="115" class="entity-sub">[Stolen Plates, Court Warrants, Suspensions]</text>
+    </g>
+
+    <!-- ENTITY 2: LEFT (CHECKPOINT OFFICER) -->
+    <g filter="url(#shadow)">
+      <rect x="40" y="380" width="280" height="160" class="entity-box" />
+      <text x="180" y="425" class="entity-title">CHECKPOINT OFFICER</text>
+      <text x="180" y="450" class="entity-sub">Apprehending Field Personnel</text>
+      <text x="180" y="475" class="entity-sub">[PNP-OFFICER-4491 / PO3]</text>
+      <text x="180" y="505" class="entity-sub">Role: Ingestion & Field Triage</text>
+    </g>
+
+    <!-- ENTITY 3: RIGHT (MUNICIPAL TREASURY OFFICER) -->
+    <g filter="url(#shadow)">
+      <rect x="1300" y="380" width="280" height="160" class="entity-box" />
+      <text x="1440" y="425" class="entity-title">MUNICIPAL TREASURY OFFICER</text>
+      <text x="1440" y="450" class="entity-sub">LGU Revenue & Cashier Desk</text>
+      <text x="1440" y="475" class="entity-sub">[Municipal Treasury Department]</text>
+      <text x="1440" y="505" class="entity-sub">Role: Settlement & Revenue Collection</text>
+    </g>
+
+    <!-- ENTITY 4: BOTTOM (APPREHENDED MOTORIST) -->
+    <g filter="url(#shadow)">
+      <rect x="660" y="740" width="300" height="110" class="entity-box" />
+      <text x="810" y="780" class="entity-title">APPREHENDED MOTORIST</text>
+      <text x="810" y="805" class="entity-sub">Driver of Flagged / Screened Vehicle</text>
+      <text x="810" y="825" class="entity-sub">[Private, PUV, MC, Truck Operator]</text>
+    </g>
+
+    <!-- ======================================================== -->
+    <!-- FLOWS: TOP ENTITY <-> PROCESS 0.0 -->
+    <!-- ======================================================== -->
+    <!-- Top to Process (Inbound Watchlist) -->
+    <path d="M 770 140 L 770 315" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="540" y="210" width="220" height="26" class="flow-label-bg" />
+    <text x="650" y="227" class="flow-label">Stolen Plates / Warrant Records</text>
+
+    <!-- Process to Top (Outbound Alarm Logs) -->
+    <path d="M 850 315 L 850 140" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="860" y="210" width="220" height="26" class="flow-label-bg" />
+    <text x="970" y="227" class="flow-label">Checkpoint Alarm Apprehension Logs</text>
+
+    <!-- ======================================================== -->
+    <!-- FLOWS: LEFT ENTITY <-> PROCESS 0.0 -->
+    <!-- ======================================================== -->
+    <!-- Officer to Process (Top curve: Ingestion payload) -->
+    <path d="M 320 420 C 460 420, 520 420, 665 435" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="350" y="380" width="290" height="26" class="flow-label-bg" />
+    <text x="495" y="397" class="flow-label">Citation Details, Disposition & Confiscated Photo</text>
+
+    <!-- Process to Officer (Bottom curve: Triage & thermal print) -->
+    <path d="M 665 485 C 520 500, 460 500, 320 500" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="350" y="515" width="290" height="26" class="flow-label-bg" />
+    <text x="495" y="532" class="flow-label">Real-Time Triage Status, KPI Metrics & POS Ticket</text>
+
+    <!-- ======================================================== -->
+    <!-- FLOWS: RIGHT ENTITY <-> PROCESS 0.0 -->
+    <!-- ======================================================== -->
+    <!-- Treasury to Process (Settlement Update) -->
+    <path d="M 1300 440 C 1160 440, 1100 440, 955 450" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="980" y="400" width="290" height="26" class="flow-label-bg" />
+    <text x="1125" y="417" class="flow-label">Payment Status Update ('Paid at Treasury' / 'Void')</text>
+
+    <!-- Process to Treasury (Outstanding Citations) -->
+    <path d="M 955 470 C 1100 480, 1160 480, 1300 480" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="980" y="495" width="290" height="26" class="flow-label-bg" />
+    <text x="1125" y="512" class="flow-label">Unsettled Violation Records & Payable Balances</text>
+
+    <!-- ======================================================== -->
+    <!-- FLOWS: BOTTOM ENTITY <-> PROCESS 0.0 -->
+    <!-- ======================================================== -->
+    <!-- Motorist to Process (Physical Credentials) -->
+    <path d="M 770 740 L 770 605" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="540" y="655" width="220" height="26" class="flow-label-bg" />
+    <text x="650" y="672" class="flow-label">Driver License / Alt-ID & OR-CR</text>
+
+    <!-- Process to Motorist (Citation Slip) -->
+    <path d="M 850 605 L 850 740" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="860" y="655" width="220" height="26" class="flow-label-bg" />
+    <text x="970" y="672" class="flow-label">Official 58mm/80mm Citation Ticket</text>
+
+  </svg>
+</div>
+
+<div class="footer-note">
+  Generated from verified application contracts — PNP-CVPRMS Technical Documentation
+</div>
+
+</body>
+</html>

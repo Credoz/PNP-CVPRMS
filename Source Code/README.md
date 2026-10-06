@@ -1,136 +1,117 @@
-# Computerized Violation Processing and Records Management System (PNP-CVPRMS)
+# PNP-CVPRMS — Source Code & Developer Guide
 
-**Target Platform:** Online Web Application with Real-Time Data Synchronization  
-**Prototype Release:** `v2.0-PRO (Demonstration & Defense Prototype)`  
-**Default Station:** `Agoo Municipal Police Station`
-
-This folder contains the complete, runnable source code, embedded database, test suite, and Windows launcher scripts for the PNP-CVPRMS application.
+This folder contains the complete, runnable source code, embedded database, automated test suite, and Windows deployment scripts for the **PNP Checkpoint Vehicular Passing & Violations Record Management System (PNP-CVPRMS)**.
 
 ---
 
-## System Vision: Online Web Platform with Real-Time Data
+## 1. Directory File Manifest
 
-**PNP-CVPRMS** is designed as a centralized, online web system that delivers **real-time data synchronization** across all active police checkpoints, municipal stations, and regional command centers. 
-
-### Target Production Capabilities:
-- **Centralized Cloud Database:** Live data synchronization across all checkpoint boundary posts and police stations.
-- **Real-Time Alert Feeds:** Instant broadcasting of Highway Patrol Group (HPG) alarms and court warrants across terminals via WebSockets.
-- **Inter-Agency Integrations:** Live REST API queries against LTO LTMS (Land Transportation Management System) for driver's license status and vehicle registration records.
-- **Treasury Payment Integration:** Instant settlement updates when fines are paid at the municipal treasury or online payment portals.
-
-### Current Demonstration Prototype:
-For coursework defense, presentations, and field demonstrations, this package runs as a **self-contained local web prototype** with full real-time operational simulation (live clock, instant citation processing, embedded SQLite database, automated fine calculation, and simulated screening rules). This allows seamless demonstration on any laptop or workstation without requiring live police cloud infrastructure or external VPNs.
-
----
-
-## Quick Launch (Recommended for Windows)
-
-### 1. Create the Desktop Shortcut
-Double-click:
-```text
-Create-CVPRMS-Shortcut.bat
-```
-This automatically generates a **PNP-CVPRMS** desktop shortcut on your Windows Desktop equipped with the official PNP shield icon.
-
-### 2. Start the System
-Double-click the **PNP-CVPRMS** desktop shortcut (or double-click `Start-CVPRMS.bat`).
-- The system will start the local server in the background and immediately open `http://localhost:3000` in your web browser.
+| File / Folder | Purpose |
+| :--- | :--- |
+| [`server.js`](file:///c:/Users/emman/PNP-CVPRMS/Source%20Code/server.js) | Express.js REST API server, SQLite database controller, screening engine, and static file server. |
+| [`index.html`](file:///c:/Users/emman/PNP-CVPRMS/Source%20Code/index.html) | Single-page application frontend containing the UI, forms, thermal print layout, modals, and client-side logic. |
+| [`pnp_checkpoint.db`](file:///c:/Users/emman/PNP-CVPRMS/Source%20Code/pnp_checkpoint.db) | Embedded SQLite 3 database file storing active citation records. |
+| [`package.json`](file:///c:/Users/emman/PNP-CVPRMS/Source%20Code/package.json) | Node.js project configuration, dependencies (`express`, `sqlite3`), and lifecycle scripts (`npm start`, `npm test`). |
+| [`Create-CVPRMS-Shortcut.bat`](file:///c:/Users/emman/PNP-CVPRMS/Source%20Code/Create-CVPRMS-Shortcut.bat) | Windows batch script that creates a one-click desktop shortcut with the official PNP shield icon. |
+| [`Start-CVPRMS.bat`](file:///c:/Users/emman/PNP-CVPRMS/Source%20Code/Start-CVPRMS.bat) | Windows launcher script that checks dependencies, starts `server.js` in the background, and opens the browser. |
+| [`test/self_check.js`](file:///c:/Users/emman/PNP-CVPRMS/Source%20Code/test/self_check.js) | Automated regression test suite verifying database integrity, validation rules, and screening logic. |
 
 ---
 
-## Manual Terminal Setup & Execution
+## 2. Quick Setup & Execution
 
 ### System Requirements
-- **Node.js** (version 18.x or later) — Download from [https://nodejs.org/](https://nodejs.org/)
+- **Node.js** (v18.0.0 or later) — [https://nodejs.org/](https://nodejs.org/)
 - **npm** (included with Node.js)
-- Modern web browser (Google Chrome, Microsoft Edge, Firefox, Brave)
+- Supported Browsers: Google Chrome, Microsoft Edge, Mozilla Firefox, Brave
 
-### Steps:
-1. Open a terminal or PowerShell prompt in this folder:
-   ```bash
-   npm install
-   ```
-2. Start the backend application:
-   ```bash
-   npm start
-   ```
-3. Open your browser and navigate to:
-   ```text
-   http://localhost:3000
-   ```
+### Option A: Standard Terminal Launch
+```bash
+# 1. Install dependencies
+npm install
 
----
+# 2. Start the server
+npm start
+```
+Open **`http://localhost:3000`** in your browser.
 
-## Transferring & Running on Another PC via Flash Drive
-
-To present or demonstrate PNP-CVPRMS on a different computer:
-
-1. **Copy or Zip this folder:** Copy the `Source Code` folder (or compress it into a `.zip` file) and save it to your USB flash drive.
-2. **Copy to Presentation PC:** On the presentation computer, copy and extract the folder onto a permanent local drive (e.g. `C:\PNP-CVPRMS` or `Documents\PNP-CVPRMS`).
-   > [!IMPORTANT]
-   > Do not run the shortcut creator directly from inside the unextracted zip or while still on the USB flash drive. Copy to a permanent drive first so the shortcut points to a valid local path.
-3. **Verify Node.js:** Ensure the presentation computer has Node.js installed ([https://nodejs.org/](https://nodejs.org/)).
-4. **Create Shortcut:** Double-click `Create-CVPRMS-Shortcut.bat`.
-5. **Launch:** Double-click the newly created **PNP-CVPRMS** desktop shortcut.
-   - `Start-CVPRMS.bat` includes an **automatic dependency preflight check**. If `node_modules` is missing or was compiled under a different Node version, it will automatically install and configure dependencies on first launch!
-
-> [!TIP]
-> **Data Portability:** If `pnp_checkpoint.db` is included, all previously recorded citations travel with you. To start a fresh demonstration with zero records, simply delete `pnp_checkpoint.db` before launching; the system will automatically recreate a clean database on startup.
+### Option B: Windows One-Click Desktop Shortcut
+1. Double-click `Create-CVPRMS-Shortcut.bat`.
+2. A shortcut labeled **PNP-CVPRMS** will appear on your desktop.
+3. Double-click the shortcut to start the server and open your default browser automatically.
 
 ---
 
-## Core System Features
+## 3. REST API Endpoint Summary
 
-- **Active Operational Session Controls:** Tag citations with active Checkpoint Post (*Boundary Post, Poblacion Plaza, MacArthur Bypass, Mobile Alpha*), Operational Shift (*Day, Afternoon, Night*), and Apprehending Officer Badge with live timestamp clock.
-- **Unlicensed Driver Workflow:** Automatically disengages driver's license requirements when *"No Driver's License"* is selected and requires alternative government identification (*PhilID, Passport, SSS/GSIS, Voter's ID, PRC, Postal, Senior/PWD*).
-- **Statutory Fine Calculations & Officer Discretion:** Automatically calculates fines according to LTO JAO 2014-01 / municipal schedules, with an optional toggle for manual officer discretion adjustments.
-- **Vehicle Classification & Disposition:** Categorize vehicles (*Private/Sedan, Motorcycle, Tricycle, Commercial/Truck*) and log disposition (*Released with Citation, Impounded, Turned Over to HPG*) with mandatory impound slip tracking.
-- **Evidence & Photo Capture:** Upload photos of confiscated licenses, OR-CR documents, or vehicle defects with client-side canvas downscaling (under ~200KB) and instant thumbnail preview.
-- **Thermal Bluetooth Citation Receipt Printing:** Built-in citation ticket with PNP header, station details, driver/vehicle details, itemized violations, fine amount, payment notice, and signature lines. Centered automatically on standard Letter/A4 paper and natively compatible with 58mm/80mm thermal roll printers.
-- **Multi-Tier Screening Alerts:** Real-time flagging for wanted persons, court warrants, and HPG alarm/stolen vehicle plates (`CLEAR`, `WARNING / REPEAT OFFENDER`, `ALARM / HPG WANTED`).
-- **Registry Management:** Compact table with violation badges, hover tooltips, status update modal (`Unsettled`, `Paid at Treasury`, `Voided/Contested`), and full detail modal.
-- **Fast Search & Quick Filter Chips:** Instant search by Ticket #, Plate, Driver, License, Alternative ID, Officer Badge, or Violation with Enter key support; one-click filter chips by Date (*Today, Active Shift, 7 Days*) and Status (*Flagged, Unsettled*).
-- **Excel-Ready CSV Export:** Export current records to CSV with a UTF-8 BOM (`\uFEFF`) to preserve Philippine Peso signs (`₱`) and Filipino name accents in Windows Excel.
-- **Summary Metrics Dashboard:** Live counters for Total Apprehensions, Total Fines Levied, Flagged Alarms, and Unsettled Citations.
+The backend (`server.js`) exposes the following HTTP endpoints:
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/violations` | Retrieve all violations (supports query params: `search`, `limit`, `offset`, `date`). |
+| `POST` | `/api/violations` | Record a new violation citation (validates license, IDs, impounds, and fines). |
+| `GET` | `/api/violations/:id` | Fetch complete dossier details and evidence photo for a specific violation. |
+| `PUT` | `/api/violations/:id/payment` | Update payment status (`Unsettled / Unpaid` or `Settled / Paid`). |
+| `GET` | `/api/violations/summary` | Return aggregated KPI statistics (Total, Fines, Alarms, Unsettled). |
+| `POST` | `/api/screen` | Evaluate driver and vehicle credentials against in-memory security watchlists. |
 
 ---
 
-## Running Automated Tests
+## 4. Running the Automated Test Suite
 
-Run the built-in test suite:
+To run all automated test assertions:
 
 ```bash
-node --test
+npm test
+```
+*(Or directly via Node: `node test/self_check.js`)*
+
+Expected output:
+```text
+Running CVPRMS self-check test suite...
+[DATABASE] Connected to SQLite database (pnp_checkpoint.db).
+[DATABASE] Violations table verified/created successfully.
+ALL SELF-CHECK ASSERTIONS PASSED SUCCESSFULLY!
 ```
 
-Executes 14 unit and integration tests covering statutory calculation, ticket numbering, screening evaluations, alternative ID enforcement, fine discretion overrides, impound validation, status PATCH routing, multi-field search, summary KPI queries, and large evidence photo payload processing.
+---
+
+## 5. Demonstration & USB Flash Drive Deployment
+
+To present or run PNP-CVPRMS on an external demonstration PC:
+
+1. **Copy or Compress:** Copy the entire `Source Code` folder onto your USB flash drive.
+2. **Transfer to Local Drive:** Extract or copy the folder onto a local drive on the presentation PC (e.g. `C:\PNP-CVPRMS` or `Desktop\PNP-CVPRMS`).
+   > [!IMPORTANT]
+   > Do not run directly from inside a `.zip` archive or while on the USB flash drive. Running from a local drive ensures persistent database access and correct shortcut creation.
+3. **Verify Node.js:** Verify that Node.js is installed on the target machine.
+4. **Launch:** Run `Create-CVPRMS-Shortcut.bat` and click the generated desktop icon. `Start-CVPRMS.bat` performs an automatic dependency preflight check on startup.
+
+### Resetting to a Clean Database
+To clear all test records before a live presentation:
+```bash
+del pnp_checkpoint.db
+```
+The server will automatically generate a clean, empty `violations` table upon the next startup.
 
 ---
 
-## Troubleshooting
+## 6. Troubleshooting
 
-### Error: "Node.js was not found in your system PATH"
-- Node.js is not yet installed on the computer. Download and run the free LTS installer from [https://nodejs.org/](https://nodejs.org/), then double-click the shortcut again.
+### `EADDRINUSE: address already in use :::3000`
+Another application is already bound to port 3000. Launch on a different port:
+```powershell
+$env:PORT = 3001
+npm start
+```
+Then navigate to `http://localhost:3001`.
 
-### Port 3000 is already in use (`EADDRINUSE`)
-- Another application is using port 3000. Specify an alternate port before starting:
-  ```powershell
-  $env:PORT = 3001
-  npm start
-  ```
-  Then open `http://localhost:3001`.
-
-### Creating a Fresh Clean Database
-- If you wish to clear all test records and start with a fresh blank database for a new checkpoint operation, simply delete `pnp_checkpoint.db`:
-  ```bash
-  del pnp_checkpoint.db
-  ```
-  The system will automatically recreate a clean database on the next launch.
-
----
-
-## Notes
-This is a local prototype and does not connect to live government or police databases. The screening feature uses a basic local rule set stored in the backend rather than a real-time external API.
-
-## License
-This project is intended for academic or prototype use and may be modified as needed for coursework or presentation purposes.
+### PowerShell Execution Policy Error (`PSSecurityException`)
+If PowerShell blocks `npm` scripts (`running scripts is disabled on this system`), run commands via standard Command Prompt (`cmd.exe`) or execute:
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+or run Node directly:
+```powershell
+node server.js
+```

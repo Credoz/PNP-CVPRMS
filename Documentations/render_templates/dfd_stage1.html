@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PNP-CVPRMS DFD Stage 1 (Level 1)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    padding: 30px;
+    width: 1720px;
+    overflow: hidden;
+  }
+  ::-webkit-scrollbar { display: none; }
+  .header-card {
+    background: linear-gradient(135deg, #002244 0%, #003366 100%);
+    color: #ffffff;
+    padding: 22px 30px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    border-bottom: 4px solid #c5a059;
+    box-shadow: 0 4px 12px rgba(0,34,68,0.1);
+  }
+  .header-card h1 {
+    font-size: 26px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .header-card .subtitle {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-top: 6px;
+  }
+  .meta-badges {
+    margin-top: 10px;
+    display: flex;
+    gap: 12px;
+  }
+  .meta-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .diagram-container {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+  }
+  svg { background: #ffffff; }
+  .entity-box {
+    fill: #f8fafc;
+    stroke: #003366;
+    stroke-width: 2.2;
+    rx: 8;
+  }
+  .entity-title {
+    font-size: 14px;
+    font-weight: 800;
+    fill: #002244;
+    text-anchor: middle;
+  }
+  .entity-sub {
+    font-size: 11px;
+    font-weight: 600;
+    fill: #64748b;
+    text-anchor: middle;
+  }
+  .proc-box {
+    fill: #eff6ff;
+    stroke: #2563eb;
+    stroke-width: 2.2;
+    rx: 8;
+  }
+  .proc-num {
+    font-size: 11px;
+    font-weight: 800;
+    fill: #1d4ed8;
+    text-anchor: middle;
+  }
+  .proc-title {
+    font-size: 13px;
+    font-weight: 800;
+    fill: #0f172a;
+    text-anchor: middle;
+  }
+  .store-box {
+    fill: #fefce8;
+    stroke: #ca8a04;
+    stroke-width: 2;
+    rx: 4;
+  }
+  .store-num {
+    font-size: 12px;
+    font-weight: 800;
+    fill: #a16207;
+  }
+  .store-title {
+    font-size: 12px;
+    font-weight: 700;
+    fill: #713f12;
+  }
+  .flow-line {
+    fill: none;
+    stroke: #003366;
+    stroke-width: 1.8;
+  }
+  .flow-label-bg {
+    fill: #ffffff;
+    stroke: #e2e8f0;
+    stroke-width: 1;
+    rx: 3;
+  }
+  .flow-label {
+    font-size: 10px;
+    font-weight: 700;
+    fill: #0f172a;
+    text-anchor: middle;
+  }
+  .footer-note {
+    font-size: 12px;
+    color: #64748B;
+    text-align: right;
+    margin-top: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-card">
+  <h1>Data Flow Diagram — Stage 1 (Level 1 Decomposition)</h1>
+  <div class="subtitle">Detailed Subsystem Processes, Persistent Data Stores, and Multi-Entity Data Flows</div>
+  <div class="meta-badges">
+    <span class="meta-badge">Processes: 1.0 to 6.0</span>
+    <span class="meta-badge">Data Stores: D1 (Violations DB), D2 (Watchlist), D3 (Fee Schedule)</span>
+    <span class="meta-badge">Source of Truth: Source Code/server.js & Source Code/index.html</span>
+  </div>
+</div>
+
+<div class="diagram-container">
+  <svg width="1640" height="920" viewBox="0 0 1640 920">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" fill="#003366" />
+      </marker>
+      <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#002244" flood-opacity="0.06"/>
+      </filter>
+    </defs>
+
+    <!-- ========================================== -->
+    <!-- COLUMN 1: LEFT ENTITIES (x=30 to 220) -->
+    <!-- ========================================== -->
+    <!-- Entity: Checkpoint Officer -->
+    <g filter="url(#shadow)">
+      <rect x="30" y="80" width="190" height="110" class="entity-box" />
+      <text x="125" y="125" class="entity-title">CHECKPOINT OFFICER</text>
+      <text x="125" y="148" class="entity-sub">Field Apprehending Team</text>
+      <text x="125" y="166" class="entity-sub">[Station / Shift / Post]</text>
+    </g>
+
+    <!-- Entity: Motorist -->
+    <g filter="url(#shadow)">
+      <rect x="30" y="430" width="190" height="110" class="entity-box" />
+      <text x="125" y="475" class="entity-title">APPREHENDED MOTORIST</text>
+      <text x="125" y="498" class="entity-sub">Vehicle Operator / Violator</text>
+      <text x="125" y="516" class="entity-sub">[Private / PUV / MC]</text>
+    </g>
+
+    <!-- ========================================== -->
+    <!-- COLUMN 2: INGESTION PROCESSES (x=330 to 550) -->
+    <!-- ========================================== -->
+    <!-- Process 1.0 -->
+    <g filter="url(#shadow)">
+      <rect x="320" y="40" width="230" height="90" class="proc-box" />
+      <text x="435" y="70" class="proc-num">PROCESS 1.0</text>
+      <text x="435" y="92" class="proc-title">Station Bootstrap &</text>
+      <text x="435" y="110" class="proc-title">Officer Session Context</text>
+    </g>
+
+    <!-- Process 2.0 -->
+    <g filter="url(#shadow)">
+      <rect x="320" y="240" width="230" height="90" class="proc-box" />
+      <text x="435" y="270" class="proc-num">PROCESS 2.0</text>
+      <text x="435" y="292" class="proc-title">Real-Time Watchlist &</text>
+      <text x="435" y="310" class="proc-title">HPG Alarm Screening</text>
+    </g>
+
+    <!-- Process 3.0 -->
+    <g filter="url(#shadow)">
+      <rect x="320" y="440" width="230" height="95" class="proc-box" />
+      <text x="435" y="468" class="proc-num">PROCESS 3.0</text>
+      <text x="435" y="488" class="proc-title">Apprehension Ingestion &</text>
+      <text x="435" y="506" class="proc-title">Citation Validation Engine</text>
+      <text x="435" y="522" class="entity-sub">(POST /api/violations)</text>
+    </g>
+
+    <!-- ========================================== -->
+    <!-- COLUMN 3: DATA STORES (x=680 to 940) -->
+    <!-- ========================================== -->
+    <!-- Store D2: Screening Watchlist -->
+    <g filter="url(#shadow)">
+      <rect x="680" y="240" width="260" height="80" class="store-box" />
+      <line x1="735" y1="240" x2="735" y2="320" stroke="#ca8a04" stroke-width="2" />
+      <text x="695" y="285" class="store-num">D2</text>
+      <text x="745" y="275" class="store-title">SCREENING_BLACKLIST</text>
+      <text x="745" y="295" class="entity-sub" style="text-anchor: start;">Stolen Plates, Warrants, Suspensions</text>
+    </g>
+
+    <!-- Store D3: Offense Schedule -->
+    <g filter="url(#shadow)">
+      <rect x="680" y="440" width="260" height="80" class="store-box" />
+      <line x1="735" y1="440" x2="735" y2="520" stroke="#ca8a04" stroke-width="2" />
+      <text x="695" y="485" class="store-num">D3</text>
+      <text x="745" y="475" class="store-title">OFFENSE_SCHEDULE</text>
+      <text x="745" y="495" class="entity-sub" style="text-anchor: start;">14 Statutory Offense Baseline Fines</text>
+    </g>
+
+    <!-- Store D1: Central Violations Database -->
+    <g filter="url(#shadow)">
+      <rect x="680" y="660" width="260" height="90" class="store-box" style="fill:#fef9c3;" />
+      <line x1="735" y1="660" x2="735" y2="750" stroke="#ca8a04" stroke-width="2.5" />
+      <text x="695" y="710" class="store-num">D1</text>
+      <text x="745" y="695" class="store-title">VIOLATIONS DATABASE</text>
+      <text x="745" y="715" class="entity-sub" style="text-anchor: start;">SQLite Table: violations (20 cols)</text>
+      <text x="745" y="732" class="entity-sub" style="text-anchor: start;">pnp_checkpoint.db</text>
+    </g>
+
+    <!-- ========================================== -->
+    <!-- COLUMN 4: SERVICING PROCESSES (x=1080 to 1310) -->
+    <!-- ========================================== -->
+    <!-- Process 4.0 -->
+    <g filter="url(#shadow)">
+      <rect x="1070" y="240" width="230" height="90" class="proc-box" />
+      <text x="1185" y="270" class="proc-num">PROCESS 4.0</text>
+      <text x="1185" y="292" class="proc-title">Registry Search &</text>
+      <text x="1185" y="310" class="proc-title">Multi-Field Filter Engine</text>
+    </g>
+
+    <!-- Process 5.0 -->
+    <g filter="url(#shadow)">
+      <rect x="1070" y="440" width="230" height="90" class="proc-box" />
+      <text x="1185" y="470" class="proc-num">PROCESS 5.0</text>
+      <text x="1185" y="492" class="proc-title">Treasury Settlement &</text>
+      <text x="1185" y="510" class="proc-title">Status Transition Manager</text>
+    </g>
+
+    <!-- Process 6.0 -->
+    <g filter="url(#shadow)">
+      <rect x="1070" y="660" width="230" height="90" class="proc-box" />
+      <text x="1185" y="690" class="proc-num">PROCESS 6.0</text>
+      <text x="1185" y="712" class="proc-title">Reporting, POS Printing</text>
+      <text x="1185" y="730" class="proc-title">& RFC 4180 CSV Export</text>
+    </g>
+
+    <!-- ========================================== -->
+    <!-- COLUMN 5: RIGHT ENTITIES (x=1420 to 1610) -->
+    <!-- ========================================== -->
+    <!-- Entity: PNP/HPG Database -->
+    <g filter="url(#shadow)">
+      <rect x="1420" y="240" width="190" height="110" class="entity-box" />
+      <text x="1515" y="280" class="entity-title">PNP / HPG REPOSITORY</text>
+      <text x="1515" y="303" class="entity-sub">National Crime Info / Warrants</text>
+      <text x="1515" y="321" class="entity-sub">[Highway Patrol Group]</text>
+    </g>
+
+    <!-- Entity: Municipal Treasury -->
+    <g filter="url(#shadow)">
+      <rect x="1420" y="440" width="190" height="110" class="entity-box" />
+      <text x="1515" y="480" class="entity-title">MUNICIPAL TREASURY</text>
+      <text x="1515" y="503" class="entity-sub">LGU Cashier & Revenue Desk</text>
+      <text x="1515" y="521" class="entity-sub">[Payment Settlement]</text>
+    </g>
+
+    <!-- ========================================== -->
+    <!-- FLOW LINES & LABELS -->
+    <!-- ========================================== -->
+
+    <!-- Officer -> Process 1.0 (Session sync) -->
+    <path d="M 220 110 L 320 85" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="230" y="80" width="80" height="20" class="flow-label-bg" />
+    <text x="270" y="94" class="flow-label">Badge & Post</text>
+
+    <!-- Officer -> Process 2.0 (Screening inputs) -->
+    <path d="M 180 190 C 220 230, 260 260, 320 270" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="180" y="235" width="120" height="20" class="flow-label-bg" />
+    <text x="240" y="249" class="flow-label">Plate / License Blur</text>
+
+    <!-- Process 2.0 -> Officer (Screening Badge) -->
+    <path d="M 320 300 C 270 300, 220 270, 180 200" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="180" y="300" width="120" height="20" class="flow-label-bg" />
+    <text x="240" y="314" class="flow-label">Alert Status Badge</text>
+
+    <!-- D2 -> Process 2.0 (Watchlist data) -->
+    <path d="M 680 280 L 550 280" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="565" y="268" width="100" height="20" class="flow-label-bg" />
+    <text x="615" y="282" class="flow-label">Active Blacklist</text>
+
+    <!-- HPG -> D2 (Watchlist updates) -->
+    <path d="M 1420 280 L 940 280" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="1130" y="200" width="120" height="20" class="flow-label-bg" />
+    <text x="1190" y="214" class="flow-label">Alarm Records Feed</text>
+
+    <!-- Motorist -> Process 3.0 (Credentials) -->
+    <path d="M 220 485 L 320 485" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="230" y="470" width="80" height="20" class="flow-label-bg" />
+    <text x="270" y="484" class="flow-label">ID & OR-CR</text>
+
+    <!-- Officer -> Process 3.0 (Form submission) -->
+    <path d="M 140 190 C 140 330, 240 440, 320 460" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="160" y="390" width="140" height="20" class="flow-label-bg" />
+    <text x="230" y="404" class="flow-label">Violation Ingestion Payload</text>
+
+    <!-- D3 -> Process 3.0 (Fee Schedule) -->
+    <path d="M 680 480 L 550 480" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="565" y="468" width="100" height="20" class="flow-label-bg" />
+    <text x="615" y="482" class="flow-label">Statutory Tariffs</text>
+
+    <!-- Process 3.0 -> D1 (Insert new citation) -->
+    <path d="M 435 535 C 435 620, 560 690, 680 700" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="470" y="635" width="150" height="20" class="flow-label-bg" />
+    <text x="545" y="649" class="flow-label">INSERT Parameterized Record</text>
+
+    <!-- Process 3.0 -> Motorist (POS Ticket) -->
+    <path d="M 320 520 L 220 520" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="230" y="525" width="80" height="20" class="flow-label-bg" />
+    <text x="270" y="539" class="flow-label">Thermal Slip</text>
+
+    <!-- D1 -> Process 4.0 (Search & Filter Query) -->
+    <path d="M 940 700 C 1040 680, 1070 420, 1075 330" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="990" y="360" width="140" height="20" class="flow-label-bg" />
+    <text x="1060" y="374" class="flow-label">SELECT Parameterized Query</text>
+
+    <!-- Process 4.0 -> Officer (Registry Table) -->
+    <path d="M 1070 260 C 850 160, 500 160, 220 150" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="580" y="145" width="160" height="20" class="flow-label-bg" />
+    <text x="660" y="159" class="flow-label">Filtered Citations & Table DOM</text>
+
+    <!-- Treasury -> Process 5.0 (Status patch) -->
+    <path d="M 1420 485 L 1300 485" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="1310" y="470" width="100" height="20" class="flow-label-bg" />
+    <text x="1360" y="484" class="flow-label">PATCH Status Update</text>
+
+    <!-- Process 5.0 -> D1 (Update payment_status) -->
+    <path d="M 1070 510 C 970 540, 950 630, 940 660" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="970" y="560" width="130" height="20" class="flow-label-bg" />
+    <text x="1035" y="574" class="flow-label">UPDATE payment_status</text>
+
+    <!-- D1 -> Process 6.0 (Aggregate reporting & CSV) -->
+    <path d="M 940 730 L 1070 730" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="960" y="718" width="90" height="20" class="flow-label-bg" />
+    <text x="1005" y="732" class="flow-label">Aggregate KPIs</text>
+
+    <!-- Process 6.0 -> Officer (CSV export & Summary) -->
+    <path d="M 1185 750 C 1185 860, 200 860, 150 190" class="flow-line" marker-end="url(#arrow)" />
+    <rect x="580" y="845" width="160" height="20" class="flow-label-bg" />
+    <text x="660" y="859" class="flow-label">Summary Cards & RFC 4180 CSV</text>
+
+  </svg>
+</div>
+
+<div class="footer-note">
+  Single Source of Truth: Source Code/server.js & Source Code/index.html — PNP-CVPRMS Technical Documentation
+</div>
+
+</body>
+</html>

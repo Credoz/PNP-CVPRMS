@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PNP-CVPRMS Entity-Relationship Diagram</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    padding: 30px;
+    width: 1720px;
+    overflow: hidden;
+  }
+  ::-webkit-scrollbar { display: none; }
+  .header-card {
+    background: linear-gradient(135deg, #002244 0%, #003366 100%);
+    color: #ffffff;
+    padding: 22px 30px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    border-bottom: 4px solid #c5a059;
+    box-shadow: 0 4px 12px rgba(0,34,68,0.1);
+  }
+  .header-card h1 {
+    font-size: 26px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .header-card .subtitle {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-top: 6px;
+  }
+  .meta-badges {
+    margin-top: 10px;
+    display: flex;
+    gap: 12px;
+  }
+  .meta-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .section-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #002244;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    border-left: 5px solid #003366;
+    padding-left: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .diagram-container {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+  }
+  svg { background: #ffffff; }
+  .table-box {
+    fill: #ffffff;
+    stroke: #003366;
+    stroke-width: 2;
+    rx: 6;
+  }
+  .table-header {
+    fill: #003366;
+    rx: 6;
+  }
+  .table-header-title {
+    font-size: 13px;
+    font-weight: 800;
+    fill: #ffffff;
+    text-anchor: middle;
+    letter-spacing: 0.5px;
+  }
+  .attr-text {
+    font-size: 11px;
+    font-weight: 600;
+    fill: #1e293b;
+    font-family: monospace;
+  }
+  .attr-type {
+    font-size: 10px;
+    font-weight: 700;
+    fill: #64748b;
+    font-family: monospace;
+  }
+  .pk-tag {
+    font-size: 9.5px;
+    font-weight: 800;
+    fill: #dc2626;
+    font-family: monospace;
+  }
+  .fk-tag {
+    font-size: 9.5px;
+    font-weight: 800;
+    fill: #2563eb;
+    font-family: monospace;
+  }
+  .rel-line {
+    fill: none;
+    stroke: #003366;
+    stroke-width: 1.8;
+  }
+  .cardinality-text {
+    font-size: 11px;
+    font-weight: 800;
+    fill: #002244;
+  }
+  .rel-label-bg {
+    fill: #ffffff;
+    stroke: #cbd5e1;
+    stroke-width: 1;
+    rx: 3;
+  }
+  .rel-label {
+    font-size: 10px;
+    font-weight: 700;
+    fill: #003366;
+    text-anchor: middle;
+  }
+  .physical-summary-card {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .physical-summary-card h4 {
+    font-size: 13px;
+    font-weight: 800;
+    color: #002244;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .tag-pill {
+    display: inline-block;
+    background: #e2e8f0;
+    color: #0f172a;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 11px;
+    margin-right: 6px;
+  }
+  .footer-note {
+    font-size: 11px;
+    color: #64748B;
+    text-align: right;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-card">
+  <h1>Entity-Relationship Diagram (Conceptual 3NF & Physical Architecture)</h1>
+  <div class="subtitle">Data Model, Entity Attributes, Cardinalities & Physical Single-Table SQLite Implementation</div>
+  <div class="meta-badges">
+    <span class="meta-badge">Conceptual Model: 6 Relational Entities</span>
+    <span class="meta-badge">Physical Storage: SQLite violations (20 Columns)</span>
+    <span class="meta-badge">Source of Truth: Source Code/server.js & pnp_checkpoint.db</span>
+  </div>
+</div>
+
+<div class="diagram-container">
+  <div class="section-title">
+    <span>1. Conceptual 3NF Entity Relationship Model</span>
+    <span style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: none;">Cardinality Key: 1:N (One-to-Many), Mandatory Associations</span>
+  </div>
+  <svg width="1640" height="540" viewBox="0 0 1640 540">
+    <defs>
+      <marker id="erdArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" fill="#003366" />
+      </marker>
+      <filter id="erdShadow" x="-5%" y="-5%" width="110%" height="110%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#002244" flood-opacity="0.06"/>
+      </filter>
+    </defs>
+
+    <!-- ENTITY 1: OFFICER (Top Left) -->
+    <g filter="url(#erdShadow)">
+      <rect x="40" y="30" width="260" height="200" class="table-box" />
+      <path d="M 40 30 L 300 30 L 300 62 L 40 62 Z" class="table-header" />
+      <text x="170" y="52" class="table-header-title">OFFICER</text>
+      <!-- Attrs -->
+      <text x="55" y="85" class="pk-tag">PK</text><text x="80" y="85" class="attr-text">officer_id</text><text x="210" y="85" class="attr-type">TEXT</text>
+      <line x1="50" y1="92" x2="290" y2="92" stroke="#e2e8f0" stroke-width="1" />
+      <text x="55" y="112" class="attr-text">officer_name</text><text x="210" y="112" class="attr-type">TEXT</text>
+      <text x="55" y="132" class="attr-text">badge_number</text><text x="210" y="132" class="attr-type">TEXT</text>
+      <text x="55" y="152" class="attr-text">rank_title</text><text x="210" y="152" class="attr-type">TEXT</text>
+      <text x="55" y="172" class="attr-text">checkpoint_post</text><text x="210" y="172" class="attr-type">TEXT</text>
+      <text x="55" y="192" class="attr-text">shift_info</text><text x="210" y="192" class="attr-type">TEXT</text>
+    </g>
+
+    <!-- ENTITY 2: MOTORIST (Bottom Left) -->
+    <g filter="url(#erdShadow)">
+      <rect x="40" y="290" width="260" height="210" class="table-box" />
+      <path d="M 40 290 L 300 290 L 300 322 L 40 322 Z" class="table-header" />
+      <text x="170" y="312" class="table-header-title">MOTORIST</text>
+      <!-- Attrs -->
+      <text x="55" y="345" class="pk-tag">PK</text><text x="80" y="345" class="attr-text">motorist_id</text><text x="210" y="345" class="attr-type">INTEGER</text>
+      <line x1="50" y1="352" x2="290" y2="352" stroke="#e2e8f0" stroke-width="1" />
+      <text x="55" y="372" class="attr-text">driver_name</text><text x="210" y="372" class="attr-type">TEXT</text>
+      <text x="55" y="392" class="attr-text">license_number</text><text x="210" y="392" class="attr-type">TEXT</text>
+      <text x="55" y="412" class="attr-text">is_unlicensed</text><text x="210" y="412" class="attr-type">INTEGER</text>
+      <text x="55" y="432" class="attr-text">id_type</text><text x="210" y="432" class="attr-type">TEXT</text>
+      <text x="55" y="452" class="attr-text">id_number</text><text x="210" y="452" class="attr-type">TEXT</text>
+      <text x="55" y="472" class="attr-text">screening_flag</text><text x="210" y="472" class="attr-type">TEXT</text>
+    </g>
+
+    <!-- ENTITY 3: VEHICLE (Top Right) -->
+    <g filter="url(#erdShadow)">
+      <rect x="1340" y="30" width="260" height="180" class="table-box" />
+      <path d="M 1340 30 L 1600 30 L 1600 62 L 1340 62 Z" class="table-header" />
+      <text x="1470" y="52" class="table-header-title">VEHICLE</text>
+      <!-- Attrs -->
+      <text x="1355" y="85" class="pk-tag">PK</text><text x="1380" y="85" class="attr-text">vehicle_id</text><text x="1510" y="85" class="attr-type">INTEGER</text>
+      <line x1="1350" y1="92" x2="1590" y2="92" stroke="#e2e8f0" stroke-width="1" />
+      <text x="1355" y="112" class="attr-text">plate_number</text><text x="1510" y="112" class="attr-type">TEXT</text>
+      <text x="1355" y="132" class="attr-text">vehicle_type</text><text x="1510" y="132" class="attr-type">TEXT</text>
+      <text x="1355" y="152" class="attr-text">chassis_number</text><text x="1510" y="152" class="attr-type">TEXT</text>
+      <text x="1355" y="172" class="attr-text">hpg_alarm_status</text><text x="1510" y="172" class="attr-type">TEXT</text>
+    </g>
+
+    <!-- ENTITY 4: CITATION (Center Main Table) -->
+    <g filter="url(#erdShadow)">
+      <rect x="470" y="40" width="310" height="450" class="table-box" style="stroke-width:2.5; stroke:#1d4ed8;" />
+      <path d="M 470 40 L 780 40 L 780 75 L 470 75 Z" class="table-header" style="fill:#1d4ed8;" />
+      <text x="625" y="62" class="table-header-title">CITATION / VIOLATION</text>
+      <!-- Attrs -->
+      <text x="485" y="100" class="pk-tag">PK</text><text x="510" y="100" class="attr-text">id</text><text x="700" y="100" class="attr-type">INTEGER</text>
+      <text x="485" y="120" style="font-size:9.5px; font-weight:800; fill:#059669; font-family:monospace;">UQ</text><text x="510" y="120" class="attr-text">ticket_number</text><text x="700" y="120" class="attr-type">TEXT</text>
+      <line x1="480" y1="128" x2="770" y2="128" stroke="#cbd5e1" stroke-width="1" />
+      <text x="485" y="148" class="fk-tag">FK</text><text x="510" y="148" class="attr-text">officer_id</text><text x="700" y="148" class="attr-type">TEXT</text>
+      <text x="485" y="168" class="fk-tag">FK</text><text x="510" y="168" class="attr-text">motorist_id</text><text x="700" y="168" class="attr-type">INTEGER</text>
+      <text x="485" y="188" class="fk-tag">FK</text><text x="510" y="188" class="attr-text">vehicle_id</text><text x="700" y="188" class="attr-type">INTEGER</text>
+      <text x="485" y="208" class="attr-text">date_recorded</text><text x="700" y="208" class="attr-type">TEXT</text>
+      <text x="485" y="228" class="attr-text">checkpoint_post</text><text x="700" y="228" class="attr-type">TEXT</text>
+      <text x="485" y="248" class="attr-text">shift_info</text><text x="700" y="248" class="attr-type">TEXT</text>
+      <text x="485" y="268" class="attr-text">vehicle_disposition</text><text x="700" y="268" class="attr-type">TEXT</text>
+      <text x="485" y="288" class="attr-text">impound_receipt_no</text><text x="700" y="288" class="attr-type">TEXT</text>
+      <text x="485" y="308" class="attr-text">fine_override</text><text x="700" y="308" class="attr-type">INTEGER</text>
+      <text x="485" y="328" class="attr-text">fine_amount</text><text x="700" y="328" class="attr-type">REAL</text>
+      <text x="485" y="348" class="attr-text">payment_status</text><text x="700" y="348" class="attr-type">TEXT</text>
+      <text x="485" y="368" class="attr-text">screening_status</text><text x="700" y="368" class="attr-type">TEXT</text>
+      <text x="485" y="388" class="attr-text">evidence_image</text><text x="700" y="388" class="attr-type">TEXT</text>
+      <text x="485" y="408" class="attr-text">violation_type</text><text x="700" y="408" class="attr-type">TEXT</text>
+      <rect x="485" y="425" width="280" height="45" rx="4" fill="#eff6ff" stroke="#bfdbfe" />
+      <text x="495" y="445" style="font-size:10px; font-weight:700; fill:#1e40af;">Physical Denormalized Implementation:</text>
+      <text x="495" y="460" style="font-size:9.5px; fill:#3b82f6;">Integrates Driver & Vehicle into single row</text>
+    </g>
+
+    <!-- ENTITY 5: CITATION_ITEM (Associative Bridge, Center Right) -->
+    <g filter="url(#erdShadow)">
+      <rect x="920" y="160" width="280" height="190" class="table-box" />
+      <path d="M 920 160 L 1200 160 L 1200 192 L 920 192 Z" class="table-header" />
+      <text x="1060" y="182" class="table-header-title">CITATION_ITEM</text>
+      <!-- Attrs -->
+      <text x="935" y="215" class="pk-tag">PK</text><text x="960" y="215" class="attr-text">item_id</text><text x="1110" y="215" class="attr-type">INTEGER</text>
+      <line x1="930" y1="222" x2="1190" y2="222" stroke="#e2e8f0" stroke-width="1" />
+      <text x="935" y="242" class="fk-tag">FK</text><text x="960" y="242" class="attr-text">citation_id</text><text x="1110" y="242" class="attr-type">INTEGER</text>
+      <text x="935" y="262" class="fk-tag">FK</text><text x="960" y="262" class="attr-text">offense_id</text><text x="1110" y="262" class="attr-type">INTEGER</text>
+      <text x="935" y="282" class="attr-text">item_fine</text><text x="1110" y="282" class="attr-type">REAL</text>
+      <text x="935" y="302" class="attr-text">override_reason</text><text x="1110" y="302" class="attr-type">TEXT</text>
+    </g>
+
+    <!-- ENTITY 6: OFFENSE_SCHEDULE (Bottom Right) -->
+    <g filter="url(#erdShadow)">
+      <rect x="1340" y="270" width="260" height="200" class="table-box" />
+      <path d="M 1340 270 L 1600 270 L 1600 302 L 1340 302 Z" class="table-header" />
+      <text x="1470" y="292" class="table-header-title">OFFENSE_SCHEDULE</text>
+      <!-- Attrs -->
+      <text x="1355" y="325" class="pk-tag">PK</text><text x="1380" y="325" class="attr-text">offense_id</text><text x="1510" y="325" class="attr-type">INTEGER</text>
+      <line x1="1350" y1="332" x2="1590" y2="332" stroke="#e2e8f0" stroke-width="1" />
+      <text x="1355" y="352" class="attr-text">violation_name</text><text x="1510" y="352" class="attr-type">TEXT</text>
+      <text x="1355" y="372" class="attr-text">legal_statute</text><text x="1510" y="372" class="attr-type">TEXT</text>
+      <text x="1355" y="392" class="attr-text">statutory_fee</text><text x="1510" y="392" class="attr-type">REAL</text>
+      <text x="1355" y="412" class="attr-text">requires_impound</text><text x="1510" y="412" class="attr-type">INTEGER</text>
+    </g>
+
+    <!-- RELATIONSHIP LINES -->
+    <!-- OFFICER (1) -> (N) CITATION -->
+    <path d="M 300 130 L 470 150" class="rel-line" marker-end="url(#erdArrow)" />
+    <text x="315" y="125" class="cardinality-text">1</text>
+    <text x="450" y="145" class="cardinality-text">N</text>
+    <rect x="345" y="125" width="80" height="18" class="rel-label-bg" />
+    <text x="385" y="138" class="rel-label">issues</text>
+
+    <!-- MOTORIST (1) -> (N) CITATION -->
+    <path d="M 300 380 L 470 300" class="rel-line" marker-end="url(#erdArrow)" />
+    <text x="315" y="380" class="cardinality-text">1</text>
+    <text x="450" y="315" class="cardinality-text">N</text>
+    <rect x="345" y="335" width="80" height="18" class="rel-label-bg" />
+    <text x="385" y="348" class="rel-label">apprehended</text>
+
+    <!-- VEHICLE (1) -> (N) CITATION -->
+    <path d="M 1340 120 C 1100 120, 950 120, 780 160" class="rel-line" marker-end="url(#erdArrow)" />
+    <text x="1320" y="115" class="cardinality-text">1</text>
+    <text x="800" y="155" class="cardinality-text">N</text>
+    <rect x="990" y="105" width="100" height="18" class="rel-label-bg" />
+    <text x="1040" y="118" class="rel-label">involved in stop</text>
+
+    <!-- CITATION (1) -> (N) CITATION_ITEM -->
+    <path d="M 780 250 L 920 250" class="rel-line" marker-end="url(#erdArrow)" />
+    <text x="795" y="242" class="cardinality-text">1</text>
+    <text x="900" y="242" class="cardinality-text">N</text>
+    <rect x="815" y="240" width="70" height="18" class="rel-label-bg" />
+    <text x="850" y="253" class="rel-label">contains</text>
+
+    <!-- OFFENSE_SCHEDULE (1) -> (N) CITATION_ITEM -->
+    <path d="M 1340 370 C 1270 370, 1270 300, 1200 270" class="rel-line" marker-end="url(#erdArrow)" />
+    <text x="1320" y="365" class="cardinality-text">1</text>
+    <text x="1215" y="280" class="cardinality-text">N</text>
+    <rect x="1235" y="315" width="80" height="18" class="rel-label-bg" />
+    <text x="1275" y="328" class="rel-label">referenced</text>
+
+  </svg>
+</div>
+
+<div class="physical-summary-card">
+  <h4>2. Physical SQLite Denormalization Rationale & Field Mapping</h4>
+  <p>
+    In the production runtime (<span class="tag-pill">pnp_checkpoint.db</span>), entities <strong>MOTORIST</strong>, <strong>VEHICLE</strong>, and <strong>OFFICER</strong> are denormalized directly into the central <span class="tag-pill">violations</span> table (20 columns). This architectural decision eliminates multi-table join latency in the field, prevents foreign key locks during high-throughput checkpoint stops, allows instantaneous single-statement parameterized transactions (<span class="tag-pill">INSERT INTO violations</span>), and enables offline SQLite standalone operation on ruggedized field laptops.
+  </p>
+</div>
+
+<div class="footer-note">
+  Physical Schema Source: Source Code/server.js (PRAGMA table_info) & pnp_checkpoint.db — PNP-CVPRMS Technical Documentation
+</div>
+
+</body>
+</html>
